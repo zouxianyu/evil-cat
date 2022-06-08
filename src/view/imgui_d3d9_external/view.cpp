@@ -157,8 +157,8 @@ void ImGuiD3D9ExternalView::MainLoop() {
     if (DirectX9.IDirect3D9 != NULL) {
         DirectX9.IDirect3D9->Release();
     }
-    DestroyWindow(Overlay.Hwnd);
-    UnregisterClass(Overlay.WindowClass.lpszClassName, Overlay.WindowClass.hInstance);
+//    DestroyWindow(Overlay.Hwnd);
+//    UnregisterClass(Overlay.WindowClass.lpszClassName, Overlay.WindowClass.hInstance);
 }
 
 bool ImGuiD3D9ExternalView::DirectXInit() {
@@ -310,7 +310,8 @@ bool ImGuiD3D9ExternalView::loop() {
         }
     }
 
-    Overlay.Name = RandomString(10).c_str();
+    std::string randomName = RandomString(10);
+    Overlay.Name = randomName.c_str();
     SetupWindow();
     DirectXInit();
 //    CreateThread(0, 0, ProcessCheck, 0, 0, 0);
