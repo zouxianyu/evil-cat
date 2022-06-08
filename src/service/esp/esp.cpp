@@ -100,12 +100,18 @@ void Esp::showEspBox3D(Player &localPlayer, std::vector<Player> &players) {
             v = esp3dTranslate * esp3dRotation * v;
             v /= v.w;
         }
+
         // translate to screen coordination
+        bool notShow = false;
         for (int j = 0; j < 8; j++) {
             if (!WorldToScreen::getInstance().translate(Vec3{corners[j].x, corners[j].y, corners[j].z},
                                                         screenCorners[j])) {
-                continue;
+                notShow = true;
+                break;
             }
+        }
+        if (notShow) {
+            continue;
         }
 
         //show box 3d
