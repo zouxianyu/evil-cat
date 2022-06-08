@@ -1,4 +1,5 @@
 #include "mem/process_memory_accessor.h"
+#include "entity/offset/player.h"
 #include "player.h"
 
 Player::Player(void *address)
@@ -6,64 +7,44 @@ Player::Player(void *address)
 }
 
 Vec3 Player::getHead() {
-    void *address = reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(_this)+ offsetof(Player, head));
-    ProcessMemoryAccessor<decltype(head)> accessor{address};
-    return accessor.get();
+    ProcessMemoryAccessor accessor{ADDRESS(_this, offset::Player, head)};
+    return accessor;
 }
 
 Vec3 Player::getFeet() {
-    void *address = reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(_this)+ offsetof(Player, feet));
-    ProcessMemoryAccessor<decltype(feet)> accessor{address};
-    return accessor.get();
+    ProcessMemoryAccessor accessor{ADDRESS(_this, offset::Player, feet)};
+    return accessor;
 }
 
 Vec3 Player::getViewAngle() {
-    void *address = reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(_this)+ offsetof(Player, viewAngle));
-    ProcessMemoryAccessor<decltype(viewAngle)> accessor{address};
-    return accessor.get();
+    return ProcessMemoryAccessor{ADDRESS(_this, offset::Player, viewAngle)};
 }
 
 void Player::setViewAngle(Vec3 angle) {
-    void *address = reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(_this)+ offsetof(Player, viewAngle));
-    ProcessMemoryAccessor<decltype(viewAngle)> accessor{address};
-    accessor.set(angle);
+    ProcessMemoryAccessor{ADDRESS(_this, offset::Player, viewAngle)} = angle;
 }
 
 int Player::getHealth() {
-    void *address = reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(_this) + offsetof(Player, health));
-    ProcessMemoryAccessor<decltype(health)> accessor{address};
-    return accessor.get();
+    return ProcessMemoryAccessor{ADDRESS(_this, offset::Player, health)};
 }
 
 void Player::setHealth(int health) {
-    void *address = reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(_this) + offsetof(Player, health));
-    ProcessMemoryAccessor<decltype(health)> accessor{address};
-    accessor.set(health);
+    ProcessMemoryAccessor{ADDRESS(_this, offset::Player, health)} = health;
 }
 
 int Player::getArmor() {
-    void *address = reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(_this) + offsetof(Player, armor));
-    ProcessMemoryAccessor<decltype(armor)> accessor{address};
-    return accessor.get();
+    return ProcessMemoryAccessor{ADDRESS(_this, offset::Player, armor)};
 }
 
 void Player::setArmor(int armor) {
-    void *address = reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(_this) + offsetof(Player, armor));
-    ProcessMemoryAccessor<decltype(armor)> accessor{address};
-    accessor.set(armor);
+    ProcessMemoryAccessor{ADDRESS(_this, offset::Player, armor)} = armor;
 }
 
 std::string Player::getName() {
-    void *address = reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(_this) + offsetof(Player, name));
-    ProcessMemoryAccessor<decltype(name)> accessor{address};
-    return accessor.get().name;
+    Name name = ProcessMemoryAccessor{ADDRESS(_this, offset::Player, name)};
+    return name.name;
 }
 
 uint8_t Player::getTeam() {
-    void *address = reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(_this) + offsetof(Player, team));
-    ProcessMemoryAccessor<decltype(team)> accessor{address};
-    return accessor.get();
+    return ProcessMemoryAccessor{ADDRESS(_this, offset::Player, team)};
 }
-
-
-

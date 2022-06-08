@@ -11,7 +11,7 @@
 template<typename T>
 class ProcessMemoryAccessor {
 
-    void *address;
+    T *address;
     bool cache;
 public:
     ProcessMemoryAccessor(const ProcessMemoryAccessor &) = delete;
@@ -31,20 +31,18 @@ public:
             throw std::runtime_error("Could not find module " + moduleName);
         }
         address = reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(moduleBase) + moduleOffset);
-        for (unsigned int offset: offsets) {
-//            ProcessMemory::getInstance().read(address, &address, sizeof(uintptr_t));
+        for (uintptr_t offset: offsets) {
             BufferPool::getInstance().read(address, &address, sizeof(uintptr_t), cache);
-            address = reinterpret_cast<void *>( reinterpret_cast<uintptr_t>(address) + offset);
+            address = reinterpret_cast<T *>( reinterpret_cast<uintptr_t>(address) + offset);
         }
         this->address = address;
         this->cache = cache;
     }
 
-    explicit ProcessMemoryAccessor(void *address, const std::vector<uintptr_t> &offsets = {}, bool cache = true) {
-        for (unsigned int offset: offsets) {
-//            ProcessMemory::getInstance().read(address, &address, sizeof(uintptr_t));
+    explicit ProcessMemoryAccessor(T *address, const std::vector<uintptr_t> &offsets = {}, bool cache = true) {
+        for (uintptr_t offset: offsets) {
             BufferPool::getInstance().read(address, &address, sizeof(uintptr_t), cache);
-            address = reinterpret_cast<void *>( reinterpret_cast<uintptr_t>(address) + offset);
+            address = reinterpret_cast<T *>( reinterpret_cast<uintptr_t>(address) + offset);
         }
         this->address = address;
         this->cache = cache;
@@ -52,7 +50,6 @@ public:
 
     T get() {
         T value;
-//        if (!ProcessMemory::getInstance().read(address, &value, sizeof(T))) {
         if (!BufferPool::getInstance().read(address, &value, sizeof(T), cache)) {
             throw std::runtime_error("failed to read memory");
         }
@@ -60,10 +57,18 @@ public:
     }
 
     void set(const T &value) {
-//        if (!ProcessMemory::getInstance().write(address, &value, sizeof(T))) {
         if (!BufferPool::getInstance().write(address, &value, sizeof(T))) {
             throw std::runtime_error("failed to write memory");
         }
+    }
+
+    operator T() {
+        return get();
+    }
+
+    ProcessMemoryAccessor<T> &operator=(const T &value) {
+        set(value);
+        return *this;
     }
 };
 

@@ -12,16 +12,12 @@ EntityManager &EntityManager::getInstance() {
 }
 
 Player EntityManager::getLocalPlayer() {
-    return Player{
-            ProcessMemoryAccessor<void *>
-                    {"ac_client.exe", offset::localPlayer}.get()
-    };
+    return Player{ProcessMemoryAccessor<void *>{"ac_client.exe", offset::localPlayer}};
 }
 
 glm::mat4 EntityManager::getViewProjectionMatrix() {
 
-    Mat4 vpMatrix = ProcessMemoryAccessor<Mat4>
-            {"ac_client.exe", offset::vpMatrix}.get();
+    Mat4 vpMatrix = ProcessMemoryAccessor<Mat4>{"ac_client.exe", offset::vpMatrix};
 
     return {vpMatrix.m[0][0], vpMatrix.m[0][1], vpMatrix.m[0][2], vpMatrix.m[0][3],
             vpMatrix.m[1][0], vpMatrix.m[1][1], vpMatrix.m[1][2], vpMatrix.m[1][3],
@@ -31,15 +27,11 @@ glm::mat4 EntityManager::getViewProjectionMatrix() {
 
 std::vector<Player> EntityManager::getPlayers() {
     std::vector<Player> players;
-    uintptr_t playerList = ProcessMemoryAccessor<uintptr_t>
-            {"ac_client.exe", offset::playerList}.get();
-    int n = ProcessMemoryAccessor<int>
-            {"ac_client.exe", offset::playerCount}.get();
-    uintptr_t self = ProcessMemoryAccessor<uintptr_t>
-            {"ac_client.exe", offset::localPlayer}.get();
+    uintptr_t playerList = ProcessMemoryAccessor<uintptr_t>{"ac_client.exe", offset::playerList};
+    int n = ProcessMemoryAccessor<int>{"ac_client.exe", offset::playerCount};
+    uintptr_t self = ProcessMemoryAccessor<uintptr_t>{"ac_client.exe", offset::localPlayer};
     for (int i = 0; i < n; i++) {
-        uintptr_t playerAddr = ProcessMemoryAccessor<uintptr_t>
-                {reinterpret_cast<void *>(playerList + i * sizeof(uintptr_t))}.get();
+        uintptr_t playerAddr = ProcessMemoryAccessor{reinterpret_cast<uintptr_t *>(playerList + i * sizeof(uintptr_t))};
         if (playerAddr == 0 || playerAddr == self) {
             continue;
         }

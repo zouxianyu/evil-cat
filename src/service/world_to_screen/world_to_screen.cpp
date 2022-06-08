@@ -1,6 +1,6 @@
 #include <imgui/imgui.h>
 #include "entity/entity_manager.h"
-#include "offset/offset.h"
+#include "entity/offset/offset.h"
 #include "mem/process_memory_accessor.h"
 
 #include "world_to_screen.h"
