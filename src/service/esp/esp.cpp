@@ -15,7 +15,7 @@ Esp &Esp::getInstance() {
     return instance;
 }
 
-void Esp::renderCallback() {
+void Esp::callback() {
     WorldToScreen::getInstance().refresh();
 
     Player localPlayer = EntityManager::getInstance().getLocalPlayer();
@@ -60,7 +60,7 @@ void Esp::showEspBox3D(Player &localPlayer, std::vector<Player> &players) {
         Vec3 feet = player.getFeet();
         Vec3 viewAngle = player.getViewAngle();
         Vec3 orientation = viewAngleToOrientation(viewAngle);
-        Vec3 viewLineEnd{head.x + orientation.x, head.y + orientation.y, head.z + orientation.z};
+        Vec3 viewLineEnd = head + orientation;
         auto boxColor = player.getTeam() == localPlayer.getTeam() ?
                         Settings::getInstance().friendlyColor : Settings::getInstance().enemyColor;
         auto viewLineColor = Settings::getInstance().viewLineColor;
@@ -89,9 +89,12 @@ void Esp::showEspBox3D(Player &localPlayer, std::vector<Player> &players) {
         };
         Vec2 screenCorners[8] = {};
 
-        glm::mat4 esp3dRotation =
-                glm::rotate(glm::mat4(1.0f), viewAngle.x * glm::pi<float>() / 180.0f,
-                            glm::vec3(0.0f, 0.0f, 1.0f));
+        glm::vec3 orientation2d = glm::normalize(glm::vec3(orientation.x, orientation.y, 0));
+        glm::mat4 esp3dRotation = glm::rotate(
+                glm::mat4(1.0f),
+                glm::angle(orientation2d, glm::vec3(1.f, 0.f, 0.f)),
+                glm::vec3(0.0f, 0.0f, 1.0f)
+        );
         glm::mat4 esp3dTranslate = glm::translate(glm::mat4(1.0f), glm::vec3(feet.x, feet.y, feet.z));
         for (auto &v: corners) {
             v = esp3dTranslate * esp3dRotation * v;

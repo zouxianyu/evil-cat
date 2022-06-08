@@ -12,7 +12,7 @@ class Esp {
 
 public:
     static Esp& getInstance();
-    void renderCallback();
+    void callback();
     Vec3 viewAngleToOrientation(Vec3 viewAngle);
     Vec3 orientationToViewAngle(Vec3 orientation);
 

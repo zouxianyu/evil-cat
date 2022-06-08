@@ -33,7 +33,7 @@ void entry() {
     });
 
     Controller::getInstance().registerCallback(ON_CONDITION(Settings::getInstance().showEsp),
-            std::bind(&Esp::renderCallback, &Esp::getInstance())
+            std::bind(&Esp::callback, &Esp::getInstance())
     );
     Controller::getInstance().registerCallback(ON_CONDITION(Settings::getInstance().aimbot),
             std::bind(&Aimbot::callback, &Aimbot::getInstance())
