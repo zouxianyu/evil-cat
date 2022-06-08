@@ -10,8 +10,6 @@ public:
 
     virtual bool initialize(const std::string &processName) = 0;
 
-    virtual bool registerCallback(std::function<void()> callback) = 0;
-
     virtual bool loop() = 0;
 };
 

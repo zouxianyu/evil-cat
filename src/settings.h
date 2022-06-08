@@ -20,7 +20,7 @@ public:
 
     bool aimbot = true;
     float aimbotMaxAngle = glm::radians(10.f);
-    std::optional<Player> aimbotTarget = std::nullopt;
+
 
     bool exit = false;
 

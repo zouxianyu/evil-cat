@@ -16,9 +16,6 @@ Esp &Esp::getInstance() {
 }
 
 void Esp::renderCallback() {
-    if (!Settings::getInstance().showEsp) {
-        return;
-    }
     WorldToScreen::getInstance().refresh();
 
     Player localPlayer = EntityManager::getInstance().getLocalPlayer();

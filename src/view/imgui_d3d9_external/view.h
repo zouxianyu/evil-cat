@@ -7,8 +7,6 @@ class ImGuiD3D9ExternalView : public View {
 
     std::string targetProcess;
 
-    std::vector<std::function<void()>> callbackList;
-
     void SetupWindow();
 
     bool DirectXInit();
@@ -28,8 +26,6 @@ public:
     static ImGuiD3D9ExternalView &getInstance();
 
     bool initialize(const std::string &processName) override;
-
-    bool registerCallback(std::function<void()> callback) override;
 
     bool loop() override;
 

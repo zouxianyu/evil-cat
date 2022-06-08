@@ -11,8 +11,6 @@ public:
 
     bool initialize(const std::string &processName) override;
 
-    bool registerCallback(std::function<void()> callback) override;
-
     bool loop() override;
 
 };

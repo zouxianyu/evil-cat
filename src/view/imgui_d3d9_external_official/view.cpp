@@ -5,3 +5,11 @@ ImGuiD3D9ExternalOfficialView &ImGuiD3D9ExternalOfficialView::getInstance() {
     return instance;
 }
 
+bool ImGuiD3D9ExternalOfficialView::initialize(const std::string &processName) {
+    return false;
+}
+
+bool ImGuiD3D9ExternalOfficialView::loop() {
+    return false;
+}
+

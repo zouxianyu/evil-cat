@@ -30,7 +30,7 @@ public:
         if (!ProcessInfo::getInstance().getModuleAddress(moduleName, moduleBase)) {
             throw std::runtime_error("Could not find module " + moduleName);
         }
-        address = reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(moduleBase) + moduleOffset);
+        address = reinterpret_cast<T *>(reinterpret_cast<uintptr_t>(moduleBase) + moduleOffset);
         for (uintptr_t offset: offsets) {
             BufferPool::getInstance().read(address, &address, sizeof(uintptr_t), cache);
             address = reinterpret_cast<T *>( reinterpret_cast<uintptr_t>(address) + offset);

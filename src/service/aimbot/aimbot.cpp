@@ -77,14 +77,10 @@ void Aimbot::aimHead(Player &localPlayer, Player &enemy) {
 }
 
 void Aimbot::callback() {
-    // if aimbot is not enabled, do nothing
-    if (!Settings::getInstance().aimbot) {
-        return;
-    }
 
     // if aimbot is not triggered, do nothing
     if (!(GetKeyState(VK_RBUTTON) & 0x8000)) {
-        Settings::getInstance().aimbotTarget = std::nullopt;
+        aimbotTarget = std::nullopt;
         return;
     }
 
@@ -95,12 +91,12 @@ void Aimbot::callback() {
     }
 
     std::optional<Player> enemy;
-    if (Settings::getInstance().aimbotTarget.has_value()
-        && Settings::getInstance().aimbotTarget.value().getHealth() > 0) {
-        enemy = Settings::getInstance().aimbotTarget.value();
+    if (aimbotTarget.has_value()
+        && aimbotTarget.value().getHealth() > 0) {
+        enemy = aimbotTarget.value();
     }else {
         enemy = getBestEnemy(localPlayer, players);
-        Settings::getInstance().aimbotTarget = enemy;
+        aimbotTarget = enemy;
     }
     if (enemy.has_value()) {
         aimHead(localPlayer, enemy.value());

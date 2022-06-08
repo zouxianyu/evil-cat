@@ -6,6 +6,7 @@
 #include <d3d9.h>
 #include <imgui/imgui.h>
 #include "view/menu.h"
+#include "controller/controller.h"
 #include "Functions.h"
 #include "Overlay.h"
 #include "view.h"
@@ -68,9 +69,7 @@ void ImGuiD3D9ExternalView::Draw() {
 //    RGBA White = { 255,255,255,255 };
 //    DrawStrokeText(30, 44, &White, FpsInfo);
 
-    for (const auto& callback : callbackList) {
-        callback();
-    }
+    Controller::getInstance().callCallback();
 }
 
 void ImGuiD3D9ExternalView::Render() {
@@ -270,11 +269,6 @@ ImGuiD3D9ExternalView &ImGuiD3D9ExternalView::getInstance() {
 
 bool ImGuiD3D9ExternalView::initialize(const std::string &processName) {
     targetProcess = processName;
-    return true;
-}
-
-bool ImGuiD3D9ExternalView::registerCallback(std::function<void()> callback) {
-    callbackList.push_back(callback);
     return true;
 }
 
