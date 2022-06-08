@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include <optional>
+#include <mutex>
 #include "type.h"
 
 #define ROUND_DOWN(a, b) ((uintptr_t)(a) & ~((uintptr_t)(b) - 1))
@@ -15,6 +16,8 @@ struct PageInfo {
 class BufferPool {
 
     std::unordered_map<void *, PageInfo> cacheMap;
+
+    std::mutex cacheMapMutex;
 
     std::optional<PageInfo> getPageInfo(void *alignedAddress);
 

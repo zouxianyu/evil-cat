@@ -79,12 +79,14 @@ bool BufferPool::refresh() {
 #ifndef USE_BUFFER_POOL
     return true;
 #else
+    std::lock_guard lock(cacheMapMutex);
     cacheMap.clear();
     return true;
 #endif
 }
 
 std::optional<PageInfo> BufferPool::getPageInfo(void *alignedAddress) {
+    std::lock_guard lock(cacheMapMutex);
 
     auto it = cacheMap.find(alignedAddress);
     if (it != cacheMap.end()) {
