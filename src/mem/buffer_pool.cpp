@@ -21,7 +21,7 @@ bool BufferPool::read(void *address, void *buffer, size_t size, bool cache) {
 
         // get cache info by the aligned read address
         std::optional<PageInfo> cachedAddress = getPageInfo(
-                (void *) addrAlign,
+                reinterpret_cast<void *>(addrAlign),
                 true
         );
         if (!cachedAddress.has_value()) {
@@ -30,7 +30,8 @@ bool BufferPool::read(void *address, void *buffer, size_t size, bool cache) {
 
         // get read size of the current cacheline
         size_t n = std::min(
-                BUFFER_POOL_CACHE_LINE_SIZE - (addrAlign - (uintptr_t) address),
+                BUFFER_POOL_CACHE_LINE_SIZE -
+                (addrAlign - reinterpret_cast<uintptr_t>(address)),
                 size
         );
 
@@ -39,7 +40,7 @@ bool BufferPool::read(void *address, void *buffer, size_t size, bool cache) {
                 reinterpret_cast<void *>(
                         reinterpret_cast<uintptr_t>(cachedAddress.value().buffer) +
                         (reinterpret_cast<uintptr_t>(address) - addrAlign)
-                    ),
+                ),
                 n);
 
         // adjust pointers
@@ -49,7 +50,6 @@ bool BufferPool::read(void *address, void *buffer, size_t size, bool cache) {
     }
 
     return true;
-
 #endif
 }
 
@@ -68,23 +68,26 @@ bool BufferPool::write(void *address, const void *buffer, size_t size) {
         uintptr_t addrAlign = ROUND_DOWN(_address, BUFFER_POOL_CACHE_LINE_SIZE);
 
         // get cache info by the aligned read address
-        std::optional<PageInfo> cachedAddress = getPageInfo((void *) addrAlign,
-                                                            false);
+        std::optional<PageInfo> cachedAddress = getPageInfo(
+                reinterpret_cast<void *>(addrAlign),
+                false
+        );
         // get write size of the current cacheline
         size_t n = std::min(
-                BUFFER_POOL_CACHE_LINE_SIZE - (addrAlign - (uintptr_t) _address),
+                BUFFER_POOL_CACHE_LINE_SIZE -
+                (addrAlign - reinterpret_cast<uintptr_t>(_address)),
                 _size
         );
 
         if (cachedAddress.has_value()) {
             // copy the data from the buffer,
             // write it to the cache line
-            memmove( reinterpret_cast<void *>(
-                             reinterpret_cast<uintptr_t>(cachedAddress.value().buffer) +
-                             (reinterpret_cast<uintptr_t>(_address) - addrAlign)
-                     ),
-                     _buffer,
-                     n
+            memmove(reinterpret_cast<void *>(
+                            reinterpret_cast<uintptr_t>(cachedAddress.value().buffer) +
+                            (reinterpret_cast<uintptr_t>(_address) - addrAlign)
+                    ),
+                    _buffer,
+                    n
             );
         }
 
@@ -128,7 +131,11 @@ BufferPool::getPageInfo(void *alignedAddress, bool allocate) {
     // allocate a new cache line and read it from the target address
     // from the next level interface
     PageInfo pageInfo{};
-    if (!ProcessMemory::getInstance().read(alignedAddress, pageInfo.buffer, BUFFER_POOL_CACHE_LINE_SIZE)) {
+    if (!ProcessMemory::getInstance().read(
+            alignedAddress,
+            pageInfo.buffer,
+            BUFFER_POOL_CACHE_LINE_SIZE
+    )) {
         return std::nullopt;
     }
 
