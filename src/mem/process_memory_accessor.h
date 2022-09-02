@@ -10,7 +10,6 @@
 
 template<typename T>
 class ProcessMemoryAccessor {
-
     T *address;
     bool cache;
 public:
@@ -22,10 +21,12 @@ public:
 
     ProcessMemoryAccessor &operator=(ProcessMemoryAccessor &&) = delete;
 
-    ProcessMemoryAccessor() = delete;
-
-    explicit ProcessMemoryAccessor(std::string moduleName, uintptr_t moduleOffset,
-                                   const std::vector<uintptr_t> &offsets = {}, bool cache = true) {
+    explicit ProcessMemoryAccessor(
+            std::string moduleName,
+            uintptr_t moduleOffset,
+            const std::vector<uintptr_t> &offsets = {},
+            bool cache = true
+    ) {
         void *moduleBase = nullptr;
         if (!ProcessInfo::getInstance().getModuleAddress(moduleName, moduleBase)) {
             throw std::runtime_error("Could not find module " + moduleName);
@@ -33,16 +34,20 @@ public:
         address = reinterpret_cast<T *>(reinterpret_cast<uintptr_t>(moduleBase) + moduleOffset);
         for (uintptr_t offset: offsets) {
             BufferPool::getInstance().read(address, &address, sizeof(uintptr_t), cache);
-            address = reinterpret_cast<T *>( reinterpret_cast<uintptr_t>(address) + offset);
+            address = reinterpret_cast<T *>(reinterpret_cast<uintptr_t>(address) + offset);
         }
         this->address = address;
         this->cache = cache;
     }
 
-    explicit ProcessMemoryAccessor(T *address, const std::vector<uintptr_t> &offsets = {}, bool cache = true) {
+    explicit ProcessMemoryAccessor(
+            T *address,
+            const std::vector<uintptr_t> &offsets = {},
+            bool cache = true
+    ) {
         for (uintptr_t offset: offsets) {
             BufferPool::getInstance().read(address, &address, sizeof(uintptr_t), cache);
-            address = reinterpret_cast<T *>( reinterpret_cast<uintptr_t>(address) + offset);
+            address = reinterpret_cast<T *>(reinterpret_cast<uintptr_t>(address) + offset);
         }
         this->address = address;
         this->cache = cache;
