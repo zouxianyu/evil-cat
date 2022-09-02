@@ -19,7 +19,7 @@ class BufferPool {
 
     std::mutex cacheMapMutex;
 
-    std::optional<PageInfo> getPageInfo(void *alignedAddress);
+    std::optional<PageInfo> getPageInfo(void *alignedAddress, bool allocate);
 
 public:
 
