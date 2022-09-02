@@ -10,6 +10,11 @@ bool BufferPool::read(void *address, void *buffer, size_t size, bool cache) {
 #ifndef USE_BUFFER_POOL
     return ProcessMemory::getInstance().read(address, buffer, size);
 #else
+    // if we don't want to use the cache, just read from the memory directly
+    if (!cache) {
+        return ProcessMemory::getInstance().read(address, buffer, size);
+    }
+
     // use loop to read cache line by line
     while (size > 0) {
         uintptr_t addrAlign = ROUND_DOWN(address, BUFFER_POOL_CACHE_LINE_SIZE);
