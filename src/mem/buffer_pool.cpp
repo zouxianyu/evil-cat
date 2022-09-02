@@ -10,60 +10,34 @@ bool BufferPool::read(void *address, void *buffer, size_t size, bool cache) {
 #ifndef USE_BUFFER_POOL
     return ProcessMemory::getInstance().read(address, buffer, size);
 #else
-    if (!cache) {
-        return ProcessMemory::getInstance().read(address, buffer, size);
-    }
+    // use loop to read cache line by line
+    while (size > 0) {
+        uintptr_t addrAlign = ROUND_DOWN(address, BUFFER_POOL_CACHE_LINE_SIZE);
 
-    uintptr_t baseAddress, startAddress, endAddress;
-    size_t tempSize = 0;
-
-    // prefix part
-    baseAddress = ROUND_DOWN(address, BUFFER_POOL_CACHE_LINE_SIZE);
-    startAddress = (uintptr_t) address;
-    endAddress = std::min(ROUND_UP(address, BUFFER_POOL_CACHE_LINE_SIZE), startAddress + size);
-    if (startAddress != endAddress) {
-        std::optional<PageInfo> cachedAddress = getPageInfo((void *) baseAddress);
+        // get cache info by the aligned read address
+        std::optional<PageInfo> cachedAddress = getPageInfo((void *) addrAlign);
         if (!cachedAddress.has_value()) {
             return false;
         }
-        size_t copySize = endAddress - startAddress;
-        size_t copyOffset = startAddress - baseAddress;
-        uintptr_t copyAddress = (uintptr_t) cachedAddress.value().buffer + copyOffset;
-        memcpy((void *) ((uintptr_t) buffer + tempSize), (void *) copyAddress, copySize);
-        tempSize += copySize;
-    }
 
-    if (tempSize == size) {
-        return true;
-    }
+        // get read size of the current cacheline
+        size_t n = std::min(
+                BUFFER_POOL_CACHE_LINE_SIZE - (addrAlign - (uintptr_t) address),
+                size
+        );
 
-    // middle part
-    startAddress = ROUND_UP(address, BUFFER_POOL_CACHE_LINE_SIZE);
-    endAddress = ROUND_DOWN((uintptr_t) address + size, BUFFER_POOL_CACHE_LINE_SIZE);
-    for (uintptr_t i = startAddress; i < endAddress; i += BUFFER_POOL_CACHE_LINE_SIZE) {
-        std::optional<PageInfo> cachedAddress = getPageInfo((void *) i);
-        if (!cachedAddress.has_value()) {
-            return false;
-        }
-        memcpy((void *) ((uintptr_t) buffer + tempSize), cachedAddress.value().buffer, BUFFER_POOL_CACHE_LINE_SIZE);
-        tempSize += BUFFER_POOL_CACHE_LINE_SIZE;
-    }
+        // copy data to the buffer
+        memmove(buffer,
+                reinterpret_cast<void *>(
+                        reinterpret_cast<uintptr_t>(cachedAddress.value().buffer) +
+                        (reinterpret_cast<uintptr_t>(address) - addrAlign)
+                    ),
+                n);
 
-    if (tempSize == size) {
-        return true;
-    }
-
-    // suffix part
-    startAddress = ROUND_DOWN((uintptr_t) address + size, BUFFER_POOL_CACHE_LINE_SIZE);
-    endAddress = (uintptr_t) address + size;
-    if (startAddress != endAddress) {
-        std::optional<PageInfo> cachedAddress = getPageInfo((void *) startAddress);
-        if (!cachedAddress.has_value()) {
-            return false;
-        }
-        size_t copySize = endAddress - startAddress;
-        memcpy((void *) ((uintptr_t) buffer + tempSize), cachedAddress.value().buffer, copySize);
-        tempSize += copySize;
+        // adjust pointers
+        size -= n;
+        buffer = reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(buffer) + n);
+        address = reinterpret_cast<void *>(addrAlign + BUFFER_POOL_CACHE_LINE_SIZE);
     }
 
     return true;
