@@ -69,7 +69,7 @@ void ImGuiD3D9ExternalView::Draw() {
 //    RGBA White = { 255,255,255,255 };
 //    DrawStrokeText(30, 44, &White, FpsInfo);
 
-    Controller::getInstance().callCallback();
+    Controller::getInstance().callGuiCallbacks();
 }
 
 void ImGuiD3D9ExternalView::Render() {

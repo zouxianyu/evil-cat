@@ -22,25 +22,27 @@ void entry() {
 
     View::getInstance().initialize(CONF_PROCESS_NAME);
 
-    Controller::getInstance().registerCallback(ON_ALWAYS,[]() {
+    Controller::getInstance().addGuiCallback(ON_ALWAYS, []() {
         std::vector<Player> players = EntityManager::getInstance().getPlayers();
         for (int i = 0; i < players.size(); i++) {
             Player &player = players[i];
             ImGui::GetForegroundDrawList()->AddText(
-                    ImVec2(0, i*10), ImColor(255, 255, 255), player.getName().c_str()
+                    ImVec2(0, i * 10), ImColor(255, 255, 255), player.getName().c_str()
             );
         }
     });
 
-    Controller::getInstance().registerCallback(ON_CONDITION(Settings::getInstance().showEsp),
-            std::bind(&Esp::callback, &Esp::getInstance())
+    Controller::getInstance().addGuiCallback(ON_CONDITION(Settings::getInstance().showEsp),
+                                             std::bind(&Esp::callback, &Esp::getInstance())
     );
-    Controller::getInstance().registerCallback(ON_CONDITION(Settings::getInstance().aimbot),
-            std::bind(&Aimbot::callback, &Aimbot::getInstance())
+    Controller::getInstance().addGuiCallback(ON_CONDITION(Settings::getInstance().aimbot),
+                                             std::bind(&Aimbot::callback,
+                                                       &Aimbot::getInstance())
     );
 
-    Controller::getInstance().registerCallback(ON_ALWAYS,
-            std::bind(&BufferPool::refresh, &BufferPool::getInstance())
+    Controller::getInstance().addGuiCallback(ON_ALWAYS,
+                                             std::bind(&BufferPool::refresh,
+                                                       &BufferPool::getInstance())
     );
 
     View::getInstance().loop();

@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <functional>
+#include <mutex>
 
 #define ON_CONDITION(condition) []()->bool{return condition;}
 #define ON_FLIP(trigger) []()->bool{static bool t = trigger; if (t != trigger) {t = trigger; return true;} else return false;}
@@ -10,14 +11,27 @@
 
 class Controller {
 
-    std::vector<std::pair<std::function<bool()>, std::function<void()>>> callbackList;
+    std::vector<std::pair<std::function<bool()>, std::function<void()>>> guiCallbacks;
+
+    std::mutex guiCallbacksMutex;
+
+    std::vector<std::function<bool()>> fastLoopCallbacks;
+
+    std::mutex fastLoopCallbacksMutex;
+
+    std::condition_variable fastLoopCV;
 
 public:
     static Controller &getInstance();
 
-    bool registerCallback(std::function<bool()> condition, std::function<void()> callback);
+    bool addGuiCallback(std::function<bool()> condition, std::function<void()> callback);
 
-    void callCallback();
+    void callGuiCallbacks();
+
+    bool addFastLoopCallback(std::function<bool()> callback);
+
+    void callFastLoopCallbacks();
+
 };
 
 #endif //ASSAULT_CUBE_HACKING_CONTROLLER_CONTROLLER_H
