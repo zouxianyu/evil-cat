@@ -5,11 +5,9 @@ set(CMAKE_CXX_STANDARD 17)
 
 #our headers
 include_directories(src)
-#all lib headers
-include_directories(lib)
-#imgui headers
+#lib headers
+include_directories(lib/glm)
 include_directories(lib/imgui)
-#directx sdk headers
 include_directories("lib/Microsoft\ DirectX\ SDK/Include")
 
 
