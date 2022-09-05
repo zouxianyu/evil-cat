@@ -53,7 +53,7 @@ public:
         this->cache = cache;
     }
 
-    T get() {
+    T get() const {
         T value;
         if (!BufferPool::getInstance().read(address, &value, sizeof(T), cache)) {
             throw std::runtime_error("failed to read memory");
@@ -67,7 +67,7 @@ public:
         }
     }
 
-    operator T() {
+    operator T() const {
         return get();
     }
 
