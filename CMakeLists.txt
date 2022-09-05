@@ -9,6 +9,8 @@ include_directories(src)
 include_directories(lib/glm)
 include_directories(lib/imgui)
 include_directories("lib/Microsoft\ DirectX\ SDK/Include")
+#game specified headers
+include_directories("src/game/assault_cube")
 
 
 file(GLOB_RECURSE SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp" "${PROJECT_SOURCE_DIR}/lib/*.cpp")

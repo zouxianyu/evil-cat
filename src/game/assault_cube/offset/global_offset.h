@@ -3,7 +3,7 @@
 
 #include <cstdint>
 
-namespace offset {
+namespace Offset {
     constexpr uintptr_t localPlayer = 0x10F4F4;
     constexpr uintptr_t playerList = 0x10F4F8;
     constexpr uintptr_t playerCount = 0x10F500;

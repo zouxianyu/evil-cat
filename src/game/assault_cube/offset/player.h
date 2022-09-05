@@ -5,7 +5,11 @@
 #include "type.h"
 #include "offset_helper.h"
 
-namespace offset {
+namespace Offset {
+
+    struct Name {
+        char name[16];
+    };
 
     struct Player {
         union {

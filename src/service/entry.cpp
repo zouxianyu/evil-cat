@@ -1,52 +1,66 @@
 #include <iostream>
-#include <iomanip>
 #include <memory>
 #include <thread>
-#include <imgui/imgui.h>
-#include <glm/ext/scalar_constants.hpp>
-#include "entity/entity_manager.h"
+#include "game.h"
+#include "init.h"
+#include "game/interface/init_config.h"
 #include "mem/process_memory.h"
 #include "mem/buffer_pool.h"
 #include "proc/process_info.h"
 #include "view/view.h"
-#include "service/esp/esp.h"
-#include "service/aimbot/aimbot.h"
 #include "controller/controller.h"
 #include "settings.h"
 #include "entry.h"
 
 void entry() {
+    // call the game specified initialization interface
+    // to get the config (currently only gui callbacks and fast loop callbacks)
+    std::shared_ptr<InitConfig> config = init();
 
+    // do initialization of the core module
     ProcessInfo::getInstance().attach(CONF_PROCESS_NAME);
     ProcessMemory::getInstance().attach(CONF_PROCESS_NAME);
-
     View::getInstance().initialize(CONF_PROCESS_NAME);
 
-    Controller::getInstance().addGuiCallback(ON_ALWAYS, []() {
-        std::vector<Player> players = EntityManager::getInstance().getPlayers();
-        for (int i = 0; i < players.size(); i++) {
-            Player &player = players[i];
-            ImGui::GetForegroundDrawList()->AddText(
-                    ImVec2(0, i * 10), ImColor(255, 255, 255), player.getName().c_str()
-            );
-        }
-    });
+    // resolve GUI callbacks
+    for (auto [condition, callback]: config->guiCallbacks) {
+        Controller::getInstance().addGuiCallback(condition, callback);
+    }
 
-    Controller::getInstance().addGuiCallback(ON_CONDITION(Settings::getInstance().showEsp),
-                                             std::bind(&Esp::callback, &Esp::getInstance())
-    );
-    Controller::getInstance().addGuiCallback(ON_CONDITION(Settings::getInstance().aimbot),
-                                             std::bind(&Aimbot::callback,
-                                                       &Aimbot::getInstance())
+    // we need to add a buffer pool refresh callback
+    // because the cache need to be flushed each frame
+    Controller::getInstance().addGuiCallback(
+            ON_ALWAYS,
+            std::bind(&BufferPool::refresh, &BufferPool::getInstance())
     );
 
-    Controller::getInstance().addGuiCallback(ON_ALWAYS,
-                                             std::bind(&BufferPool::refresh,
-                                                       &BufferPool::getInstance())
-    );
+    // resolve fast loop callbacks
+    for (auto callback: config->fastLoopCallbacks) {
+        Controller::getInstance().addFastLoopCallback(callback);
+    }
 
+    // create the fast loop thread
+    // the code inside the fast loop is a busy-wait loop
+    std::thread fastLoopThread{
+            std::bind(&Controller::callFastLoopCallbacks, &Controller::getInstance())
+    };
+
+    // create the gui thread
     View::getInstance().loop();
 
+    // set the exit flag in case the code in 'View' doesn't set it
+    {
+        std::lock_guard lock(Settings::getInstance().mutex);
+        Settings::getInstance().exit = true;
+    }
+
+    // when the gui thread exits, the fast loop thread should also exit
+    fastLoopThread.join();
+
+    // do clean up here
+    // because the ProcessMemory and ProcessInfo is singleton
+    // we can't use RAII to do the cleanup
+    // so just do it manually, although it doesn't look good
     ProcessMemory::getInstance().detach();
     ProcessInfo::getInstance().detach();
 
