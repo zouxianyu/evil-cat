@@ -2,9 +2,9 @@
 #define ASSAULT_CUBE_HACKING_SETTINGS_H
 
 #include <optional>
+#include <mutex>
 #include <glm/glm.hpp>
-#include <imgui/imgui.h>
-#include "entity/player.h"
+#include <imgui.h>
 
 class Settings {
 public:
@@ -12,6 +12,9 @@ public:
         static Settings instance;
         return instance;
     }
+
+    // must hold the mutex before using all the fields below
+    std::mutex mutex;
 
     bool showEsp = true;
     bool showEspBox2D = true;
@@ -31,6 +34,7 @@ public:
     ImColor healthColor = ImColor(0, 255, 0);
     ImColor armorColor = ImColor(0, 0, 255);
     ImColor backgroundColor = ImColor(0, 0, 0);
+
 };
 
 #endif //ASSAULT_CUBE_HACKING_SETTINGS_H
