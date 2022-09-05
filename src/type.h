@@ -41,8 +41,4 @@ struct Mat4 {
     float m[4][4];
 };
 
-struct Color { int r, g, b, a; };
-
-struct Name { char name[16]; };
-
 #endif //ASSAULT_CUBE_HACKING_TYPE_H
