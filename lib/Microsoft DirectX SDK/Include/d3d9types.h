@@ -349,7 +349,7 @@ typedef enum _D3DRENDERSTATETYPE {
     D3DRS_SPECULARENABLE            = 29,   /* TRUE to enable specular */
     D3DRS_FOGCOLOR                  = 34,   /* D3DCOLOR */
     D3DRS_FOGTABLEMODE              = 35,   /* D3DFOGMODE */
-    D3DRS_FOGSTART                  = 36,   /* Fog loop (for both vertex and pixel fog) */
+    D3DRS_FOGSTART                  = 36,   /* Fog start (for both vertex and pixel fog) */
     D3DRS_FOGEND                    = 37,   /* Fog end      */
     D3DRS_FOGDENSITY                = 38,   /* Fog density  */
     D3DRS_RANGEFOGENABLE            = 48,   /* Enables range-based fog */
