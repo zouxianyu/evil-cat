@@ -20,7 +20,7 @@ bool Controller::addGuiCallback(std::function<bool()> condition, std::function<v
 
 // this function is invoked from the GUI thread
 // we call all the gui callbacks here
-// eg. if the 'ESP' is on, we call the ESP callback to draw boxes around the players
+// e.g. if the 'ESP' is on, we call the ESP callback to draw boxes around the players
 
 void Controller::callGuiCallbacks() {
     std::lock_guard lock(guiCallbacksMutex);
@@ -52,11 +52,18 @@ bool Controller::addFastLoopCallback(std::function<bool()> callback) {
     return true;
 }
 
+// a wapper function to read 'exit' flag in 'Settings' holding mutex
+
+static inline bool isExit() {
+    std::lock_guard lock(Settings::getInstance().mutex);
+    return Settings::getInstance().exit;
+}
+
 // call each callback in the fast loop callback list
 // if each of them returns false, we remove it from the list
 
 void Controller::callFastLoopCallbacks() {
-    while (!Settings::getInstance().exit) {
+    while (!isExit()) {
         std::unique_lock lock(fastLoopCallbacksMutex);
 
         // wait until the fast loop callback list is not empty
