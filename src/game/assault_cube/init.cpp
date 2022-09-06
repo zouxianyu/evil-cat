@@ -34,8 +34,8 @@ std::shared_ptr<InitConfig> init() {
     ));
 
     // try to lock local player's health value
-    fastLoopCallbacks.emplace_back(
-            std::bind(&HealthLocker::callback, &HealthLocker::getInstance())
+    guiCallbacks.emplace_back(
+            std::bind(&HealthLocker::guiCallback, &HealthLocker::getInstance())
     );
 
     // construct initialization config and return it to the caller (framework)
