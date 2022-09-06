@@ -6,15 +6,12 @@
 #include <utility>
 
 struct InitConfig {
-    using GuiCallback = std::pair<std::function<bool()>, std::function<void()>>;
-    std::vector<GuiCallback> guiCallbacks;
-
-    using FastLoopCallback = std::function<bool()>;
-    std::vector<FastLoopCallback> fastLoopCallbacks;
+    std::vector<std::function<void()>> guiCallbacks;
+    std::vector<std::function<bool()>> fastLoopCallbacks;
 
     InitConfig(
-        std::vector<GuiCallback> guiCallbacks,
-        std::vector<FastLoopCallback> fastLoopCallbacks
+        std::vector<std::function<void()>> guiCallbacks,
+        std::vector<std::function<bool()>> fastLoopCallbacks
     ):  guiCallbacks(std::move(guiCallbacks)),
         fastLoopCallbacks(std::move(fastLoopCallbacks)) {
     };
