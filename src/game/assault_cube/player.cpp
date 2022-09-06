@@ -30,7 +30,8 @@ void Player::setViewAngle(Vec3 angle) {
 
 std::string Player::getName() {
     Offset::Name name = ProcessMemoryAccessor{ADDRESS(_this, Offset::Player, name)};
-    return name.name;
+    *name.rbegin() = '\0';
+    return name.data();
 }
 
 int Player::getTeamId() {
@@ -51,4 +52,8 @@ float Player::getArmor() {
 
 void Player::setArmor(float armor) {
     ProcessMemoryAccessor{ADDRESS(_this, Offset::Player, armor)} = (int)armor;
+}
+
+bool Player::operator==(const PlayerBasicInterface &other) const {
+    return _this == dynamic_cast<const Player&>(other)._this;
 }

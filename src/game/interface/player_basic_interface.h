@@ -45,6 +45,8 @@ public:
     // show health bar over the player when the ESP is on
     virtual float getHealth() = 0;
 
+    // we call use the compare operator to identify whether the player is the local player
+    virtual bool operator==(const PlayerBasicInterface &other) const = 0;
 };
 
 #endif //ASSAULT_CUBE_HACKING_SRC_GAME_INTERFACE_PLAYER_BASIC_INTERFACE_H

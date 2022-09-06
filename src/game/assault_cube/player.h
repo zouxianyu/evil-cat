@@ -37,6 +37,8 @@ public:
     float getArmor() override;
 
     void setArmor(float armor) override;
+
+    bool operator==(const PlayerBasicInterface &other) const override;
 };
 
 #endif //ASSAULT_CUBE_HACKING_ENTITY_PLAYER_H

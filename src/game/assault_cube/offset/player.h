@@ -1,15 +1,14 @@
 #ifndef ASSAULT_CUBE_HACKING_ENTITY_OFFSET_PLAYER_H
 #define ASSAULT_CUBE_HACKING_ENTITY_OFFSET_PLAYER_H
 
+#include <array>
 #include <cstdint>
 #include "type.h"
 #include "offset_helper.h"
 
 namespace Offset {
 
-    struct Name {
-        char name[16];
-    };
+    using Name = std::array<char, 16>;
 
     struct Player {
         union {
