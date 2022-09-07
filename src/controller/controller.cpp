@@ -12,9 +12,9 @@ Controller &Controller::getInstance() {
 // generally, we call this function in the 'init' stage
 // we add all the GUI callbacks to the GUI thread
 
-bool Controller::addGuiCallback(std::function<bool()> condition, std::function<void()> callback) {
+bool Controller::addGuiCallback(const std::function<void()>& callback) {
     std::lock_guard lock(guiCallbacksMutex);
-    guiCallbacks.emplace_back(condition, callback);
+    guiCallbacks.emplace_back(callback);
     return true;
 }
 
@@ -24,10 +24,8 @@ bool Controller::addGuiCallback(std::function<bool()> condition, std::function<v
 
 void Controller::callGuiCallbacks() {
     std::lock_guard lock(guiCallbacksMutex);
-    for (const auto&[condition, callback]: guiCallbacks) {
-        if (condition()) {
-            callback();
-        }
+    for (const auto& callback : guiCallbacks) {
+        callback();
     }
 }
 
@@ -40,7 +38,7 @@ void Controller::callGuiCallbacks() {
 // calling it in the loop, return false means the callback want to be removed
 // from the fast loop callback list.
 
-bool Controller::addFastLoopCallback(std::function<bool()> callback) {
+bool Controller::addFastLoopCallback(const std::function<bool()>& callback) {
     std::lock_guard lock(fastLoopCallbacksMutex);
     fastLoopCallbacks.emplace_back(callback);
 
@@ -55,8 +53,8 @@ bool Controller::addFastLoopCallback(std::function<bool()> callback) {
 // a wapper function to read 'exit' flag in 'Settings' holding mutex
 
 static inline bool isExit() {
-    std::lock_guard lock(Settings::getInstance().mutex);
-    return Settings::getInstance().exit;
+    std::lock_guard lock(Settings::mutex);
+    return Settings::exit;
 }
 
 // call each callback in the fast loop callback list
