@@ -1,4 +1,6 @@
-<img src="rsrc/logo.png" alt="logo" width="150" />
+<p style="text-align: center;">
+    <img src="rsrc/logo.png" alt="logo" width="180" />
+</p>
 
 # Evil Cat
 
