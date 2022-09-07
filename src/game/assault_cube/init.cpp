@@ -1,10 +1,7 @@
 #include <vector>
 #include <functional>
 #include <memory>
-#include "game.h"
-#include "menu.h"
 #include "init.h"
-#include "controller/controller.h"
 #include "service/name_list/name_list.h"
 #include "service/health_locker/health_locker.h"
 #include "service/aimbot/aimbot.h"

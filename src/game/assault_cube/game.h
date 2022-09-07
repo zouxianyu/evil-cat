@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <memory>
+#include "game/interface/player_basic_interface.h"
 #include "type.h"
 
 class Game {
