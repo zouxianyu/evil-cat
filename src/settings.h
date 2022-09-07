@@ -1,5 +1,5 @@
-#ifndef ASSAULT_CUBE_HACKING_SETTINGS_H
-#define ASSAULT_CUBE_HACKING_SETTINGS_H
+#ifndef EVIL_CAT_SETTINGS_H
+#define EVIL_CAT_SETTINGS_H
 
 #include <mutex>
 #include <imgui.h>
@@ -15,4 +15,4 @@ namespace Settings {
 
 }
 
-#endif //ASSAULT_CUBE_HACKING_SETTINGS_H
+#endif //EVIL_CAT_SETTINGS_H

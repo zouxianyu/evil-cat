@@ -1,5 +1,5 @@
-#ifndef ASSAULT_CUBE_HACKING_MEM_PROC_PROCESS_INFO_H
-#define ASSAULT_CUBE_HACKING_MEM_PROC_PROCESS_INFO_H
+#ifndef EVIL_CAT_PROC_PROCESS_INFO_H
+#define EVIL_CAT_PROC_PROCESS_INFO_H
 
 #include <unordered_map>
 #include <string>
@@ -19,4 +19,4 @@ public:
     virtual bool refresh() = 0;
 };
 
-#endif //ASSAULT_CUBE_HACKING_MEM_PROC_PROCESS_INFO_H
+#endif //EVIL_CAT_PROC_PROCESS_INFO_H

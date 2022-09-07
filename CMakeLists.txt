@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.21)
-project(assault_cube_hacking)
+project(evil-cat)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -28,7 +28,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${HEADERS})
 #static libs
 file(GLOB_RECURSE STATIC_LIBS "lib/Microsoft\ DirectX\ SDK/Lib/x86/*.lib")
 #file(GLOB_RECURSE STATIC_LIBS "lib/Microsoft\ DirectX\ SDK/Lib/x64/*.lib")
-target_link_libraries(assault_cube_hacking ${STATIC_LIBS})
+target_link_libraries(${PROJECT_NAME} ${STATIC_LIBS})
 
 #configuration
 add_compile_definitions(GLM_LEFT_HANDED)

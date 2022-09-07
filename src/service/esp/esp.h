@@ -1,5 +1,5 @@
-#ifndef ASSAULT_CUBE_HACKING_SERVICE_ESP_ESP_H
-#define ASSAULT_CUBE_HACKING_SERVICE_ESP_ESP_H
+#ifndef EVIL_CAT_SERVICE_ESP_ESP_H
+#define EVIL_CAT_SERVICE_ESP_ESP_H
 
 #include <vector>
 #include <imgui.h>
@@ -56,4 +56,4 @@ public:
     void callback();
 };
 
-#endif //ASSAULT_CUBE_HACKING_SERVICE_ESP_ESP_H
+#endif //EVIL_CAT_SERVICE_ESP_ESP_H

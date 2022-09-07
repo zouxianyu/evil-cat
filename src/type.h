@@ -1,5 +1,5 @@
-#ifndef ASSAULT_CUBE_HACKING_TYPE_H
-#define ASSAULT_CUBE_HACKING_TYPE_H
+#ifndef EVIL_CAT_TYPE_H
+#define EVIL_CAT_TYPE_H
 
 struct Vec2 {
     float x, y;
@@ -41,4 +41,4 @@ struct Mat4 {
     float m[4][4];
 };
 
-#endif //ASSAULT_CUBE_HACKING_TYPE_H
+#endif //EVIL_CAT_TYPE_H

@@ -1,5 +1,5 @@
-#ifndef ASSAULT_CUBE_HACKING_VIEW_VIEW_H
-#define ASSAULT_CUBE_HACKING_VIEW_VIEW_H
+#ifndef EVIL_CAT_VIEW_VIEW_H
+#define EVIL_CAT_VIEW_VIEW_H
 
 #include <string>
 #include <functional>
@@ -13,4 +13,4 @@ public:
     virtual bool loop() = 0;
 };
 
-#endif //ASSAULT_CUBE_HACKING_VIEW_VIEW_H
+#endif //EVIL_CAT_VIEW_VIEW_H

@@ -1,5 +1,5 @@
-#ifndef ASSAULT_CUBE_HACKING_SRC_GAME_ASSAULT_CUBE_GAME_H
-#define ASSAULT_CUBE_HACKING_SRC_GAME_ASSAULT_CUBE_GAME_H
+#ifndef EVIL_CAT_GAME_ASSAULT_CUBE_GAME_H
+#define EVIL_CAT_GAME_ASSAULT_CUBE_GAME_H
 
 #include <vector>
 #include <memory>
@@ -23,4 +23,4 @@ public:
     Vec3 orientationToViewAngle(Vec3 orientation);
 };
 
-#endif //ASSAULT_CUBE_HACKING_SRC_GAME_ASSAULT_CUBE_GAME_H
+#endif //EVIL_CAT_GAME_ASSAULT_CUBE_GAME_H

@@ -1,5 +1,5 @@
-#ifndef ASSAULT_CUBE_HACKING_MEM_BUFFER_POOL_H
-#define ASSAULT_CUBE_HACKING_MEM_BUFFER_POOL_H
+#ifndef EVIL_CAT_MEM_BUFFER_POOL_H
+#define EVIL_CAT_MEM_BUFFER_POOL_H
 
 #include <unordered_map>
 #include <optional>
@@ -32,4 +32,4 @@ public:
     bool refresh();
 };
 
-#endif //ASSAULT_CUBE_HACKING_MEM_BUFFER_POOL_H
+#endif //EVIL_CAT_MEM_BUFFER_POOL_H

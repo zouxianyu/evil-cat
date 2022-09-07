@@ -1,5 +1,5 @@
-#ifndef ASSAULT_CUBE_HACKING_ENTITY_PLAYER_H
-#define ASSAULT_CUBE_HACKING_ENTITY_PLAYER_H
+#ifndef EVIL_CAT_GAME_ASSAULT_CUBE_PLAYER_H
+#define EVIL_CAT_GAME_ASSAULT_CUBE_PLAYER_H
 
 #include <string>
 #include "type.h"
@@ -41,4 +41,4 @@ public:
     bool operator==(const PlayerBasicInterface &other) const override;
 };
 
-#endif //ASSAULT_CUBE_HACKING_ENTITY_PLAYER_H
+#endif //EVIL_CAT_GAME_ASSAULT_CUBE_PLAYER_H
