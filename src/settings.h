@@ -1,40 +1,18 @@
 #ifndef ASSAULT_CUBE_HACKING_SETTINGS_H
 #define ASSAULT_CUBE_HACKING_SETTINGS_H
 
-#include <optional>
 #include <mutex>
-#include <glm/glm.hpp>
 #include <imgui.h>
 
-class Settings {
-public:
-    static Settings &getInstance() {
-        static Settings instance;
-        return instance;
-    }
+namespace Settings {
 
-    // must hold the mutex before using all the fields below
-    std::mutex mutex;
+    extern std::mutex mutex;
 
-    bool showEsp = true;
-    bool showEspBox2D = true;
-    bool showHealthAndArmor = true;
-    bool showName = true;
+    extern bool exit;
 
-    bool aimbot = true;
-    float aimbotMaxAngle = glm::radians(10.f);
+    extern ImColor textColor;
+    extern ImColor backgroundColor;
 
-
-    bool exit = false;
-
-    ImColor textColor = ImColor(255, 255, 255);
-    ImColor friendlyColor = ImColor(0, 255, 0);
-    ImColor enemyColor = ImColor(255, 0, 0);
-    ImColor viewLineColor = ImColor(255, 255, 255);
-    ImColor healthColor = ImColor(0, 255, 0);
-    ImColor armorColor = ImColor(0, 0, 255);
-    ImColor backgroundColor = ImColor(0, 0, 0);
-
-};
+}
 
 #endif //ASSAULT_CUBE_HACKING_SETTINGS_H
