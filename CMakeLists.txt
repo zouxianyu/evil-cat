@@ -3,27 +3,32 @@ project(assault_cube_hacking)
 
 set(CMAKE_CXX_STANDARD 17)
 
-#our headers
-include_directories(src)
-#lib headers
-include_directories(lib/glm)
-include_directories(lib/imgui)
-include_directories("lib/Microsoft\ DirectX\ SDK/Include")
-#game specified headers
-include_directories("src/game/assault_cube")
-
-
-file(GLOB_RECURSE SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp" "${PROJECT_SOURCE_DIR}/lib/*.cpp")
+#our sources
+file(GLOB_RECURSE MY_SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp")
+#imgui sources
+file(GLOB_RECURSE IMGUI_SOURCES "${PROJECT_SOURCE_DIR}/lib/imgui/*.cpp")
+#merge sources
+list(APPEND SOURCES ${MY_SOURCES} ${IMGUI_SOURCES})
 
 #compile as exe or dll
-add_executable(assault_cube_hacking ${SOURCES})
-#add_library(assault_cube_hacking SHARED ${SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES})
+#add_library(${PROJECT_NAME} SHARED ${SOURCES})
 
+#our headers
+list(APPEND HEADERS src)
+#lib headers
+list(APPEND HEADERS lib/glm)
+list(APPEND HEADERS lib/imgui)
+list(APPEND HEADERS "lib/Microsoft\ DirectX\ SDK/Include")
+#game specified headers
+list(APPEND HEADERS "src/game/assault_cube")
 
-#external headers and libs
-file(GLOB_RECURSE LIBS "lib/Microsoft\ DirectX\ SDK/Lib/x86/*.lib")
-#file(GLOB_RECURSE LIBS "lib/Microsoft\ DirectX\ SDK/Lib/x64/*.lib")
-target_link_libraries(assault_cube_hacking ${LIBS})
+target_include_directories(${PROJECT_NAME} PRIVATE ${HEADERS})
+
+#static libs
+file(GLOB_RECURSE STATIC_LIBS "lib/Microsoft\ DirectX\ SDK/Lib/x86/*.lib")
+#file(GLOB_RECURSE STATIC_LIBS "lib/Microsoft\ DirectX\ SDK/Lib/x64/*.lib")
+target_link_libraries(assault_cube_hacking ${STATIC_LIBS})
 
 #configuration
 add_compile_definitions(GLM_LEFT_HANDED)
