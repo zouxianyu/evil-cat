@@ -23,19 +23,18 @@ void entry() {
     View::getInstance().initialize(CONF_PROCESS_NAME);
 
     // resolve GUI callbacks
-    for (auto [condition, callback]: config->guiCallbacks) {
-        Controller::getInstance().addGuiCallback(condition, callback);
+    for (const auto& callback: config->guiCallbacks) {
+        Controller::getInstance().addGuiCallback(callback);
     }
 
     // we need to add a buffer pool refresh callback
     // because the cache need to be flushed each frame
     Controller::getInstance().addGuiCallback(
-            ON_ALWAYS,
             std::bind(&BufferPool::refresh, &BufferPool::getInstance())
     );
 
     // resolve fast loop callbacks
-    for (auto callback: config->fastLoopCallbacks) {
+    for (const auto& callback: config->fastLoopCallbacks) {
         Controller::getInstance().addFastLoopCallback(callback);
     }
 
@@ -50,8 +49,8 @@ void entry() {
 
     // set the exit flag in case the code in 'View' doesn't set it
     {
-        std::lock_guard lock(Settings::getInstance().mutex);
-        Settings::getInstance().exit = true;
+        std::lock_guard lock(Settings::mutex);
+        Settings::exit = true;
     }
 
     // when the gui thread exits, the fast loop thread should also exit
