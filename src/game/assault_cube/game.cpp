@@ -42,6 +42,9 @@ std::vector<std::shared_ptr<PlayerBasicInterface>> Game::getPlayers() {
         uintptr_t playerAddr = ProcessMemoryAccessor<uintptr_t>{
             reinterpret_cast<uintptr_t *>(playerList + i * sizeof(uintptr_t))
         };
+        if (!playerAddr) {
+            continue;
+        }
         players.emplace_back(std::make_shared<Player>(
             reinterpret_cast<void *>(playerAddr)
         ));

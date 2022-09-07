@@ -4,8 +4,8 @@
 #include <psapi.h>
 #include <dwmapi.h>
 #include <d3d9.h>
-#include <imgui/imgui.h>
-#include "view/menu.h"
+#include <imgui.h>
+#include "menu.h"
 #include "controller/controller.h"
 #include "Functions.h"
 #include "Overlay.h"
@@ -112,7 +112,7 @@ void ImGuiD3D9ExternalView::Render() {
 void ImGuiD3D9ExternalView::MainLoop() {
     static RECT OldRect;
     ZeroMemory(&DirectX9.Message, sizeof(MSG));
-    while (DirectX9.Message.message != WM_QUIT && !Settings::getInstance().exit) {
+    while (DirectX9.Message.message != WM_QUIT && !Settings::exit) {
         if (PeekMessage(&DirectX9.Message, Overlay.Hwnd, 0, 0, PM_REMOVE)) {
             TranslateMessage(&DirectX9.Message);
             DispatchMessage(&DirectX9.Message);
