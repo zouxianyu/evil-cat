@@ -1,4 +1,4 @@
-<img src="rsrc/logo.png" alt="logo" style="zoom: 5%;" />
+<img src="rsrc/logo.png" alt="logo" width="150" />
 
 # Evil Cat
 
