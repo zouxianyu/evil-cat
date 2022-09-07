@@ -5,6 +5,10 @@
 #include "health_locker.h"
 #include "controller/controller.h"
 
+namespace Settings::HealthLocker {
+    bool on = false;
+}
+
 HealthLocker &HealthLocker::getInstance() {
     static HealthLocker instance;
     return instance;

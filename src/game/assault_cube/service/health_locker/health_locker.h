@@ -2,7 +2,7 @@
 #define ASSAULT_CUBE_HACKING_SRC_GAME_ASSAULT_CUBE_SERVICE_HEALTH_LOCKER_HEALTH_LOCKER_H
 
 namespace Settings::HealthLocker {
-    bool on = false;
+    extern bool on;
 }
 
 class HealthLocker {

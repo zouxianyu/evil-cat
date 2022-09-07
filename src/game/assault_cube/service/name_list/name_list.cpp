@@ -5,15 +5,24 @@
 #include "game/interface/player_basic_interface.h"
 #include "name_list.h"
 
+namespace Settings::NameList {
+    bool on = false;
+}
+
 NameList &NameList::getInstance() {
     static NameList instance;
     return instance;
 }
 
 void NameList::callback() {
-    std::vector<std::shared_ptr<PlayerInterface>> players = Game::getInstance().getPlayers();
+
+    if (!Settings::NameList::on) {
+        return;
+    }
+
+    std::vector<std::shared_ptr<PlayerBasicInterface>> players = Game::getInstance().getPlayers();
     for (int i = 0; i < players.size(); i++) {
-        PlayerInterface &player = *players[i];
+        PlayerBasicInterface &player = *players[i];
         ImGui::GetForegroundDrawList()->AddText(
                 ImVec2(0, i * 10),
                 ImColor(255, 255, 255),
