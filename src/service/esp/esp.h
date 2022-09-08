@@ -15,13 +15,18 @@ namespace Settings::Esp {
     extern BoxType boxType;
     extern bool showViewLine;
     extern bool showHeadBar;
-    extern bool showHeadDot;
+    extern bool showHeadCircle;
 
     extern ImColor teammateColor;
     extern ImColor enemyColor;
-    extern ImColor viewLineColor;
-    extern ImColor healthColor;
-    extern ImColor armorColor;
+
+    extern float barMoveUp;
+    extern float barWidth;
+    extern float barHeight;
+
+    extern ImColor healthFullColor;
+    extern ImColor healthHalfColor;
+    extern ImColor healthLowColor;
 }
 
 class Esp {
@@ -30,25 +35,25 @@ class Esp {
             const std::vector<std::shared_ptr<PlayerBasicInterface>> &players
     );
 
-//    void showEsp3D(
-//            std::shared_ptr<PlayerBasicInterface> localPlayer,
-//            std::vector<std::shared_ptr<PlayerBasicInterface>> players
-//    );
-//
-//    void showViewLine(
-//            std::shared_ptr<PlayerBasicInterface> localPlayer,
-//            std::vector<std::shared_ptr<PlayerBasicInterface>> players
-//    );
-//
-//    void showHeadBar(
-//            std::shared_ptr<PlayerBasicInterface> localPlayer,
-//            std::vector<std::shared_ptr<PlayerBasicInterface>> players
-//    );
-//
-//    void showHeadDot(
-//            std::shared_ptr<PlayerBasicInterface> localPlayer,
-//            std::vector<std::shared_ptr<PlayerBasicInterface>> players
-//    );
+    void showEsp3D(
+            std::shared_ptr<PlayerBasicInterface> localPlayer,
+            std::vector<std::shared_ptr<PlayerBasicInterface>> players
+    );
+
+    void showViewLine(
+            std::shared_ptr<PlayerBasicInterface> localPlayer,
+            std::vector<std::shared_ptr<PlayerBasicInterface>> players
+    );
+
+    void showHeadBar(
+            std::shared_ptr<PlayerBasicInterface> localPlayer,
+            std::vector<std::shared_ptr<PlayerBasicInterface>> players
+    );
+
+    void showHeadCircle(
+            std::shared_ptr<PlayerBasicInterface> localPlayer,
+            std::vector<std::shared_ptr<PlayerBasicInterface>> players
+    );
 
 public:
     static Esp &getInstance();
