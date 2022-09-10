@@ -6,6 +6,7 @@
 #include <dwmapi.h>
 #include <d3d9.h>
 #include <imgui.h>
+#include <imgui_spectrum.h>
 #include "menu.h"
 #include "controller/controller.h"
 #include "Functions.h"
@@ -187,6 +188,10 @@ bool ImGuiD3D9ExternalView::DirectXInit() {
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
+
+    ImGui::Spectrum::StyleColorsSpectrum();
+    ImGui::GetIO().Fonts->Clear();
+    ImGui::Spectrum::LoadFont(22.0f);
 
     ImGui_ImplWin32_Init(Overlay.Hwnd);
     ImGui_ImplDX9_Init(DirectX9.pDevice);

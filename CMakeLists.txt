@@ -6,9 +6,11 @@ set(CMAKE_CXX_STANDARD 17)
 #our sources
 file(GLOB_RECURSE MY_SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp")
 #imgui sources
-file(GLOB_RECURSE IMGUI_SOURCES "${PROJECT_SOURCE_DIR}/lib/imgui/*.cpp")
+file(GLOB IMGUI_SOURCES "${PROJECT_SOURCE_DIR}/lib/imgui/*.cpp")
+list(APPEND IMGUI_BACKEND_SOURCES "${PROJECT_SOURCE_DIR}/lib/imgui/backends/imgui_impl_dx9.cpp")
+list(APPEND IMGUI_BACKEND_SOURCES "${PROJECT_SOURCE_DIR}/lib/imgui/backends/imgui_impl_win32.cpp")
 #merge sources
-list(APPEND SOURCES ${MY_SOURCES} ${IMGUI_SOURCES})
+list(APPEND SOURCES ${MY_SOURCES} ${IMGUI_SOURCES} ${IMGUI_BACKEND_SOURCES})
 
 #compile as exe or dll
 add_executable(${PROJECT_NAME} ${SOURCES})
@@ -19,6 +21,7 @@ list(APPEND HEADERS src)
 #lib headers
 list(APPEND HEADERS lib/glm)
 list(APPEND HEADERS lib/imgui)
+list(APPEND HEADERS lib/imgui/backends)
 list(APPEND HEADERS "lib/Microsoft\ DirectX\ SDK/Include")
 #game specified headers
 list(APPEND HEADERS "src/game/assault_cube")
