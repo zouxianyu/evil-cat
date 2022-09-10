@@ -4,3 +4,6 @@
 [submodule "lib/imgui"]
 	path = lib/imgui
 	url = https://github.com/adobe/imgui.git
+[submodule "lib/DirectX-SDK"]
+	path = lib/DirectX-SDK
+	url = https://github.com/ReactiioN1337/DirectX-SDK

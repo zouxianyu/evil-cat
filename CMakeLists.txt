@@ -22,15 +22,15 @@ list(APPEND HEADERS src)
 list(APPEND HEADERS lib/glm)
 list(APPEND HEADERS lib/imgui)
 list(APPEND HEADERS lib/imgui/backends)
-list(APPEND HEADERS "lib/Microsoft\ DirectX\ SDK/Include")
+list(APPEND HEADERS "lib/DirectX-SDK/Include")
 #game specified headers
 list(APPEND HEADERS "src/game/assault_cube")
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${HEADERS})
 
 #static libs
-file(GLOB_RECURSE STATIC_LIBS "lib/Microsoft\ DirectX\ SDK/Lib/x86/*.lib")
-#file(GLOB_RECURSE STATIC_LIBS "lib/Microsoft\ DirectX\ SDK/Lib/x64/*.lib")
+file(GLOB_RECURSE STATIC_LIBS "lib/DirectX-SDK/Lib/x86/*.lib")
+#file(GLOB_RECURSE STATIC_LIBS "lib/DirectX-SDK/Lib/x64/*.lib")
 target_link_libraries(${PROJECT_NAME} ${STATIC_LIBS})
 
 #configuration
