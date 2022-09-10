@@ -19,6 +19,7 @@ class ImGuiD3D9ExternalView : public View {
 
     void InputHandler();
 
+    void ProcessCheck();
 public:
 
     ImGuiD3D9ExternalView();

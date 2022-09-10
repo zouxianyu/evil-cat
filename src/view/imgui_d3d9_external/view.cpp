@@ -1,4 +1,5 @@
 #include <iostream>
+#include <thread>
 #include <windows.h>
 #include <tlhelp32.h>
 #include <psapi.h>
@@ -252,15 +253,17 @@ void ImGuiD3D9ExternalView::SetupWindow() {
     UpdateWindow(Overlay.Hwnd);
 }
 
-//DWORD WINAPI ProcessCheck(LPVOID lpParameter) {
-//    while (true) {
-//        if (Process.Hwnd != NULL) {
-//            if (GetProcessId(targetProcess) == 0) {
-//                exit(0);
-//            }
-//        }
-//    }
-//}
+void ImGuiD3D9ExternalView::ProcessCheck() {
+    while (true) {
+        if (Process.Hwnd != NULL) {
+            if (GetProcessId(targetProcess.c_str()) == 0) {
+                Settings::exit = true;
+                break;
+            }
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+}
 
 ImGuiD3D9ExternalView &ImGuiD3D9ExternalView::getInstance() {
     static ImGuiD3D9ExternalView instance;
@@ -314,10 +317,9 @@ bool ImGuiD3D9ExternalView::loop() {
     Overlay.Name = randomName.c_str();
     SetupWindow();
     DirectXInit();
-//    CreateThread(0, 0, ProcessCheck, 0, 0, 0);
-//    while (!Settings::getInstance().exit) {
+    std::thread processCheckThread(std::bind(&ImGuiD3D9ExternalView::ProcessCheck, this));
     MainLoop();
-//    }
+    processCheckThread.join();
     return true;
 }
 
