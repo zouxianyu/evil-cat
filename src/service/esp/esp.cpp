@@ -15,6 +15,7 @@ namespace Settings::Esp {
     bool showViewLine = true;
     bool showHeadBar = true;
     bool showHeadCircle = true;
+    bool showDistance = true;
 
     ImColor teammateColor = ImColor(0, 255, 0);
     ImColor enemyColor = ImColor(255, 0, 0);
@@ -70,6 +71,11 @@ void Esp::callback() {
     // show head bar
     if (Settings::Esp::showHeadBar) {
         showHeadBar(localPlayer, players);
+    }
+
+    // show distance
+    if (Settings::Esp::showDistance) {
+        showDistance(localPlayer, players);
     }
 
     // show self test
@@ -130,7 +136,7 @@ void Esp::showEsp3D(
 ) {
 
     for (const auto &player: players) {
-        if (player->getHealth() <= 0) {
+        if (*player == *localPlayer || player->getHealth() <= 0) {
             continue;
         }
 
@@ -212,7 +218,7 @@ void Esp::showViewLine(
 ) {
 
     for (const auto &player: players) {
-        if (player->getHealth() <= 0) {
+        if (*player == *localPlayer || player->getHealth() <= 0) {
             continue;
         }
 
@@ -243,7 +249,7 @@ void Esp::showHeadCircle(
         std::vector<std::shared_ptr<PlayerBasicInterface>> players
 ) {
     for (const auto &player: players) {
-        if (player->getHealth() <= 0) {
+        if (*player == *localPlayer || player->getHealth() <= 0) {
             continue;
         }
 
@@ -276,7 +282,7 @@ void Esp::showHeadBar(
         std::vector<std::shared_ptr<PlayerBasicInterface>> players
 ) {
     for (const auto &player: players) {
-        if (player->getHealth() <= 0) {
+        if (*player == *localPlayer || player->getHealth() <= 0) {
             continue;
         }
 
@@ -376,6 +382,38 @@ void Esp::showHeadBar(
                 ImVec2(healthLeftTop.x, healthLeftTop.y),
                 ImVec2(healthRightBottom.x, healthRightBottom.y),
                 healthBarColor
+        );
+    }
+}
+
+void Esp::showDistance(std::shared_ptr<PlayerBasicInterface> localPlayer,
+                       std::vector<std::shared_ptr<PlayerBasicInterface>> players) {
+    for (const auto &player: players) {
+        if (*player == *localPlayer || player->getHealth() <= 0) {
+            continue;
+        }
+
+        Vec3 feet = player->getPosition();
+
+        std::optional<Vec2> screenFeet = WorldToScreen::getInstance().translate(feet);
+
+        if (!screenFeet) {
+            continue;
+        }
+
+        auto pos1 = localPlayer->getPosition();
+        auto pos2 = player->getPosition();
+        auto distance = (float) sqrt(
+                pow(pos1.x - pos2.x, 2) +
+                pow(pos1.y - pos2.y, 2) +
+                pow(pos1.z - pos2.z, 2)
+        );
+        std::string distanceStr = std::to_string((int) distance) + "m";
+        ImVec2 textSize = ImGui::CalcTextSize(distanceStr.c_str());
+        ImGui::GetBackgroundDrawList()->AddText(
+                ImVec2(screenFeet->x - textSize.x / 2, screenFeet->y - textSize.y),
+                ImColor(255, 255, 255),
+                distanceStr.c_str()
         );
     }
 }

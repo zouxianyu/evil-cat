@@ -92,6 +92,7 @@ void Menu::show() {
             ImGui::Checkbox("view line", &Settings::Esp::showViewLine);
             ImGui::Checkbox("head bar", &Settings::Esp::showHeadBar);
             ImGui::Checkbox("head circle", &Settings::Esp::showHeadCircle);
+            ImGui::Checkbox("distance", &Settings::Esp::showDistance);
             ImGui::Separator();
 
             ImGui::Checkbox("aimbot", &Settings::Aimbot::on);

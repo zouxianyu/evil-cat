@@ -16,6 +16,7 @@ namespace Settings::Esp {
     extern bool showViewLine;
     extern bool showHeadBar;
     extern bool showHeadCircle;
+    extern bool showDistance;
 
     extern ImColor teammateColor;
     extern ImColor enemyColor;
@@ -51,6 +52,11 @@ class Esp {
     );
 
     void showHeadCircle(
+            std::shared_ptr<PlayerBasicInterface> localPlayer,
+            std::vector<std::shared_ptr<PlayerBasicInterface>> players
+    );
+
+    void showDistance(
             std::shared_ptr<PlayerBasicInterface> localPlayer,
             std::vector<std::shared_ptr<PlayerBasicInterface>> players
     );
