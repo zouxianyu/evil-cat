@@ -259,7 +259,7 @@ void ImGuiD3D9ExternalView::SetupWindow() {
 }
 
 void ImGuiD3D9ExternalView::ProcessCheck() {
-    while (true) {
+    while (!Settings::exit) {
         if (Process.Hwnd != NULL) {
             if (GetProcessId(targetProcess.c_str()) == 0) {
                 Settings::exit = true;
