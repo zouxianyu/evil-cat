@@ -23,8 +23,8 @@ void NameList::callback() {
     std::vector<std::shared_ptr<PlayerBasicInterface>> players = Game::getInstance().getPlayers();
     for (int i = 0; i < players.size(); i++) {
         PlayerBasicInterface &player = *players[i];
-        ImGui::GetForegroundDrawList()->AddText(
-                ImVec2(0, i * 10),
+        ImGui::GetBackgroundDrawList()->AddText(
+                ImVec2(0, i * ImGui::GetTextLineHeightWithSpacing()),
                 ImColor(255, 255, 255),
                 player.getName().c_str()
         );

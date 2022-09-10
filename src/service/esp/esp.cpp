@@ -21,7 +21,7 @@ namespace Settings::Esp {
 
     float barMoveUp = 15.f;
     float barWidth = 125.f;
-    float barHeight = 25.f;
+    float barHeight = 35.f;
 
     ImColor nameBackgroundColor = ImColor(0, 0, 0);
     ImColor healthBackgroundColor = ImColor(50, 50, 50);
@@ -83,7 +83,7 @@ void Esp::callback() {
 //    if (!WorldToScreen::getInstance().translate(viewLineEnd, screenViewLineEnd)) {
 //        return;
 //    }
-//    ImGui::GetForegroundDrawList()->AddCircle(ImVec2(screenViewLineEnd.x, screenViewLineEnd.y),
+//    ImGui::GetBackgroundDrawList()->AddCircle(ImVec2(screenViewLineEnd.x, screenViewLineEnd.y),
 //                                              5, ImColor(255, 255, 255, 255));
 
 }
@@ -116,7 +116,7 @@ void Esp::showEsp2D(
         float width = height / 2;
 
 
-        ImGui::GetForegroundDrawList()->AddRect(
+        ImGui::GetBackgroundDrawList()->AddRect(
                 ImVec2(screenFeet->x - width / 2, screenFeet->y - height),
                 ImVec2(screenFeet->x + width / 2, screenFeet->y),
                 boxColor
@@ -189,16 +189,16 @@ void Esp::showEsp3D(
 
         //show box 3d
         for (int j: {0, 1, 2, 3}) {
-            ImGui::GetForegroundDrawList()->AddLine(ImVec2(screenCorners[j].x, screenCorners[j].y),
+            ImGui::GetBackgroundDrawList()->AddLine(ImVec2(screenCorners[j].x, screenCorners[j].y),
                                                     ImVec2(screenCorners[(j + 1) % 4].x,
                                                            screenCorners[(j + 1) % 4].y),
                                                     boxColor);
-            ImGui::GetForegroundDrawList()->AddLine(
+            ImGui::GetBackgroundDrawList()->AddLine(
                     ImVec2(screenCorners[4 + j].x, screenCorners[4 + j].y),
                     ImVec2(screenCorners[4 + (j + 1) % 4].x,
                            screenCorners[4 + (j + 1) % 4].y),
                     boxColor);
-            ImGui::GetForegroundDrawList()->AddLine(ImVec2(screenCorners[j].x, screenCorners[j].y),
+            ImGui::GetBackgroundDrawList()->AddLine(ImVec2(screenCorners[j].x, screenCorners[j].y),
                                                     ImVec2(screenCorners[j + 4].x,
                                                            screenCorners[j + 4].y),
                                                     boxColor);
@@ -230,7 +230,7 @@ void Esp::showViewLine(
             continue;
         }
 
-        ImGui::GetForegroundDrawList()->AddLine(
+        ImGui::GetBackgroundDrawList()->AddLine(
                 ImVec2(screenHead->x, screenHead->y),
                 ImVec2(screenViewLineEnd->x, screenViewLineEnd->y),
                 viewLineColor
@@ -263,7 +263,7 @@ void Esp::showHeadCircle(
 
         float headRadius = (screenFeet->y - screenHead->y) / 12.f;
 
-        ImGui::GetForegroundDrawList()->AddCircle(
+        ImGui::GetBackgroundDrawList()->AddCircle(
                 ImVec2(screenHead->x, screenHead->y),
                 headRadius,
                 headCircleColor
@@ -302,7 +302,7 @@ void Esp::showHeadBar(
         auto barBorderColor = player->getTeamId() == localPlayer->getTeamId() ?
                               Settings::Esp::teammateColor : Settings::Esp::enemyColor;
 
-        ImGui::GetForegroundDrawList()->AddRect(
+        ImGui::GetBackgroundDrawList()->AddRect(
                 ImVec2(barLeftTop.x, barLeftTop.y),
                 ImVec2(barRightBottom.x, barRightBottom.y),
                 barBorderColor
@@ -315,30 +315,30 @@ void Esp::showHeadBar(
         };
         Vec2 upperAreaRightBottom = {
                 barLeftTop.x + Settings::Esp::barWidth - 1,
-                barLeftTop.y + Settings::Esp::barHeight * 0.6f - 1
+                barLeftTop.y + Settings::Esp::barHeight * 0.64f - 1
         };
         Vec2 lowerAreaLeftTop = {
-                barLeftTop.x + 1,
-                barLeftTop.y + Settings::Esp::barHeight * 0.6f
+                barLeftTop.x,
+                barLeftTop.y + Settings::Esp::barHeight * 0.64f
         };
         Vec2 lowerAreaRightBottom = {
                 barRightBottom.x - 1,
                 barRightBottom.y - 1
         };
 
-        ImGui::GetForegroundDrawList()->AddRectFilled(
+        ImGui::GetBackgroundDrawList()->AddRectFilled(
                 ImVec2(upperAreaLeftTop.x, upperAreaLeftTop.y),
                 ImVec2(upperAreaRightBottom.x, upperAreaRightBottom.y),
                 Settings::Esp::nameBackgroundColor
         );
 
-        ImGui::GetForegroundDrawList()->AddText(
-                ImVec2(upperAreaLeftTop.x + 1, upperAreaLeftTop.y + 1),
+        ImGui::GetBackgroundDrawList()->AddText(
+                ImVec2(upperAreaLeftTop.x, upperAreaLeftTop.y),
                 ImColor(255,255,255),
                 player->getName().c_str()
         );
 
-        ImGui::GetForegroundDrawList()->AddRectFilled(
+        ImGui::GetBackgroundDrawList()->AddRectFilled(
                 ImVec2(lowerAreaLeftTop.x, lowerAreaLeftTop.y),
                 ImVec2(lowerAreaRightBottom.x, lowerAreaRightBottom.y),
                 Settings::Esp::healthBackgroundColor
@@ -365,14 +365,14 @@ void Esp::showHeadBar(
                 lowerInnerRightBottom.y
         };
         ImColor healthBarColor;
-        if (health >= 50) {
+        if (health >= 60) {
             healthBarColor = Settings::Esp::healthFullColor;
-        } else if (health >= 20) {
+        } else if (health >= 30) {
             healthBarColor = Settings::Esp::healthHalfColor;
         } else {
             healthBarColor = Settings::Esp::healthLowColor;
         }
-        ImGui::GetForegroundDrawList()->AddRectFilled(
+        ImGui::GetBackgroundDrawList()->AddRectFilled(
                 ImVec2(healthLeftTop.x, healthLeftTop.y),
                 ImVec2(healthRightBottom.x, healthRightBottom.y),
                 healthBarColor
