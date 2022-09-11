@@ -11,6 +11,14 @@ struct Vec2 {
     Vec2 operator-(const Vec2& v) const {
         return Vec2{x - v.x, y - v.y};
     }
+    // mul
+    Vec2 operator*(float v) const {
+        return Vec2{x * v, y * v};
+    }
+    // div
+    Vec2 operator/(float v) const {
+        return Vec2{x / v, y / v};
+    }
 };
 
 struct Vec3 {
@@ -23,6 +31,14 @@ struct Vec3 {
     Vec3 operator-(const Vec3& v) const {
         return { x - v.x, y - v.y, z - v.z };
     }
+    // mul
+    Vec3 operator*(float v) const {
+        return { x * v, y * v, z * v };
+    }
+    // div
+    Vec3 operator/(float v) const {
+        return { x / v, y / v, z / v };
+    }
 };
 
 struct Vec4 {
@@ -34,6 +50,14 @@ struct Vec4 {
     // sub
     Vec4 operator-(const Vec4& v) const {
         return { x - v.x, y - v.y, z - v.z, w - v.w };
+    }
+    // mul
+    Vec4 operator*(float v) const {
+        return { x * v, y * v, z * v, w * v };
+    }
+    // div
+    Vec4 operator/(float v) const {
+        return { x / v, y / v, z / v, w / v };
     }
 };
 
