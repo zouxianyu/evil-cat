@@ -8,6 +8,7 @@ namespace Settings {
 
     extern std::mutex mutex;
 
+    extern bool showMenu;
     extern bool exit;
 
     extern ImColor textColor;

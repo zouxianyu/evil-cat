@@ -28,7 +28,8 @@ void Menu::show() {
     };
     static Tab tab = Tab::Info;
 
-    ImGui::Begin("Evil Cat", nullptr, windowFlags);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 5.f);
+    ImGui::Begin("Evil Cat", &Settings::showMenu, windowFlags);
     ImGui::SetWindowSize(ImVec2(windowWidth, windowHeight));
     ImVec2 globalRegion = ImGui::GetContentRegionAvail();
 
@@ -121,4 +122,5 @@ void Menu::show() {
     ImGui::EndChild();
 
     ImGui::End();
+    ImGui::PopStyleVar();
 }

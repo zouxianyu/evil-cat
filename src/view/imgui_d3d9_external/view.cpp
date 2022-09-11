@@ -17,7 +17,6 @@
 #pragma comment(lib, "d3d9.lib")
 #pragma comment(lib, "dwmapi.lib")
 
-static bool ShowMenu = true;
 static bool CreateConsole = true;
 
 static struct CurrentProcess {
@@ -75,14 +74,16 @@ void ImGuiD3D9ExternalView::Draw() {
 }
 
 void ImGuiD3D9ExternalView::Render() {
-    if (GetAsyncKeyState(VK_RSHIFT) & 1) ShowMenu = !ShowMenu;
+    if (GetAsyncKeyState(VK_RSHIFT) & 1) {
+        Settings::showMenu = !Settings::showMenu;
+    }
     ImGui_ImplDX9_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
     Draw();
-    ImGui::GetIO().MouseDrawCursor = ShowMenu;
+    ImGui::GetIO().MouseDrawCursor = Settings::showMenu;
 
-    if (ShowMenu == true) {
+    if (Settings::showMenu) {
         InputHandler();
 //        ImGui::ShowDemoWindow();
         Menu::getInstance().show();
