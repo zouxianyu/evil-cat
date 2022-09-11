@@ -2,6 +2,8 @@
 #define EVIL_CAT_SERVICE_AIMBOT_AIMBOT_H
 
 #include <optional>
+#include <functional>
+#include <vector>
 #include <memory>
 #include <glm/glm.hpp>
 #include "game/interface/player_basic_interface.h"
@@ -9,19 +11,17 @@
 namespace Settings::Aimbot {
     extern bool on;
     extern float maxAngle;
-    enum class Policy : int {
-        minAngle
+    enum class Strategy : int {
+        rightButtonPrecise,
+        rightButtonSmooth,
+        autoFollowPrecise,
+        autoFollowSmooth
     };
-    extern Policy policy;
+    extern Strategy strategy;
 }
 
 class Aimbot {
     std::optional<std::shared_ptr<PlayerBasicInterface>> aimbotTarget = std::nullopt;
-
-    void aimHead(
-            std::shared_ptr<PlayerBasicInterface> localPlayer,
-            std::shared_ptr<PlayerBasicInterface> targetPlayer
-    );
 
 public:
     static Aimbot &getInstance();
