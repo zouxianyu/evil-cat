@@ -28,7 +28,7 @@ void Menu::show() {
     };
     static Tab tab = Tab::Info;
 
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 5.f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 4.f);
     ImGui::Begin("Evil Cat", &Settings::showMenu, windowFlags);
     ImGui::SetWindowSize(ImVec2(windowWidth, windowHeight));
     ImVec2 globalRegion = ImGui::GetContentRegionAvail();
@@ -72,7 +72,13 @@ void Menu::show() {
     ImGui::SameLine();
 
     ImGui::BeginChild("tab content", ImVec2(globalRegion.x - tabWidth, globalRegion.y), false);
-    const char * boxType[] = { "2D", "3D" };
+    const char *boxType[] = { "2D", "3D" };
+    const char *aimbotStrategy[] = {
+            "right button precise",
+            "right button smooth",
+            "auto follow precise",
+            "auto follow smooth",
+    };
     switch (tab) {
         case Tab::Info:
             ImGui::Text("Info");
@@ -88,7 +94,12 @@ void Menu::show() {
             ImGui::Checkbox("ESP", &Settings::Esp::on);
             // make the item as small as possible
             ImGui::PushItemWidth(70.f);
-            ImGui::Combo("box type", (int *)&Settings::Esp::boxType, boxType, 2);
+            ImGui::Combo(
+                    "box type",
+                    (int *) &Settings::Esp::boxType,
+                    boxType,
+                    IM_ARRAYSIZE(boxType)
+            );
             ImGui::PopItemWidth();
             ImGui::Checkbox("view line", &Settings::Esp::showViewLine);
             ImGui::Checkbox("head bar", &Settings::Esp::showHeadBar);
@@ -97,7 +108,13 @@ void Menu::show() {
             ImGui::Separator();
 
             ImGui::Checkbox("aimbot", &Settings::Aimbot::on);
-            ImGui::SliderAngle("max aimbot angle", &Settings::Aimbot::maxAngle, 0.f, 180.f);
+            ImGui::Combo(
+                    "strategy",
+                    (int *) &Settings::Aimbot::strategy,
+                    aimbotStrategy,
+                    IM_ARRAYSIZE(aimbotStrategy)
+            );
+            ImGui::SliderAngle("max angle", &Settings::Aimbot::maxAngle, 0.f, 180.f);
             break;
         case Tab::Extra:
             ImGui::Text("Extra");
