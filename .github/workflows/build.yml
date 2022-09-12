@@ -22,10 +22,10 @@ jobs:
       with:
         submodules: 'recursive'
     
-    - uses: ilammy/msvc-dev-cmd@v1
+    - name: Configure build for x86
+      uses: ilammy/msvc-dev-cmd@v1
       with:
         arch: amd64_x86
-        vsversion: '2019'
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
