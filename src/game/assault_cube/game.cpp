@@ -81,9 +81,11 @@ glm::vec3 Game::orientationToViewAngle(glm::vec3 orientation) {
     glm::vec3 X = glm::vec3(1.0f, 0.0f, 0.0f);
     glm::vec3 Z = glm::vec3(0.0f, 0.0f, 1.0f);
     glm::vec3 negtiveY = glm::vec3(0.0f, -1.0f, 0.0f);
-    glm::vec3 orientationXY = glm::normalize(glm::vec3(orientation.x, orientation.y, 0.f));
+    glm::vec3 orientationXY = glm::normalize(
+            glm::vec3(orientation.x, orientation.y, 0.f)
+    );
     float alpha = glm::orientedAngle(negtiveY, orientationXY, Z);
-    glm::vec3 orientationXYZ = glm::normalize(glm::vec3(orientation.x, orientation.y, orientation.z));
+    glm::vec3 orientationXYZ = glm::normalize(orientation);
     float beta = glm::pi<float>() / 2.0f - glm::angle(Z, orientationXYZ);
     return {alpha * 180.0f / glm::pi<float>(), beta * 180.0f / glm::pi<float>(), 0.0f};
 }

@@ -52,7 +52,9 @@ std::optional<std::shared_ptr<PlayerBasicInterface>> AimbotHelper::minAnglePicke
 
     // get local player orientation
     glm::vec3 localPlayerViewAngle = localPlayer->getViewAngle();
-    glm::vec3 localPlayerOrientation = Game::getInstance().viewAngleToOrientation(localPlayerViewAngle);
+    glm::vec3 localPlayerOrientation = Game::getInstance().viewAngleToOrientation(
+            localPlayerViewAngle
+    );
 
     // find the best enemy
     // maybe there's no valid enemy, so we use "optional" container
@@ -69,7 +71,8 @@ std::optional<std::shared_ptr<PlayerBasicInterface>> AimbotHelper::minAnglePicke
         }
 
         // get target orientation
-        glm::vec3 targetOrientation = player->getCameraPosition() - localPlayer->getCameraPosition();
+        glm::vec3 targetOrientation =
+                player->getCameraPosition() - localPlayer->getCameraPosition();
 
         // calculate delta view angle
         double deltaAngle = getDeltaAngle(localPlayerOrientation, targetOrientation);

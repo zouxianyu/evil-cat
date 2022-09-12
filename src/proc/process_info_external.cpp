@@ -15,7 +15,11 @@ bool ProcessInfoExternal::attach(const std::string &processName) {
     }
 
     DWORD pid = getProcessIdByName(processName);
-    hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);
+    hProcess = OpenProcess(
+            PROCESS_ALL_ACCESS,
+            FALSE,
+            pid
+    );
     if (hProcess == nullptr || hProcess == INVALID_HANDLE_VALUE) {
         return false;
     }
@@ -47,7 +51,10 @@ bool ProcessInfoExternal::getModuleAddress(const std::string &moduleName, void *
 
     // otherwise, find the module's base address by enumerating all modules
     uintptr_t modBaseAddr = 0;
-    HANDLE hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, GetProcessId(hProcess));
+    HANDLE hSnap = CreateToolhelp32Snapshot(
+            TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32,
+            GetProcessId(hProcess)
+    );
     if (hSnap != INVALID_HANDLE_VALUE)
     {
         MODULEENTRY32 modEntry;
@@ -78,7 +85,10 @@ bool ProcessInfoExternal::refresh() {
 
 DWORD ProcessInfoExternal::getProcessIdByName(const std::string &processName) {
     //use the process name to get the process id via CreateToolhelp32Snapshot
-    HANDLE hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    HANDLE hProcessSnap = CreateToolhelp32Snapshot(
+            TH32CS_SNAPPROCESS,
+            0
+    );
     if (hProcessSnap == INVALID_HANDLE_VALUE) {
         return 0;
     }

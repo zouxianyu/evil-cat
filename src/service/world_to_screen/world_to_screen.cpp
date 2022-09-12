@@ -33,8 +33,15 @@ std::optional<glm::vec2> WorldToScreen::translate(const glm::vec3 &world) {
 
     // calculate NDC coordinates
     glm::vec4 NDC = clip / clip.w;
-    glm::vec2 screen{(NDC.x + 1.0f) * 0.5f * width, (-NDC.y + 1.0f) * 0.5f * height};
-    if (screen.x < -width || screen.x >= 2 * width || screen.y < -height || screen.y >= 2 * height) {
+    glm::vec2 screen{
+            (NDC.x + 1.0f) * 0.5f * width,
+            (-NDC.y + 1.0f) * 0.5f * height
+    };
+    if (screen.x < -width ||
+        screen.x >= 2 * width ||
+        screen.y < -height ||
+        screen.y >= 2 * height
+    ) {
         return std::nullopt;
     }
     return screen;

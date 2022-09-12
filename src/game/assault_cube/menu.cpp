@@ -13,7 +13,9 @@ Menu &Menu::getInstance() {
 }
 
 void Menu::show() {
-    constexpr auto windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+    constexpr auto windowFlags = ImGuiWindowFlags_NoCollapse |
+                                 ImGuiWindowFlags_NoResize |
+                                 ImGuiWindowFlags_NoMove;
     constexpr float tabWidth = 120.f;
     constexpr float windowWidth = 600.f;
     constexpr float windowHeight = 400.f;
@@ -34,24 +36,44 @@ void Menu::show() {
     ImVec2 globalRegion = ImGui::GetContentRegionAvail();
 
     // create a widget at left
-    ImGui::BeginChild("tab panel", ImVec2(tabWidth, globalRegion.y), false);
+    ImGui::BeginChild(
+            "tab panel",
+            ImVec2(tabWidth, globalRegion.y),
+            false
+    );
     ImVec2 panelRegion = ImGui::GetContentRegionAvail();
     float tabHeight = panelRegion.y / static_cast<int>(Tab::End) - 3.f;
-    if (ImGui::Button("Info", ImVec2(ImGui::GetContentRegionAvail().x, tabHeight))) {
+    if (ImGui::Button(
+            "Info",
+            ImVec2(ImGui::GetContentRegionAvail().x, tabHeight)
+    )) {
         tab = Tab::Info;
     }
-    if (ImGui::Button("Basic", ImVec2(ImGui::GetContentRegionAvail().x, tabHeight))) {
+    if (ImGui::Button(
+            "Basic",
+            ImVec2(ImGui::GetContentRegionAvail().x, tabHeight)
+    )) {
         tab = Tab::Basic;
     }
-    if (ImGui::Button("Extra", ImVec2(ImGui::GetContentRegionAvail().x, tabHeight))) {
+    if (ImGui::Button(
+            "Extra",
+            ImVec2(ImGui::GetContentRegionAvail().x, tabHeight)
+    )) {
         tab = Tab::Extra;
     }
-    if (ImGui::Button("Color", ImVec2(ImGui::GetContentRegionAvail().x, tabHeight))) {
+    if (ImGui::Button(
+            "Color",
+            ImVec2(ImGui::GetContentRegionAvail().x, tabHeight)
+    )) {
         tab = Tab::Color;
     }
-    if (ImGui::Button("Exit", ImVec2(ImGui::GetContentRegionAvail().x, tabHeight))) {
+    if (ImGui::Button(
+            "Exit",
+            ImVec2(ImGui::GetContentRegionAvail().x, tabHeight)
+    )) {
         ImGui::OpenPopup("Exit");
     }
+
     if (ImGui::BeginPopupModal("Exit", NULL, windowFlags))
     {
         ImGui::Text("Are you sure you want to exit?");
@@ -71,7 +93,11 @@ void Menu::show() {
 
     ImGui::SameLine();
 
-    ImGui::BeginChild("tab content", ImVec2(globalRegion.x - tabWidth, globalRegion.y), false);
+    ImGui::BeginChild(
+            "tab content",
+            ImVec2(globalRegion.x - tabWidth, globalRegion.y),
+            false
+    );
     const char *boxType[] = { "2D", "3D" };
     const char *aimbotStrategy[] = {
             "right button precise",
@@ -114,7 +140,12 @@ void Menu::show() {
                     aimbotStrategy,
                     IM_ARRAYSIZE(aimbotStrategy)
             );
-            ImGui::SliderAngle("max angle", &Settings::Aimbot::maxAngle, 0.f, 180.f);
+            ImGui::SliderAngle(
+                    "max angle",
+                    &Settings::Aimbot::maxAngle,
+                    0.f,
+                    180.f
+            );
             break;
         case Tab::Extra:
             ImGui::Text("Extra");
@@ -127,11 +158,26 @@ void Menu::show() {
             ImGui::Text("Color");
             ImGui::Separator();
 
-            ImGui::ColorEdit4("teammate", (float *)&Settings::Esp::teammateColor.Value);
-            ImGui::ColorEdit4("enemy", (float *)&Settings::Esp::enemyColor.Value);
-            ImGui::ColorEdit4("full health", (float *)&Settings::Esp::healthFullColor.Value);
-            ImGui::ColorEdit4("half health", (float *)&Settings::Esp::healthHalfColor.Value);
-            ImGui::ColorEdit4("low health", (float *)&Settings::Esp::healthLowColor.Value);
+            ImGui::ColorEdit4(
+                    "teammate",
+                    (float *)&Settings::Esp::teammateColor.Value
+            );
+            ImGui::ColorEdit4(
+                    "enemy",
+                    (float *)&Settings::Esp::enemyColor.Value
+            );
+            ImGui::ColorEdit4(
+                    "full health",
+                    (float *)&Settings::Esp::healthFullColor.Value
+            );
+            ImGui::ColorEdit4(
+                    "half health",
+                    (float *)&Settings::Esp::healthHalfColor.Value
+            );
+            ImGui::ColorEdit4(
+                    "low health",
+                    (float *)&Settings::Esp::healthLowColor.Value
+            );
             break;
         default:
             break;
