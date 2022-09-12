@@ -15,7 +15,11 @@ bool ProcessMemoryExternal::attach(const std::string &processName) {
     }
 
     DWORD pid = getProcessIdByName(processName);
-    hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);
+    hProcess = OpenProcess(
+            PROCESS_ALL_ACCESS,
+            FALSE,
+            pid
+    );
     if (hProcess == nullptr || hProcess == INVALID_HANDLE_VALUE) {
         return false;
     }
@@ -39,7 +43,13 @@ bool ProcessMemoryExternal::read(void *address, void *buffer, size_t size) {
     }
 
     SIZE_T bytesRead;
-    if (!ReadProcessMemory(hProcess, address, buffer, size, &bytesRead)) {
+    if (!ReadProcessMemory(
+            hProcess,
+            address,
+            buffer,
+            size,
+            &bytesRead
+    )) {
         return false;
     }
 
@@ -52,7 +62,13 @@ bool ProcessMemoryExternal::write(void *address, const void *buffer, size_t size
     }
 
     SIZE_T bytesWritten;
-    if (!WriteProcessMemory(hProcess, address, buffer, size, &bytesWritten)) {
+    if (!WriteProcessMemory(
+            hProcess,
+            address,
+            buffer,
+            size,
+            &bytesWritten
+    )) {
         return false;
     }
 
@@ -61,7 +77,10 @@ bool ProcessMemoryExternal::write(void *address, const void *buffer, size_t size
 
 DWORD ProcessMemoryExternal::getProcessIdByName(const std::string& processName) {
     //use the process name to get the process id via CreateToolhelp32Snapshot
-    HANDLE hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    HANDLE hProcessSnap = CreateToolhelp32Snapshot(
+            TH32CS_SNAPPROCESS,
+            0
+    );
     if (hProcessSnap == INVALID_HANDLE_VALUE) {
         return 0;
     }

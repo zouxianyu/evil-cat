@@ -50,8 +50,12 @@ void Aimbot::callback() {
         return;
     }
 
-    std::shared_ptr<PlayerBasicInterface> localPlayer = Game::getInstance().getLocalPlayer();
-    std::vector<std::shared_ptr<PlayerBasicInterface>> players = Game::getInstance().getPlayers();
+    std::shared_ptr<PlayerBasicInterface> localPlayer =
+            Game::getInstance().getLocalPlayer();
+
+    std::vector<std::shared_ptr<PlayerBasicInterface>> players =
+            Game::getInstance().getPlayers();
+
     if (players.empty()) {
         return;
     }

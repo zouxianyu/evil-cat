@@ -44,8 +44,11 @@ void Esp::callback() {
     WorldToScreen::getInstance().refresh();
 
     // get players
-    std::shared_ptr<PlayerBasicInterface> localPlayer = Game::getInstance().getLocalPlayer();
-    std::vector<std::shared_ptr<PlayerBasicInterface>> players = Game::getInstance().getPlayers();
+    std::shared_ptr<PlayerBasicInterface>
+            localPlayer = Game::getInstance().getLocalPlayer();
+
+    std::vector<std::shared_ptr<PlayerBasicInterface>>
+            players = Game::getInstance().getPlayers();
 
     // show esp box
     switch (Settings::Esp::boxType) {
@@ -96,8 +99,11 @@ void Esp::showEsp2D(
                            Settings::Esp::teammateColor : Settings::Esp::enemyColor;
 
         // show box 2d
-        std::optional<glm::vec2> screenHead = WorldToScreen::getInstance().translate(head);
-        std::optional<glm::vec2> screenFeet = WorldToScreen::getInstance().translate(feet);
+        std::optional<glm::vec2> screenHead =
+                WorldToScreen::getInstance().translate(head);
+
+        std::optional<glm::vec2> screenFeet =
+                WorldToScreen::getInstance().translate(feet);
 
         if (!screenHead || !screenFeet) {
             continue;
@@ -147,7 +153,9 @@ void Esp::showEsp3D(
         };
         glm::vec2 screenCorners[8] = {};
 
-        glm::vec3 orientation2d = glm::normalize(glm::vec3(orientation.x, orientation.y, 0));
+        glm::vec3 orientation2d =
+                glm::normalize(glm::vec3(orientation.x, orientation.y, 0));
+
         glm::mat4 esp3dRotation = glm::rotate(
                 glm::mat4(1.0f),
                 glm::angle(orientation2d, glm::vec3(1.f, 0.f, 0.f)),
@@ -178,20 +186,29 @@ void Esp::showEsp3D(
         }
 
         //show box 3d
-        for (int j: {0, 1, 2, 3}) {
-            ImGui::GetBackgroundDrawList()->AddLine(ImVec2(screenCorners[j].x, screenCorners[j].y),
-                                                    ImVec2(screenCorners[(j + 1) % 4].x,
-                                                           screenCorners[(j + 1) % 4].y),
-                                                    boxColor);
+        for (int j = 0; j < 4; j++) {
+            const glm::vec2 &groundP1 = screenCorners[j];
+            const glm::vec2 &groundP2 = screenCorners[(j + 1) % 4];
+            const glm::vec2 &topP1 = screenCorners[j + 4];
+            const glm::vec2 &topP2 = screenCorners[4 + (j + 1) % 4];
+
             ImGui::GetBackgroundDrawList()->AddLine(
-                    ImVec2(screenCorners[4 + j].x, screenCorners[4 + j].y),
-                    ImVec2(screenCorners[4 + (j + 1) % 4].x,
-                           screenCorners[4 + (j + 1) % 4].y),
-                    boxColor);
-            ImGui::GetBackgroundDrawList()->AddLine(ImVec2(screenCorners[j].x, screenCorners[j].y),
-                                                    ImVec2(screenCorners[j + 4].x,
-                                                           screenCorners[j + 4].y),
-                                                    boxColor);
+                    ImVec2(groundP1.x, groundP1.y),
+                    ImVec2(groundP2.x, groundP2.y),
+                    boxColor
+            );
+
+            ImGui::GetBackgroundDrawList()->AddLine(
+                    ImVec2(topP1.x, topP1.y),
+                    ImVec2(topP2.x, topP2.y),
+                    boxColor
+            );
+
+            ImGui::GetBackgroundDrawList()->AddLine(
+                    ImVec2(groundP1.x, groundP1.y),
+                    ImVec2(topP1.x, topP1.y),
+                    boxColor
+            );
         }
     }
 }
@@ -214,8 +231,12 @@ void Esp::showViewLine(
                              Settings::Esp::teammateColor : Settings::Esp::enemyColor;
 
         // show view line
-        std::optional<glm::vec2> screenHead = WorldToScreen::getInstance().translate(head);
-        std::optional<glm::vec2> screenViewLineEnd = WorldToScreen::getInstance().translate(viewLineEnd);
+        std::optional<glm::vec2> screenHead =
+                WorldToScreen::getInstance().translate(head);
+
+        std::optional<glm::vec2> screenViewLineEnd =
+                WorldToScreen::getInstance().translate(viewLineEnd);
+
         if (!screenHead || !screenViewLineEnd) {
             continue;
         }
@@ -244,8 +265,11 @@ void Esp::showHeadCircle(
         glm::vec3 head = player->getCameraPosition();
         glm::vec3 feet = player->getPosition();
 
-        std::optional<glm::vec2> screenHead = WorldToScreen::getInstance().translate(head);
-        std::optional<glm::vec2> screenFeet = WorldToScreen::getInstance().translate(feet);
+        std::optional<glm::vec2> screenHead =
+                WorldToScreen::getInstance().translate(head);
+
+        std::optional<glm::vec2> screenFeet =
+                WorldToScreen::getInstance().translate(feet);
 
         if (!screenHead || !screenFeet) {
             continue;
@@ -274,7 +298,9 @@ void Esp::showHeadBar(
         glm::vec3 top = {feet.x, feet.y, feet.z + player->getHeight()};
 
         // calculate the head bar position
-        std::optional<glm::vec2> screenTop = WorldToScreen::getInstance().translate(top);
+        std::optional<glm::vec2> screenTop =
+                WorldToScreen::getInstance().translate(top);
+
         if (!screenTop) {
             continue;
         }
@@ -379,7 +405,8 @@ void Esp::showDistance(std::shared_ptr<PlayerBasicInterface> localPlayer,
 
         glm::vec3 feet = player->getPosition();
 
-        std::optional<glm::vec2> screenFeet = WorldToScreen::getInstance().translate(feet);
+        std::optional<glm::vec2> screenFeet =
+                WorldToScreen::getInstance().translate(feet);
 
         if (!screenFeet) {
             continue;
