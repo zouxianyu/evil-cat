@@ -53,20 +53,20 @@ std::vector<std::shared_ptr<PlayerBasicInterface>> Game::getPlayers() {
     return players;
 }
 
-std::shared_ptr<Mat4> Game::getVPMatrix() {
-    return std::make_shared<Mat4>(
-        ProcessMemoryAccessor<Mat4>{
+std::shared_ptr<glm::mat4> Game::getVPMatrix() {
+    return std::make_shared<glm::mat4>(
+        ProcessMemoryAccessor<glm::mat4>{
             "ac_client.exe",
             Offset::vpMatrix
         }
     );
 }
 
-Vec2 Game::getWindowSize() {
-    return Vec2{1024, 768};
+glm::vec2 Game::getWindowSize() {
+    return glm::vec2{1024, 768};
 }
 
-Vec3 Game::viewAngleToOrientation(Vec3 viewAngle) {
+glm::vec3 Game::viewAngleToOrientation(glm::vec3 viewAngle) {
     glm::vec3 Z = glm::vec3(0.0f, 0.0f, 1.0f);
     glm::vec3 negtiveY = glm::vec3(0.0f, -1.0f, 0.0f);
     float alpha = viewAngle.x * glm::pi<float>() / 180.0f;
@@ -74,10 +74,10 @@ Vec3 Game::viewAngleToOrientation(Vec3 viewAngle) {
     glm::vec3 vecXY = glm::rotate(negtiveY, alpha, Z);
     glm::vec3 axis = glm::normalize(glm::cross(vecXY, Z));
     glm::vec3 vecXYZ = glm::normalize(glm::rotate(vecXY, beta, axis));
-    return Vec3{vecXYZ.x, vecXYZ.y, vecXYZ.z};
+    return vecXYZ;
 }
 
-Vec3 Game::orientationToViewAngle(Vec3 orientation) {
+glm::vec3 Game::orientationToViewAngle(glm::vec3 orientation) {
     glm::vec3 X = glm::vec3(1.0f, 0.0f, 0.0f);
     glm::vec3 Z = glm::vec3(0.0f, 0.0f, 1.0f);
     glm::vec3 negtiveY = glm::vec3(0.0f, -1.0f, 0.0f);
@@ -85,5 +85,5 @@ Vec3 Game::orientationToViewAngle(Vec3 orientation) {
     float alpha = glm::orientedAngle(negtiveY, orientationXY, Z);
     glm::vec3 orientationXYZ = glm::normalize(glm::vec3(orientation.x, orientation.y, orientation.z));
     float beta = glm::pi<float>() / 2.0f - glm::angle(Z, orientationXYZ);
-    return Vec3{alpha * 180.0f / glm::pi<float>(), beta * 180.0f / glm::pi<float>(), 0.0f};
+    return {alpha * 180.0f / glm::pi<float>(), beta * 180.0f / glm::pi<float>(), 0.0f};
 }

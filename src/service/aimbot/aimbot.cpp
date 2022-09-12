@@ -5,7 +5,6 @@
 #include <windows.h>
 #include "game.h"
 #include "game/interface/player_basic_interface.h"
-#include "type.h"
 #include "aimbot_helper.h"
 #include "aimbot.h"
 

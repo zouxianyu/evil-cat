@@ -4,7 +4,6 @@
 #include <optional>
 #include <functional>
 #include <glm/glm.hpp>
-#include "type.h"
 
 class WorldToScreen {
     glm::mat4 vpMatrix; // cached view matrix
@@ -16,7 +15,7 @@ public:
 
     bool refresh();
 
-    std::optional<Vec2> translate(const Vec3 &world);
+    std::optional<glm::vec2> translate(const glm::vec3 &world);
 };
 
 #endif //EVIL_CAT_SERVICE_WORLD_TO_SCREEN_WORLD_TO_SCREEN_H

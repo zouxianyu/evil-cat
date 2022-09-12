@@ -2,7 +2,7 @@
 #define EVIL_CAT_GAME_ASSAULT_CUBE_PLAYER_H
 
 #include <string>
-#include "type.h"
+#include <glm/glm.hpp>
 #include "game/interface/player_basic_interface.h"
 #include "interface/player_health_interface.h"
 #include "interface/player_armor_interface.h"
@@ -16,15 +16,15 @@ class Player : public PlayerBasicInterface,
 public:
     explicit Player(void *address);
 
-    Vec3 getPosition() override;
+    glm::vec3 getPosition() override;
 
     float getHeight() override;
 
-    Vec3 getCameraPosition() override;
+    glm::vec3 getCameraPosition() override;
 
-    Vec3 getViewAngle() override;
+    glm::vec3 getViewAngle() override;
 
-    void setViewAngle(Vec3 angle) override;
+    void setViewAngle(glm::vec3 angle) override;
 
     std::string getName() override;
 

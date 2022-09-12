@@ -4,7 +4,6 @@
 #include <vector>
 #include <imgui.h>
 #include "game/interface/player_basic_interface.h"
-#include "type.h"
 
 namespace Settings::Esp {
     extern bool on;

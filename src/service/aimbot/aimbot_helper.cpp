@@ -8,12 +8,9 @@
 #include "game.h"
 #include "aimbot.h"
 #include "game/interface/player_basic_interface.h"
-#include "type.h"
 #include "aimbot_helper.h"
 
-static float getDeltaAngle(Vec3 o1, Vec3 o2) {
-    glm::vec3 v1{o1.x, o1.y, o1.z};
-    glm::vec3 v2{o2.x, o2.y, o2.z};
+static float getDeltaAngle(glm::vec3 v1, glm::vec3 v2) {
     return glm::angle(glm::normalize(v1), glm::normalize(v2));
 }
 
@@ -54,8 +51,8 @@ std::optional<std::shared_ptr<PlayerBasicInterface>> AimbotHelper::minAnglePicke
 ) {
 
     // get local player orientation
-    Vec3 localPlayerViewAngle = localPlayer->getViewAngle();
-    Vec3 localPlayerOrientation = Game::getInstance().viewAngleToOrientation(localPlayerViewAngle);
+    glm::vec3 localPlayerViewAngle = localPlayer->getViewAngle();
+    glm::vec3 localPlayerOrientation = Game::getInstance().viewAngleToOrientation(localPlayerViewAngle);
 
     // find the best enemy
     // maybe there's no valid enemy, so we use "optional" container
@@ -72,7 +69,7 @@ std::optional<std::shared_ptr<PlayerBasicInterface>> AimbotHelper::minAnglePicke
         }
 
         // get target orientation
-        Vec3 targetOrientation = player->getCameraPosition() - localPlayer->getCameraPosition();
+        glm::vec3 targetOrientation = player->getCameraPosition() - localPlayer->getCameraPosition();
 
         // calculate delta view angle
         double deltaAngle = getDeltaAngle(localPlayerOrientation, targetOrientation);
@@ -98,22 +95,15 @@ void AimbotHelper::speedChangeableAimer(
         std::shared_ptr<PlayerBasicInterface> localPlayer,
         std::shared_ptr<PlayerBasicInterface> targetPlayer
 ) {
-    Vec3 targetPos = targetPlayer->getCameraPosition();
-    Vec3 localPos = localPlayer->getCameraPosition();
-    Vec3 targetOrientation = targetPos - localPos;
-    Vec3 currentOrientation = Game::getInstance().viewAngleToOrientation(
+    glm::vec3 targetPos = targetPlayer->getCameraPosition();
+    glm::vec3 localPos = localPlayer->getCameraPosition();
+    glm::vec3 vTarget = glm::normalize(targetPos - localPos);
+    glm::vec3 vCurrent = glm::normalize(Game::getInstance().viewAngleToOrientation(
             localPlayer->getViewAngle()
-    );
-    glm::vec3 vCurrent = glm::normalize(glm::vec3{
-        currentOrientation.x, currentOrientation.y, currentOrientation.z
-    });
-    glm::vec3 vTarget = glm::normalize(glm::vec3{
-        targetOrientation.x, targetOrientation.y, targetOrientation.z
-    });
+    ));
     glm::vec3 vCross = glm::cross(vCurrent, vTarget);
     float angle = glm::angle(vCurrent, vTarget) / divisor;
     glm::vec3 vAim = glm::rotate(vCurrent, angle, vCross);
-    Vec3 aimOrientation = {vAim.x, vAim.y, vAim.z};
-    Vec3 aimViewAngle = Game::getInstance().orientationToViewAngle(aimOrientation);
+    glm::vec3 aimViewAngle = Game::getInstance().orientationToViewAngle(vAim);
     localPlayer->setViewAngle(aimViewAngle);
 }
