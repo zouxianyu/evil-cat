@@ -4,7 +4,6 @@
 #include <unordered_map>
 #include <optional>
 #include <mutex>
-#include "type.h"
 
 #define ROUND_DOWN(a, b) ((uintptr_t)(a) & ~((uintptr_t)(b) - 1))
 #define ROUND_UP(a, b) (((uintptr_t)(a) + ((uintptr_t)(b) - 1)) & ~((uintptr_t)(b) - 1))

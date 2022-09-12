@@ -1,7 +1,7 @@
 #ifndef EVIL_CAT_GAME_INTERFACE_PLAYER_BONE_INTERFACE_H
 #define EVIL_CAT_GAME_INTERFACE_PLAYER_BONE_INTERFACE_H
 
-#include "type.h"
+#include <glm/glm.hpp>
 
 class PlayerBoneInterface {
 public:
@@ -16,7 +16,7 @@ public:
         RIGHT_LEG
     };
 
-    virtual Vec3 getBonePosition(Bone bone) = 0;
+    virtual glm::vec3 getBonePosition(Bone bone) = 0;
 };
 
 #endif //EVIL_CAT_GAME_INTERFACE_PLAYER_BONE_INTERFACE_H

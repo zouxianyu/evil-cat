@@ -2,7 +2,7 @@
 #define EVIL_CAT_GAME_INTERFACE_PLAYER_BASIC_INTERFACE_H
 
 #include <string>
-#include "type.h"
+#include <glm/glm.hpp>
 
 // this interface contains basic information about a player
 // use this interface to get basic information about a player in the core of the framework
@@ -11,7 +11,7 @@ class PlayerBasicInterface {
 public:
     // get the position of the player
     // we assume the position represents the bottom center of the player
-    virtual Vec3 getPosition() = 0;
+    virtual glm::vec3 getPosition() = 0;
 
     // get the height of the player,
     // so we can draw a box with proper size around the player
@@ -21,16 +21,16 @@ public:
     // the camera position is the camera position of a player
     // we can use the position combined with the view angle
     // to calculate the orientation of the player and draw a view line
-    virtual Vec3 getCameraPosition() = 0;
+    virtual glm::vec3 getCameraPosition() = 0;
 
     // get the view angle of the player
     // we can use the view angle to calculate the orientation of the player
     // 3D esp needs the orientation of the player
-    virtual Vec3 getViewAngle() = 0;
+    virtual glm::vec3 getViewAngle() = 0;
 
     // set the view angle of the player
     // aimbot needs to set the view angle of the local player
-    virtual void setViewAngle(Vec3 angle) = 0;
+    virtual void setViewAngle(glm::vec3 angle) = 0;
 
     // get the name of the player
     // we can draw it over the esp box

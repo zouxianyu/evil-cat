@@ -3,7 +3,7 @@
 
 #include <array>
 #include <cstdint>
-#include "type.h"
+#include <glm/glm.hpp>
 #include "offset_helper.h"
 
 namespace Offset {
@@ -12,9 +12,9 @@ namespace Offset {
 
     struct Player {
         union {
-            DEFINE_MEMBER_N(Vec3, head, 0x4);
-            DEFINE_MEMBER_N(Vec3, feet, 0x34);
-            DEFINE_MEMBER_N(Vec3, viewAngle, 0x40);
+            DEFINE_MEMBER_N(glm::vec3, head, 0x4);
+            DEFINE_MEMBER_N(glm::vec3, feet, 0x34);
+            DEFINE_MEMBER_N(glm::vec3, viewAngle, 0x40);
             DEFINE_MEMBER_N(int, health, 0xF8);
             DEFINE_MEMBER_N(int, armor, 0xFC);
             DEFINE_MEMBER_N(Name, name, 0x225);

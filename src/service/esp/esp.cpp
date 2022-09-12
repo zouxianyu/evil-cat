@@ -6,7 +6,6 @@
 #include "game.h"
 #include "game/interface/player_basic_interface.h"
 #include "service/world_to_screen/world_to_screen.h"
-#include "type.h"
 #include "esp.h"
 
 namespace Settings::Esp {
@@ -78,20 +77,6 @@ void Esp::callback() {
         showDistance(localPlayer, players);
     }
 
-    // show self test
-//    Player localPlayer = EntityManager::getInstance().getLocalPlayer();
-//    Vec3 localHead = localPlayer.getHead();
-//    Vec3 localViewAngle = localPlayer.getViewAngle();
-//    Vec3 localOrientation = viewAngleToOrientation(localViewAngle);
-//    Vec3 viewLineEnd = localHead + localOrientation;
-//
-//    Vec2 screenViewLineEnd{};
-//    if (!WorldToScreen::getInstance().translate(viewLineEnd, screenViewLineEnd)) {
-//        return;
-//    }
-//    ImGui::GetBackgroundDrawList()->AddCircle(ImVec2(screenViewLineEnd.x, screenViewLineEnd.y),
-//                                              5, ImColor(255, 255, 255, 255));
-
 }
 
 void Esp::showEsp2D(
@@ -105,14 +90,14 @@ void Esp::showEsp2D(
             continue;
         }
 
-        Vec3 head = player->getCameraPosition();
-        Vec3 feet = player->getPosition();
+        glm::vec3 head = player->getCameraPosition();
+        glm::vec3 feet = player->getPosition();
         ImColor boxColor = player->getTeamId() == localPlayer->getTeamId() ?
                            Settings::Esp::teammateColor : Settings::Esp::enemyColor;
 
         // show box 2d
-        std::optional<Vec2> screenHead = WorldToScreen::getInstance().translate(head);
-        std::optional<Vec2> screenFeet = WorldToScreen::getInstance().translate(feet);
+        std::optional<glm::vec2> screenHead = WorldToScreen::getInstance().translate(head);
+        std::optional<glm::vec2> screenFeet = WorldToScreen::getInstance().translate(feet);
 
         if (!screenHead || !screenFeet) {
             continue;
@@ -140,10 +125,10 @@ void Esp::showEsp3D(
             continue;
         }
 
-        Vec3 head = player->getCameraPosition();
-        Vec3 feet = player->getPosition();
-        Vec3 viewAngle = player->getViewAngle();
-        Vec3 orientation = Game::getInstance().viewAngleToOrientation(viewAngle);
+        glm::vec3 head = player->getCameraPosition();
+        glm::vec3 feet = player->getPosition();
+        glm::vec3 viewAngle = player->getViewAngle();
+        glm::vec3 orientation = Game::getInstance().viewAngleToOrientation(viewAngle);
         auto boxColor = player->getTeamId() == localPlayer->getTeamId() ?
                         Settings::Esp::teammateColor : Settings::Esp::enemyColor;
 
@@ -160,7 +145,7 @@ void Esp::showEsp3D(
                 {-width / 2, -width / 2, height, 1},
                 {-width / 2, width / 2,  height, 1},
         };
-        Vec2 screenCorners[8] = {};
+        glm::vec2 screenCorners[8] = {};
 
         glm::vec3 orientation2d = glm::normalize(glm::vec3(orientation.x, orientation.y, 0));
         glm::mat4 esp3dRotation = glm::rotate(
@@ -168,8 +153,7 @@ void Esp::showEsp3D(
                 glm::angle(orientation2d, glm::vec3(1.f, 0.f, 0.f)),
                 glm::vec3(0.0f, 0.0f, 1.0f)
         );
-        glm::mat4 esp3dTranslate = glm::translate(glm::mat4(1.0f),
-                                                  glm::vec3(feet.x, feet.y, feet.z));
+        glm::mat4 esp3dTranslate = glm::translate(glm::mat4(1.0f), feet);
         for (auto &v: corners) {
             v = esp3dTranslate * esp3dRotation * v;
             v /= v.w;
@@ -178,8 +162,8 @@ void Esp::showEsp3D(
         // translate to screen coordination
         bool notShow = false;
         for (int j = 0; j < 8; j++) {
-            std::optional<Vec2> result = WorldToScreen::getInstance().translate(
-                    Vec3{corners[j].x, corners[j].y, corners[j].z}
+            std::optional<glm::vec2> result = WorldToScreen::getInstance().translate(
+                    corners[j]
             );
             if (!result) {
                 notShow = true;
@@ -222,16 +206,16 @@ void Esp::showViewLine(
             continue;
         }
 
-        Vec3 head = player->getCameraPosition();
-        Vec3 viewAngle = player->getViewAngle();
-        Vec3 orientation = Game::getInstance().viewAngleToOrientation(viewAngle);
-        Vec3 viewLineEnd = head + orientation;
+        glm::vec3 head = player->getCameraPosition();
+        glm::vec3 viewAngle = player->getViewAngle();
+        glm::vec3 orientation = Game::getInstance().viewAngleToOrientation(viewAngle);
+        glm::vec3 viewLineEnd = head + orientation;
         auto viewLineColor = player->getTeamId() == localPlayer->getTeamId() ?
                              Settings::Esp::teammateColor : Settings::Esp::enemyColor;
 
         // show view line
-        std::optional<Vec2> screenHead = WorldToScreen::getInstance().translate(head);
-        std::optional<Vec2> screenViewLineEnd = WorldToScreen::getInstance().translate(viewLineEnd);
+        std::optional<glm::vec2> screenHead = WorldToScreen::getInstance().translate(head);
+        std::optional<glm::vec2> screenViewLineEnd = WorldToScreen::getInstance().translate(viewLineEnd);
         if (!screenHead || !screenViewLineEnd) {
             continue;
         }
@@ -257,11 +241,11 @@ void Esp::showHeadCircle(
                                Settings::Esp::teammateColor : Settings::Esp::enemyColor;
 
         // show head circle
-        Vec3 head = player->getCameraPosition();
-        Vec3 feet = player->getPosition();
+        glm::vec3 head = player->getCameraPosition();
+        glm::vec3 feet = player->getPosition();
 
-        std::optional<Vec2> screenHead = WorldToScreen::getInstance().translate(head);
-        std::optional<Vec2> screenFeet = WorldToScreen::getInstance().translate(feet);
+        std::optional<glm::vec2> screenHead = WorldToScreen::getInstance().translate(head);
+        std::optional<glm::vec2> screenFeet = WorldToScreen::getInstance().translate(feet);
 
         if (!screenHead || !screenFeet) {
             continue;
@@ -286,21 +270,21 @@ void Esp::showHeadBar(
             continue;
         }
 
-        Vec3 feet = player->getPosition();
-        Vec3 top = {feet.x, feet.y, feet.z + player->getHeight()};
+        glm::vec3 feet = player->getPosition();
+        glm::vec3 top = {feet.x, feet.y, feet.z + player->getHeight()};
 
         // calculate the head bar position
-        std::optional<Vec2> screenTop = WorldToScreen::getInstance().translate(top);
+        std::optional<glm::vec2> screenTop = WorldToScreen::getInstance().translate(top);
         if (!screenTop) {
             continue;
         }
 
         // draw the head bar border
-        Vec2 barLeftTop = {
+        glm::vec2 barLeftTop = {
                 screenTop->x - Settings::Esp::barWidth / 2,
                 screenTop->y - (Settings::Esp::barHeight + Settings::Esp::barMoveUp)
         };
-        Vec2 barRightBottom = {
+        glm::vec2 barRightBottom = {
                 screenTop->x + Settings::Esp::barWidth / 2,
                 screenTop->y - Settings::Esp::barMoveUp
         };
@@ -315,19 +299,19 @@ void Esp::showHeadBar(
         );
 
         // draw name health bar
-        Vec2 upperAreaLeftTop = {
+        glm::vec2 upperAreaLeftTop = {
                 barLeftTop.x + 1,
                 barLeftTop.y + 1
         };
-        Vec2 upperAreaRightBottom = {
+        glm::vec2 upperAreaRightBottom = {
                 barLeftTop.x + Settings::Esp::barWidth - 1,
                 barLeftTop.y + Settings::Esp::barHeight * 0.64f - 1
         };
-        Vec2 lowerAreaLeftTop = {
+        glm::vec2 lowerAreaLeftTop = {
                 barLeftTop.x,
                 barLeftTop.y + Settings::Esp::barHeight * 0.64f
         };
-        Vec2 lowerAreaRightBottom = {
+        glm::vec2 lowerAreaRightBottom = {
                 barRightBottom.x - 1,
                 barRightBottom.y - 1
         };
@@ -350,11 +334,11 @@ void Esp::showHeadBar(
                 Settings::Esp::healthBackgroundColor
         );
 
-        Vec2 lowerInnerLeftTop = {
+        glm::vec2 lowerInnerLeftTop = {
                 lowerAreaLeftTop.x + 1,
                 lowerAreaLeftTop.y + 1
         };
-        Vec2 lowerInnerRightBottom = {
+        glm::vec2 lowerInnerRightBottom = {
                 lowerAreaRightBottom.x - 1,
                 lowerAreaRightBottom.y - 1
         };
@@ -362,11 +346,11 @@ void Esp::showHeadBar(
         float health = player->getHealth();
         float fullHealthLength = lowerInnerRightBottom.x - lowerInnerLeftTop.x;
         float healthLength = fullHealthLength * health / 100.f;
-        Vec2 healthLeftTop = {
+        glm::vec2 healthLeftTop = {
                 lowerInnerLeftTop.x,
                 lowerInnerLeftTop.y
         };
-        Vec2 healthRightBottom = {
+        glm::vec2 healthRightBottom = {
                 lowerInnerLeftTop.x + healthLength,
                 lowerInnerRightBottom.y
         };
@@ -393,9 +377,9 @@ void Esp::showDistance(std::shared_ptr<PlayerBasicInterface> localPlayer,
             continue;
         }
 
-        Vec3 feet = player->getPosition();
+        glm::vec3 feet = player->getPosition();
 
-        std::optional<Vec2> screenFeet = WorldToScreen::getInstance().translate(feet);
+        std::optional<glm::vec2> screenFeet = WorldToScreen::getInstance().translate(feet);
 
         if (!screenFeet) {
             continue;
