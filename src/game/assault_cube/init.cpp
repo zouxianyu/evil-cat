@@ -6,6 +6,7 @@
 #include "service/health_locker/health_locker.h"
 #include "service/aimbot/aimbot.h"
 #include "service/esp/esp.h"
+#include "service/radar/radar.h"
 
 std::shared_ptr<InitConfig> init() {
     std::vector<std::function<void()>> guiCallbacks;
@@ -26,6 +27,11 @@ std::shared_ptr<InitConfig> init() {
     // core service : esp
     guiCallbacks.emplace_back(
             std::bind(&Esp::callback, &Esp::getInstance())
+    );
+
+    // core service : radar
+    guiCallbacks.emplace_back(
+            std::bind(&Radar::callback, &Radar::getInstance())
     );
 
     // try to lock local player's health value
