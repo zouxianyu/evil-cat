@@ -1,6 +1,7 @@
 #include <imgui.h>
 #include "service/aimbot/aimbot.h"
 #include "service/esp/esp.h"
+#include "service/radar/radar.h"
 #include "service/name_list/name_list.h"
 #include "service/health_locker/health_locker.h"
 
@@ -146,6 +147,10 @@ void Menu::show() {
                     0.f,
                     180.f
             );
+            ImGui::Separator();
+
+            ImGui::Checkbox("2D radar", &Settings::Radar::on);
+            ImGui::Checkbox("rotate", &Settings::Radar::rotate);
             break;
         case Tab::Extra:
             ImGui::Text("Extra");
