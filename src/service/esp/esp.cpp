@@ -16,18 +16,18 @@ namespace Settings::Esp {
     bool showHeadCircle = true;
     bool showDistance = true;
 
-    ImColor teammateColor = ImColor(0, 255, 0);
-    ImColor enemyColor = ImColor(255, 0, 0);
+    ImColor teammateColor = ImColor(0, 255, 0, 225);
+    ImColor enemyColor = ImColor(255, 0, 0, 225);
 
     float barMoveUp = 15.f;
     float barWidth = 125.f;
     float barHeight = 35.f;
 
-    ImColor nameBackgroundColor = ImColor(0, 0, 0);
-    ImColor healthBackgroundColor = ImColor(50, 50, 50);
-    ImColor healthFullColor = ImColor(255, 255, 255);
-    ImColor healthHalfColor = ImColor(255, 255, 255);
-    ImColor healthLowColor = ImColor(255, 255, 255);
+    ImColor nameBackgroundColor = ImColor(0, 0, 0, 200);
+    ImColor healthBackgroundColor = ImColor(50, 50, 50, 255);
+    ImColor healthFullColor = ImColor(255, 255, 255, 255);
+    ImColor healthHalfColor = ImColor(150, 150, 150, 255);
+    ImColor healthLowColor = ImColor(255, 120, 120, 255);
 }
 
 Esp &Esp::getInstance() {
