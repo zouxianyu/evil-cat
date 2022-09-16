@@ -1,5 +1,5 @@
-#ifndef ASSAULT_CUBE_HACKING_SRC_SINGLETON_H
-#define ASSAULT_CUBE_HACKING_SRC_SINGLETON_H
+#ifndef EVIL_CAT_SINGLETON_H
+#define EVIL_CAT_SINGLETON_H
 
 template <typename T>
 class Singleton {
@@ -18,4 +18,4 @@ protected:
     ~Singleton() = default;
 };
 
-#endif //ASSAULT_CUBE_HACKING_SRC_SINGLETON_H
+#endif //EVIL_CAT_SINGLETON_H
