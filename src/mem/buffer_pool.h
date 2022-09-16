@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <optional>
 #include <mutex>
+#include "singleton.h"
 
 #define ROUND_DOWN(a, b) ((uintptr_t)(a) & ~((uintptr_t)(b) - 1))
 #define ROUND_UP(a, b) (((uintptr_t)(a) + ((uintptr_t)(b) - 1)) & ~((uintptr_t)(b) - 1))
@@ -12,7 +13,7 @@ struct PageInfo {
     uint8_t buffer[BUFFER_POOL_CACHE_LINE_SIZE];
 };
 
-class BufferPool {
+class BufferPool : public Singleton<BufferPool> {
 
     std::unordered_map<void *, PageInfo> cacheMap;
 
@@ -21,8 +22,6 @@ class BufferPool {
     std::optional<PageInfo> getPageInfo(void *alignedAddress, bool allocate);
 
 public:
-
-    static BufferPool &getInstance();
 
     bool read(void *address, void *buffer, size_t size, bool cache);
 

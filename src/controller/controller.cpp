@@ -4,11 +4,6 @@
 #include "controller.h"
 #include "settings.h"
 
-Controller &Controller::getInstance() {
-    static Controller instance;
-    return instance;
-}
-
 // generally, we call this function in the 'init' stage
 // we add all the GUI callbacks to the GUI thread
 

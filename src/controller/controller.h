@@ -4,8 +4,9 @@
 #include <vector>
 #include <functional>
 #include <mutex>
+#include "singleton.h"
 
-class Controller {
+class Controller : public Singleton<Controller> {
 
     std::vector<std::function<void()>> guiCallbacks;
 
@@ -18,8 +19,6 @@ class Controller {
     std::condition_variable fastLoopCV;
 
 public:
-    static Controller &getInstance();
-
     bool addGuiCallback(const std::function<void()>& callback);
 
     void callGuiCallbacks();

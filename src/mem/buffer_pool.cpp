@@ -1,11 +1,6 @@
 #include "process_memory.h"
 #include "buffer_pool.h"
 
-BufferPool &BufferPool::getInstance() {
-    static BufferPool instance;
-    return instance;
-}
-
 bool BufferPool::read(void *address, void *buffer, size_t size, bool cache) {
 #ifndef USE_BUFFER_POOL
     return ProcessMemory::getInstance().read(address, buffer, size);
