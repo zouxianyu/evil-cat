@@ -3,11 +3,9 @@
 #include <thread>
 #include "game.h"
 #include "init.h"
-#include "game/interface/init_config.h"
-#include "mem/process_memory.h"
+#include "module.h"
+#include "service/service_interface.h"
 #include "mem/buffer_pool.h"
-#include "proc/process_info.h"
-#include "view/view.h"
 #include "controller/controller.h"
 #include "settings.h"
 #include "entry.h"
@@ -15,37 +13,40 @@
 void entry() {
     // call the game specified initialization interface
     // to get the config (currently only gui callbacks and fast loop callbacks)
-    std::shared_ptr<InitConfig> config = init();
+    std::vector<std::unique_ptr<ServiceInterface>> services = init();
 
     // do initialization of the core module
-    ProcessInfo::getInstance().attach(CONF_PROCESS_NAME);
-    ProcessMemory::getInstance().attach(CONF_PROCESS_NAME);
-    View::getInstance().initialize(CONF_PROCESS_NAME);
+    Module::processInfo->attach(CONF_PROCESS_NAME);
+    Module::processMemory->attach(CONF_PROCESS_NAME);
+    Module::view->initialize(CONF_PROCESS_NAME);
 
     // resolve GUI callbacks
-    for (const auto& callback: config->guiCallbacks) {
-        Controller::getInstance().addGuiCallback(callback);
+    for (const auto &service: services) {
+        Controller::getInstance().addGuiCallback(
+                [&service] {
+                    service->callback();
+                }
+        );
     }
 
     // we need to add a buffer pool refresh callback
     // because the cache need to be flushed each frame
     Controller::getInstance().addGuiCallback(
-            std::bind(&BufferPool::refresh, &BufferPool::getInstance())
+            [inst = &BufferPool::getInstance()] {
+                inst->refresh();
+            }
     );
-
-    // resolve fast loop callbacks
-    for (const auto& callback: config->fastLoopCallbacks) {
-        Controller::getInstance().addFastLoopCallback(callback);
-    }
 
     // create the fast loop thread
     // the code inside the fast loop is a busy-wait loop
     std::thread fastLoopThread{
-            std::bind(&Controller::callFastLoopCallbacks, &Controller::getInstance())
+            [inst = &Controller::getInstance()] {
+                inst->callFastLoopCallbacks();
+            }
     };
 
     // create the gui thread
-    View::getInstance().loop();
+    Module::view->loop();
 
     // set the exit flag in case the code in 'View' doesn't set it
     {
@@ -60,8 +61,7 @@ void entry() {
     // because the ProcessMemory and ProcessInfo is singleton
     // we can't use RAII to do the cleanup
     // so just do it manually, although it doesn't look good
-    ProcessMemory::getInstance().detach();
-    ProcessInfo::getInstance().detach();
+    Module::processMemory->detach();
+    Module::processInfo->detach();
 
 }
-

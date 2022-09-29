@@ -8,11 +8,6 @@
 #include "settings.h"
 #include "menu.h"
 
-Menu &Menu::getInstance() {
-    static Menu instance;
-    return instance;
-}
-
 void Menu::show() {
     constexpr auto windowFlags = ImGuiWindowFlags_NoCollapse |
                                  ImGuiWindowFlags_NoResize |

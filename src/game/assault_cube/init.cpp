@@ -1,48 +1,25 @@
 #include <vector>
-#include <functional>
 #include <memory>
 #include "init.h"
+#include "service/service_interface.h"
 #include "service/name_list/name_list.h"
 #include "service/health_locker/health_locker.h"
 #include "service/aimbot/aimbot.h"
 #include "service/esp/esp.h"
 #include "service/radar/radar.h"
 
-std::shared_ptr<InitConfig> init() {
-    std::vector<std::function<void()>> guiCallbacks;
-    std::vector<std::function<bool()>> fastLoopCallbacks;
+std::vector<std::unique_ptr<ServiceInterface>> init() {
 
-    // initialize your callbacks here
+    std::vector<std::unique_ptr<ServiceInterface>> services;
 
-    // custom service : show name list on the left-top corner
-    guiCallbacks.emplace_back(
-            std::bind(&NameList::callback, &NameList::getInstance())
-    );
+    // choose your services here
+    // easy to understand
 
-    // core service : aimbot
-    guiCallbacks.emplace_back(
-            std::bind(&Aimbot::callback, &Aimbot::getInstance())
-    );
+    services.emplace_back(std::make_unique<NameList>());
+    services.emplace_back(std::make_unique<Aimbot>());
+    services.emplace_back(std::make_unique<Esp>());
+    services.emplace_back(std::make_unique<Radar>());
+    services.emplace_back(std::make_unique<HealthLocker>());
 
-    // core service : esp
-    guiCallbacks.emplace_back(
-            std::bind(&Esp::callback, &Esp::getInstance())
-    );
-
-    // core service : radar
-    guiCallbacks.emplace_back(
-            std::bind(&Radar::callback, &Radar::getInstance())
-    );
-
-    // try to lock local player's health value
-    guiCallbacks.emplace_back(
-            std::bind(&HealthLocker::guiCallback, &HealthLocker::getInstance())
-    );
-
-    // construct initialization config and return it to the caller (framework)
-    std::shared_ptr<InitConfig> config = std::make_shared<InitConfig>(
-            guiCallbacks,
-            fastLoopCallbacks
-    );
-    return config;
+    return services;
 }

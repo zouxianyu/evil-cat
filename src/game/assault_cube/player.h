@@ -6,15 +6,16 @@
 #include "game/interface/player_basic_interface.h"
 #include "interface/player_health_interface.h"
 #include "interface/player_armor_interface.h"
+#include "module_config.h"
 
 class Player : public PlayerBasicInterface,
                public PlayerHealthInterface,
                public PlayerArmorInterface {
 
-    void *_this;
+    gameptr_t _this;
 
 public:
-    explicit Player(void *address);
+    explicit Player(gameptr_t address);
 
     glm::vec3 getPosition() override;
 

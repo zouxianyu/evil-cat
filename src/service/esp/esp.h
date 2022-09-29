@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <imgui.h>
+#include "service/service_interface.h"
 #include "game/interface/player_basic_interface.h"
 
 namespace Settings::Esp {
@@ -29,7 +30,7 @@ namespace Settings::Esp {
     extern ImColor healthLowColor;
 }
 
-class Esp {
+class Esp : public ServiceInterface {
     void showEsp2D(
             std::shared_ptr<PlayerBasicInterface> localPlayer,
             const std::vector<std::shared_ptr<PlayerBasicInterface>> &players
@@ -61,9 +62,8 @@ class Esp {
     );
 
 public:
-    static Esp &getInstance();
-
     void callback();
+
 };
 
 #endif //EVIL_CAT_SERVICE_ESP_ESP_H

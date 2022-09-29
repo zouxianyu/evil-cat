@@ -2,8 +2,8 @@
 #define EVIL_CAT_GAME_ASSAULT_CUBE_INIT_H
 
 #include <memory>
-#include "game/interface/init_config.h"
+#include "service/service_interface.h"
 
-std::shared_ptr<InitConfig> init();
+std::vector<std::unique_ptr<ServiceInterface>> init();
 
 #endif //EVIL_CAT_GAME_ASSAULT_CUBE_INIT_H

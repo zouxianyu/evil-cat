@@ -1,58 +1,56 @@
-#include "process_memory.h"
+#include <algorithm>
+#include "game_ptr.h"
+#include "module.h"
 #include "buffer_pool.h"
 
-bool BufferPool::read(void *address, void *buffer, size_t size, bool cache) {
+bool BufferPool::read(gameptr_t address, void *buffer, size_t size, bool cache) {
 #ifndef USE_BUFFER_POOL
-    return ProcessMemory::getInstance().read(address, buffer, size);
+    return Module::processMemory->read(address, buffer, size);
 #else
     // if we don't want to use the cache, just read from the memory directly
     if (!cache) {
-        return ProcessMemory::getInstance().read(address, buffer, size);
+        return Module::processMemory->read(address, buffer, size);
     }
 
     // use loop to read cache line by line
     while (size > 0) {
-        uintptr_t addrAlign = ROUND_DOWN(address, BUFFER_POOL_CACHE_LINE_SIZE);
+        gameptr_t addrAlign = ROUND_DOWN(address, BUFFER_POOL_CACHE_LINE_SIZE);
 
         // get cache info by the aligned read address
-        std::optional<PageInfo> cachedAddress = getPageInfo(
-                reinterpret_cast<void *>(addrAlign),
-                true
-        );
-        if (!cachedAddress.has_value()) {
+        std::optional<PageCache> cachedAddress = getPageCache(addrAlign, true);
+        if (!cachedAddress) {
             return false;
         }
 
         // get read size of the current cacheline
-        size_t n = std::min(
-                BUFFER_POOL_CACHE_LINE_SIZE -
-                (addrAlign - reinterpret_cast<uintptr_t>(address)),
+        size_t n = (std::min)(
+                BUFFER_POOL_CACHE_LINE_SIZE - (address - addrAlign),
                 size
         );
 
         // copy data to the buffer
         memmove(buffer,
                 reinterpret_cast<void *>(
-                        reinterpret_cast<uintptr_t>(cachedAddress.value().buffer) +
-                        (reinterpret_cast<uintptr_t>(address) - addrAlign)
+                        reinterpret_cast<gameptr_t>(&*cachedAddress) + (address - addrAlign)
                 ),
-                n);
+                n
+        );
 
         // adjust pointers
         size -= n;
         buffer = reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(buffer) + n);
-        address = reinterpret_cast<void *>(addrAlign + BUFFER_POOL_CACHE_LINE_SIZE);
+        address = addrAlign + BUFFER_POOL_CACHE_LINE_SIZE;
     }
 
     return true;
 #endif
 }
 
-bool BufferPool::write(void *address, const void *buffer, size_t size) {
+bool BufferPool::write(gameptr_t address, const void *buffer, size_t size) {
 #ifdef USE_BUFFER_POOL
     // copy this variable to avoid modifying the original one
     // because at last we will use the original one
-    void *_address = address;
+    gameptr_t _address = address;
     const void *_buffer = buffer;
     size_t _size = size;
 
@@ -60,26 +58,22 @@ bool BufferPool::write(void *address, const void *buffer, size_t size) {
     // we use write-through policy here,
     // because we want to matain the cache consistency
     while (_size > 0) {
-        uintptr_t addrAlign = ROUND_DOWN(_address, BUFFER_POOL_CACHE_LINE_SIZE);
+        gameptr_t addrAlign = ROUND_DOWN(_address, BUFFER_POOL_CACHE_LINE_SIZE);
 
         // get cache info by the aligned read address
-        std::optional<PageInfo> cachedAddress = getPageInfo(
-                reinterpret_cast<void *>(addrAlign),
-                false
-        );
+        std::optional<PageCache> cachedAddress = getPageCache(addrAlign, false);
+
         // get write size of the current cacheline
-        size_t n = std::min(
-                BUFFER_POOL_CACHE_LINE_SIZE -
-                (addrAlign - reinterpret_cast<uintptr_t>(_address)),
+        size_t n = (std::min)(
+                BUFFER_POOL_CACHE_LINE_SIZE - (_address - addrAlign),
                 _size
         );
 
-        if (cachedAddress.has_value()) {
+        if (cachedAddress) {
             // copy the data from the buffer,
             // write it to the cache line
             memmove(reinterpret_cast<void *>(
-                            reinterpret_cast<uintptr_t>(cachedAddress.value().buffer) +
-                            (reinterpret_cast<uintptr_t>(_address) - addrAlign)
+                            reinterpret_cast<uintptr_t>(&*cachedAddress) + (_address - addrAlign)
                     ),
                     _buffer,
                     n
@@ -89,11 +83,11 @@ bool BufferPool::write(void *address, const void *buffer, size_t size) {
         // adjust pointers
         _size -= n;
         _buffer = reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(_buffer) + n);
-        _address = reinterpret_cast<void *>(addrAlign + BUFFER_POOL_CACHE_LINE_SIZE);
+        _address = addrAlign + BUFFER_POOL_CACHE_LINE_SIZE;
     }
 #endif
     // we should write it to the memory anyway
-    return ProcessMemory::getInstance().write(address, buffer, size);
+    return Module::processMemory->write(address, buffer, size);
 }
 
 bool BufferPool::refresh() {
@@ -106,8 +100,8 @@ bool BufferPool::refresh() {
 #endif
 }
 
-std::optional<PageInfo>
-BufferPool::getPageInfo(void *alignedAddress, bool allocate) {
+std::optional<PageCache>
+BufferPool::getPageCache(gameptr_t alignedAddress, bool allocate) {
     std::lock_guard lock(cacheMapMutex);
 
     // try to find a cache line which is in the cache map
@@ -125,10 +119,10 @@ BufferPool::getPageInfo(void *alignedAddress, bool allocate) {
 
     // allocate a new cache line and read it from the target address
     // from the next level interface
-    PageInfo pageInfo{};
-    if (!ProcessMemory::getInstance().read(
+    PageCache pageCache;
+    if (!Module::processMemory->read(
             alignedAddress,
-            pageInfo.buffer,
+            &pageCache,
             BUFFER_POOL_CACHE_LINE_SIZE
     )) {
         return std::nullopt;
@@ -136,9 +130,9 @@ BufferPool::getPageInfo(void *alignedAddress, bool allocate) {
 
     // insert it in to the cache map
     // so that we can use it next time
-    cacheMap.insert(std::make_pair(alignedAddress, pageInfo));
+    cacheMap.insert(std::make_pair(alignedAddress, pageCache));
 
-    return pageInfo;
+    return pageCache;
 }
 
 

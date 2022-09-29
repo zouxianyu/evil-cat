@@ -1,6 +1,5 @@
 #include <memory>
 #include "game.h"
-#include "game/interface/player_basic_interface.h"
 #include "interface/player_health_interface.h"
 #include "health_locker.h"
 #include "controller/controller.h"
@@ -9,12 +8,7 @@ namespace Settings::HealthLocker {
     bool on = false;
 }
 
-HealthLocker &HealthLocker::getInstance() {
-    static HealthLocker instance;
-    return instance;
-}
-
-void HealthLocker::guiCallback() {
+void HealthLocker::callback() {
     static bool previous = false;
     if (Settings::HealthLocker::on && !previous) {
         Controller::getInstance().addFastLoopCallback(
@@ -28,9 +22,7 @@ bool HealthLocker::fastLoopCallback() {
     if (!Settings::HealthLocker::on) {
         return false;
     }
-    auto localPlayer = std::dynamic_pointer_cast<PlayerHealthInterface>(
-            Game::getInstance().getLocalPlayer()
-    );
+    std::shared_ptr<PlayerHealthInterface> localPlayer = Game::getInstance().getLocalPlayer();
     localPlayer->setHealth(100);
     return true;
 }

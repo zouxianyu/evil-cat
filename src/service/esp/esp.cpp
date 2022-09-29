@@ -4,8 +4,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/vector_angle.hpp>
 #include "game.h"
+#include "game/game_helper.h"
 #include "game/interface/player_basic_interface.h"
-#include "service/world_to_screen/world_to_screen.h"
+#include "world_to_screen/world_to_screen.h"
 #include "esp.h"
 
 namespace Settings::Esp {
@@ -30,11 +31,6 @@ namespace Settings::Esp {
     ImColor healthLowColor = ImColor(255, 120, 120, 255);
 }
 
-Esp &Esp::getInstance() {
-    static Esp instance;
-    return instance;
-}
-
 void Esp::callback() {
     if (!Settings::Esp::on) {
         return;
@@ -47,8 +43,8 @@ void Esp::callback() {
     std::shared_ptr<PlayerBasicInterface>
             localPlayer = Game::getInstance().getLocalPlayer();
 
-    std::vector<std::shared_ptr<PlayerBasicInterface>>
-            players = Game::getInstance().getPlayers();
+    std::vector<std::shared_ptr<PlayerBasicInterface>> players =
+            GameHelper::getPlayers<PlayerBasicInterface>();
 
     // show esp box
     switch (Settings::Esp::boxType) {
@@ -396,8 +392,10 @@ void Esp::showHeadBar(
     }
 }
 
-void Esp::showDistance(std::shared_ptr<PlayerBasicInterface> localPlayer,
-                       std::vector<std::shared_ptr<PlayerBasicInterface>> players) {
+void Esp::showDistance(
+        std::shared_ptr<PlayerBasicInterface> localPlayer,
+        std::vector<std::shared_ptr<PlayerBasicInterface>> players
+) {
     for (const auto &player: players) {
         if (*player == *localPlayer || player->getHealth() <= 0) {
             continue;

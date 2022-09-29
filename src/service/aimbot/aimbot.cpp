@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <windows.h>
 #include "game.h"
+#include "game/game_helper.h"
 #include "game/interface/player_basic_interface.h"
 #include "aimbot_helper.h"
 #include "aimbot.h"
@@ -15,11 +16,6 @@ namespace Settings::Aimbot {
 }
 
 // TODO: add bone aimbot and traceline collision detection aimbot policy
-
-Aimbot &Aimbot::getInstance() {
-    static Aimbot instance;
-    return instance;
-}
 
 void Aimbot::callback() {
 
@@ -54,7 +50,7 @@ void Aimbot::callback() {
             Game::getInstance().getLocalPlayer();
 
     std::vector<std::shared_ptr<PlayerBasicInterface>> players =
-            Game::getInstance().getPlayers();
+            GameHelper::getPlayers<PlayerBasicInterface>();
 
     if (players.empty()) {
         return;

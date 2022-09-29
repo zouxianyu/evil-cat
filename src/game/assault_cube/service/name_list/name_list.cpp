@@ -3,15 +3,11 @@
 #include <imgui.h>
 #include "game.h"
 #include "game/interface/player_basic_interface.h"
+#include "game/game_helper.h"
 #include "name_list.h"
 
 namespace Settings::NameList {
     bool on = false;
-}
-
-NameList &NameList::getInstance() {
-    static NameList instance;
-    return instance;
 }
 
 void NameList::callback() {
@@ -20,7 +16,9 @@ void NameList::callback() {
         return;
     }
 
-    std::vector<std::shared_ptr<PlayerBasicInterface>> players = Game::getInstance().getPlayers();
+    std::vector<std::shared_ptr<PlayerBasicInterface>> players =
+            GameHelper::getPlayers<PlayerBasicInterface>();
+
     for (int i = 0; i < players.size(); i++) {
         PlayerBasicInterface &player = *players[i];
         ImGui::GetBackgroundDrawList()->AddText(

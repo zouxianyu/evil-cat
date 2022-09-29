@@ -1,4 +1,4 @@
-#include "service/entry.h"
+#include "entry/entry.h"
 
 // this is the external entry
 // if we compile it as an executable file

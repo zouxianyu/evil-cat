@@ -3,17 +3,16 @@
 
 #include <vector>
 #include <memory>
-#include "game/interface/player_basic_interface.h"
+#include "singleton.h"
+#include "player.h"
 
-class Game {
+class Game : public Singleton<Game> {
 public:
-    static Game &getInstance();
+    std::shared_ptr<Player> getLocalPlayer();
 
-    std::shared_ptr<PlayerBasicInterface> getLocalPlayer();
+    std::vector<std::shared_ptr<Player>> getPlayers();
 
-    std::vector<std::shared_ptr<PlayerBasicInterface>> getPlayers();
-
-    std::shared_ptr<glm::mat4> getVPMatrix();
+    glm::mat4 getVPMatrix();
 
     glm::vec2 getWindowSize();
 

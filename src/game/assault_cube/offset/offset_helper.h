@@ -2,6 +2,7 @@
 #define EVIL_CAT_GAME_ASSAULT_CUBE_OFFSET_OFFSET_HELPER_H
 
 #include <cstdint>
+#include "game_ptr.h"
 
 // dynamic define
 #define STR_MERGE_IMPL(a, b) a##b
@@ -10,6 +11,6 @@
 #define DEFINE_MEMBER_N(type, name, offset) struct {unsigned char MAKE_PAD(offset); type name;}
 
 // offset
-#define ADDRESS(t,c,m) (&(((c*)t)->m))
+#define ADDRESS(t,c,m) ((gameptr_t)(&(((c*)t)->m)))
 
 #endif //EVIL_CAT_GAME_ASSAULT_CUBE_OFFSET_OFFSET_HELPER_H

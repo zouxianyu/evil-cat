@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/vector_angle.hpp>
 #include "game.h"
+#include "game/game_helper.h"
 #include "settings.h"
 #include "radar.h"
 
@@ -20,17 +21,13 @@ namespace Settings::Radar {
     ImColor enemyColor = ImColor(255, 0, 0, 255);
 }
 
-Radar &Radar::getInstance() {
-    static Radar instance;
-    return instance;
-}
-
 void Radar::callback() {
     if (!Settings::Radar::on) {
         return;
     }
     std::shared_ptr<PlayerBasicInterface> localPlayer = Game::getInstance().getLocalPlayer();
-    std::vector<std::shared_ptr<PlayerBasicInterface>> players = Game::getInstance().getPlayers();
+    std::vector<std::shared_ptr<PlayerBasicInterface>> players =
+            GameHelper::getPlayers<PlayerBasicInterface>();
 
     glm::vec3 localPosition = localPlayer->getPosition();
 

@@ -1,15 +1,16 @@
 #ifndef EVIL_CAT_GAME_ASSAULT_CUBE_SERVICE_NAME_LIST_NAME_LIST_H
 #define EVIL_CAT_GAME_ASSAULT_CUBE_SERVICE_NAME_LIST_NAME_LIST_H
 
+#include "service/service_interface.h"
+
 namespace Settings::NameList {
     extern bool on;
 }
 
-class NameList {
+class NameList : public ServiceInterface {
 public:
-    static NameList &getInstance();
+    void callback() override;
 
-    void callback();
 };
 
 #endif //EVIL_CAT_GAME_ASSAULT_CUBE_SERVICE_NAME_LIST_NAME_LIST_H

@@ -1,6 +1,6 @@
 #include <thread>
 #include <windows.h>
-#include "service/entry.h"
+#include "entry/entry.h"
 
 // if we inject the dll into the target process
 // and when we want to exit, we need to free the library

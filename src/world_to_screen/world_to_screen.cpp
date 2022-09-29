@@ -13,7 +13,7 @@ WorldToScreen &WorldToScreen::getInstance() {
 bool WorldToScreen::refresh() {
 
     // refresh view projection matrix
-    vpMatrix = *Game::getInstance().getVPMatrix();
+    vpMatrix = Game::getInstance().getVPMatrix();
 
     // refresh window size
     glm::vec2 windowSize = Game::getInstance().getWindowSize();
