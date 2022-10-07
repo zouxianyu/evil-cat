@@ -24,7 +24,7 @@ void Controller::callGuiCallbacks() {
     }
 }
 
-// fast loop is designed to adapt 'lock lockHealth', 'lock position', ...
+// fast loop is designed to adapt 'lock health', 'lock position', ...
 //
 // the speed of the fast loop is not the same as the gui thread (up to 60 fps)
 // it is just like a busy-wait loop, and it is asynchronous to the GUI thread.
