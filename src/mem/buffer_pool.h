@@ -4,28 +4,28 @@
 #include <unordered_map>
 #include <optional>
 #include <mutex>
+#include <array>
+#include "game_ptr.h"
+#include "process_memory_interface.h"
 #include "singleton.h"
 
 #define ROUND_DOWN(a, b) ((uintptr_t)(a) & ~((uintptr_t)(b) - 1))
 #define ROUND_UP(a, b) (((uintptr_t)(a) + ((uintptr_t)(b) - 1)) & ~((uintptr_t)(b) - 1))
 
-struct PageInfo {
-    uint8_t buffer[BUFFER_POOL_CACHE_LINE_SIZE];
-};
+using PageCache = std::array<uint8_t, BUFFER_POOL_CACHE_LINE_SIZE>;
 
 class BufferPool : public Singleton<BufferPool> {
 
-    std::unordered_map<void *, PageInfo> cacheMap;
+    std::unordered_map<gameptr_t, PageCache> cacheMap;
 
     std::mutex cacheMapMutex;
 
-    std::optional<PageInfo> getPageInfo(void *alignedAddress, bool allocate);
-
+    std::optional<PageCache> getPageCache(gameptr_t alignedAddress, bool allocate);
 public:
 
-    bool read(void *address, void *buffer, size_t size, bool cache);
+    bool read(gameptr_t address, void *buffer, size_t size, bool cache);
 
-    bool write(void *address, const void *buffer, size_t size);
+    bool write(gameptr_t address, const void *buffer, size_t size);
 
     bool refresh();
 };

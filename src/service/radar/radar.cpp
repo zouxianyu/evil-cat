@@ -1,9 +1,9 @@
+#include <memory>
 #include <optional>
 #include <imgui.h>
 #include <glm/glm.hpp>
 #include <glm/gtx/vector_angle.hpp>
-#include "game.h"
-#include "settings.h"
+#include "module.h"
 #include "radar.h"
 
 namespace Settings::Radar {
@@ -20,31 +20,24 @@ namespace Settings::Radar {
     ImColor enemyColor = ImColor(255, 0, 0, 255);
 }
 
-Radar &Radar::getInstance() {
-    static Radar instance;
-    return instance;
-}
-
 void Radar::callback() {
     if (!Settings::Radar::on) {
         return;
     }
-    std::shared_ptr<PlayerBasicInterface> localPlayer = Game::getInstance().getLocalPlayer();
-    std::vector<std::shared_ptr<PlayerBasicInterface>> players = Game::getInstance().getPlayers();
+    std::shared_ptr<PlayerInterface> localPlayer = Module::game->getLocalPlayer();
+    std::vector<std::shared_ptr<PlayerInterface>> players = Module::game->getPlayers();
 
     glm::vec3 localPosition = localPlayer->getPosition();
 
     glm::vec3 defaultViewAngle = {0.f, 0.f, 0.f};
-    glm::vec3 defaultOrientation =
-            Game::getInstance().viewAngleToOrientation(defaultViewAngle);
+    glm::vec3 defaultOrientation = Module::game->viewAngleToOrientation(defaultViewAngle);
 
     glm::vec2 defaultOrientation2D = glm::normalize(
             glm::vec2{defaultOrientation.x, defaultOrientation.y}
     );
 
     glm::vec3 currentViewAngle = localPlayer->getViewAngle();
-    glm::vec3 currentOrientation =
-            Game::getInstance().viewAngleToOrientation(currentViewAngle);
+    glm::vec3 currentOrientation = Module::game->viewAngleToOrientation(currentViewAngle);
 
     glm::vec2 currentOrientation2D = glm::normalize(
             glm::vec2{currentOrientation.x, currentOrientation.y}
@@ -57,7 +50,7 @@ void Radar::callback() {
     }
 
     // calculate the radar's position
-    glm::vec2 windowSize = Game::getInstance().getWindowSize();
+    glm::vec2 windowSize = Module::game->getWindowSize();
 
     glm::vec2 radarPosition = Settings::Radar::normalizedCenter * windowSize;
 
@@ -130,13 +123,11 @@ void Radar::callback() {
 
         glm::vec3 playerViewAngle = player->getViewAngle();
 
-        glm::vec3 playerOrientation =
-                Game::getInstance().viewAngleToOrientation(playerViewAngle);
+        glm::vec3 playerOrientation = Module::game->viewAngleToOrientation(playerViewAngle);
 
         glm::vec2 playerOrientation2D = glm::normalize(
-                glm::vec2{playerOrientation.x, playerOrientation. y}
+                glm::vec2{playerOrientation.x, playerOrientation.y}
         );
-
 
         if (Settings::Radar::rotate) {
             playerOrientation2D = glm::rotate(playerOrientation2D, alpha);
@@ -161,7 +152,6 @@ void Radar::callback() {
                 playerColor,
                 2.f
         );
-
 
     }
 }

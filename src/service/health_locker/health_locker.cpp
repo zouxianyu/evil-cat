@@ -1,20 +1,14 @@
 #include <memory>
-#include "game.h"
-#include "game/interface/player_basic_interface.h"
-#include "interface/player_health_interface.h"
-#include "health_locker.h"
+#include "module.h"
 #include "controller/controller.h"
+#include "health_locker.h"
 
 namespace Settings::HealthLocker {
     bool on = false;
+    float lockHealth = 100.f;
 }
 
-HealthLocker &HealthLocker::getInstance() {
-    static HealthLocker instance;
-    return instance;
-}
-
-void HealthLocker::guiCallback() {
+void HealthLocker::callback() {
     static bool previous = false;
     if (Settings::HealthLocker::on && !previous) {
         Controller::getInstance().addFastLoopCallback(
@@ -28,10 +22,7 @@ bool HealthLocker::fastLoopCallback() {
     if (!Settings::HealthLocker::on) {
         return false;
     }
-    auto localPlayer = std::dynamic_pointer_cast<PlayerHealthInterface>(
-            Game::getInstance().getLocalPlayer()
-    );
-    localPlayer->setHealth(100);
+    Module::game->getLocalPlayer()->setHealth(Settings::HealthLocker::lockHealth);
     return true;
 }
 

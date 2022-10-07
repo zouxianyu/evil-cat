@@ -7,7 +7,7 @@
 #include <d3d9.h>
 #include <imgui.h>
 #include <imgui_spectrum.h>
-#include "menu.h"
+#include "module.h"
 #include "controller/controller.h"
 #include "Functions.h"
 #include "Overlay.h"
@@ -86,7 +86,7 @@ void ImGuiD3D9ExternalView::Render() {
     if (Settings::showMenu) {
         InputHandler();
 //        ImGui::ShowDemoWindow();
-        Menu::getInstance().show();
+        Module::menu->show();
         SetWindowLong(Overlay.Hwnd, GWL_EXSTYLE, WS_EX_TOOLWINDOW);
         UpdateWindow(Overlay.Hwnd);
         SetFocus(Overlay.Hwnd);
@@ -332,6 +332,5 @@ bool ImGuiD3D9ExternalView::loop() {
 ImGuiD3D9ExternalView::ImGuiD3D9ExternalView() {
 //    _this = this;
 }
-
 
 

@@ -10,17 +10,15 @@ namespace Offset {
 
     using Name = std::array<char, 16>;
 
-    struct Player {
-        union {
-            DEFINE_MEMBER_N(glm::vec3, head, 0x4);
-            DEFINE_MEMBER_N(glm::vec3, feet, 0x34);
-            DEFINE_MEMBER_N(glm::vec3, viewAngle, 0x40);
-            DEFINE_MEMBER_N(int, health, 0xF8);
-            DEFINE_MEMBER_N(int, armor, 0xFC);
-            DEFINE_MEMBER_N(Name, name, 0x225);
-            DEFINE_MEMBER_N(uint8_t, team, 0x32C);
-        };
-    };
+    namespace Player {
+        constexpr auto head = 0x4; // vec3
+        constexpr auto feet = 0x34; // vec3
+        constexpr auto viewAngle = 0x40; // vec3
+        constexpr auto health = 0xF8; // int
+        constexpr auto armor = 0xFC; // int
+        constexpr auto name = 0x225; // Offset::Name
+        constexpr auto team = 0x32C; // uint8_t
+    }
 
 }
 

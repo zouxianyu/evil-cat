@@ -1,20 +1,22 @@
 #ifndef EVIL_CAT_PROC_PROCESS_INFO_INTERNAL_H
 #define EVIL_CAT_PROC_PROCESS_INFO_INTERNAL_H
 
-#include "process_info.h"
+#include <optional>
+#include <unordered_map>
+#include <string>
+#include "game_ptr.h"
+#include "process_info_interface.h"
 
-class ProcessInfoInternal : public ProcessInfo {
+class ProcessInfoInternal : public ProcessInfoInterface {
 
-    std::unordered_map<std::string, void*> modulesAddress;
+    std::unordered_map<std::string, gameptr_t> modulesAddress;
 
 public:
-    static ProcessInfo &getInstance();
-
     bool attach(const std::string &processName) override;
 
     bool detach() override;
 
-    bool getModuleAddress(const std::string &moduleName, void *&address) override;
+    std::optional<gameptr_t> getModuleAddress(const std::string &moduleName) override;
 
     bool refresh() override;
 };

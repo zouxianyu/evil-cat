@@ -1,11 +1,12 @@
 #ifndef EVIL_CAT_GAME_ASSAULT_CUBE_MENU_H
 #define EVIL_CAT_GAME_ASSAULT_CUBE_MENU_H
 
-class Menu {
-public:
-    static Menu &getInstance();
+#include "game/interface/menu_interface.h"
 
-    void show();
+class Menu : public MenuInterface {
+public:
+    void show() override;
+
 };
 
 #endif //EVIL_CAT_GAME_ASSAULT_CUBE_MENU_H

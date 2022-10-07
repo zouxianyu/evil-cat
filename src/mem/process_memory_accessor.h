@@ -3,16 +3,27 @@
 
 #include <string>
 #include <vector>
-#include <stdexcept>
-#include "proc/process_info.h"
+#include <type_traits>
+#include "module_config.h"
+#include "module.h"
+#include "game_ptr.h"
+#include "log.h"
 #include "buffer_pool.h"
 
 
 template<typename T>
 class ProcessMemoryAccessor {
-    T *address;
+    // check T's type
+    // if T is not a pod type, we cannot directly read/write it
+    static_assert(std::is_pod_v<T>, "T must be a POD type");
+
+    gameptr_t address;
+
     bool cache;
+
+    bool bad;
 public:
+
     ProcessMemoryAccessor(const ProcessMemoryAccessor &) = delete;
 
     ProcessMemoryAccessor &operator=(const ProcessMemoryAccessor &) = delete;
@@ -23,48 +34,62 @@ public:
 
     explicit ProcessMemoryAccessor(
             std::string moduleName,
-            uintptr_t moduleOffset,
-            const std::vector<uintptr_t> &offsets = {},
+            gameptr_t moduleOffset,
+            const std::vector<gameptr_t> &offsets = {},
             bool cache = true
     ) {
-        void *moduleBase = nullptr;
-        if (!ProcessInfo::getInstance().getModuleAddress(moduleName, moduleBase)) {
-            throw std::runtime_error("Could not find module " + moduleName);
+        gameptr_t moduleBase{};
+        if (auto result = Module::processInfo->getModuleAddress(moduleName)) {
+            moduleBase = *result;
+            bad = false;
+        } else {
+            LOG_DEBUG << "Failed to get module address for " << moduleName << std::endl;
+            bad = true;
+            return;
         }
-        address = reinterpret_cast<T *>(reinterpret_cast<uintptr_t>(moduleBase) + moduleOffset);
-        for (uintptr_t offset: offsets) {
-            BufferPool::getInstance().read(address, &address, sizeof(uintptr_t), cache);
-            address = reinterpret_cast<T *>(reinterpret_cast<uintptr_t>(address) + offset);
+        address = moduleBase + moduleOffset;
+        for (gameptr_t offset: offsets) {
+            if (!BufferPool::getInstance().read(address, &address, sizeof(gameptr_t), cache)) {
+                LOG_DEBUG << "Failed to read address at " << std::hex << address << std::endl;
+                bad = true;
+                return;
+            }
+            address += offset;
         }
         this->address = address;
         this->cache = cache;
     }
 
     explicit ProcessMemoryAccessor(
-            T *address,
-            const std::vector<uintptr_t> &offsets = {},
+            gameptr_t address,
+            const std::vector<gameptr_t> &offsets = {},
             bool cache = true
     ) {
-        for (uintptr_t offset: offsets) {
-            BufferPool::getInstance().read(address, &address, sizeof(uintptr_t), cache);
-            address = reinterpret_cast<T *>(reinterpret_cast<uintptr_t>(address) + offset);
+        for (gameptr_t offset: offsets) {
+            if (!BufferPool::getInstance().read(address, &address, sizeof(gameptr_t), cache)) {
+                LOG_DEBUG << "Failed to read address at " << std::hex << address << std::endl;
+                bad = true;
+                return;
+            }
+            address += offset;
         }
         this->address = address;
         this->cache = cache;
     }
 
     T get() const {
-        T value;
-        if (!BufferPool::getInstance().read(address, &value, sizeof(T), cache)) {
-            throw std::runtime_error("failed to read memory");
+        T value{};
+        if (bad || !BufferPool::getInstance().read(address, &value, sizeof(T), cache)) {
+            return {};
         }
         return value;
     }
 
     void set(const T &value) {
-        if (!BufferPool::getInstance().write(address, &value, sizeof(T))) {
-            throw std::runtime_error("failed to write memory");
+        if (bad) {
+            return;
         }
+        BufferPool::getInstance().write(address, &value, sizeof(T));
     }
 
     operator T() const {
@@ -72,6 +97,11 @@ public:
     }
 
     ProcessMemoryAccessor<T> &operator=(const T &value) {
+        set(value);
+        return *this;
+    }
+
+    ProcessMemoryAccessor<T> &operator=(T &&value) {
         set(value);
         return *this;
     }

@@ -3,6 +3,7 @@
 
 #include <imgui.h>
 #include <glm/glm.hpp>
+#include "service/service_interface.h"
 
 namespace Settings::Radar {
     extern bool on;
@@ -18,12 +19,10 @@ namespace Settings::Radar {
     extern ImColor enemyColor;
 }
 
-class Radar {
-
+class Radar : public ServiceInterface {
 public:
-    static Radar &getInstance();
+    void callback() override;
 
-    void callback();
 };
 
 #endif //EVIL_CAT_SERVICE_RADAR_RADAR_H

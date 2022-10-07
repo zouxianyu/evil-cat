@@ -8,11 +8,6 @@
 #include "settings.h"
 #include "menu.h"
 
-Menu &Menu::getInstance() {
-    static Menu instance;
-    return instance;
-}
-
 void Menu::show() {
     constexpr auto windowFlags = ImGuiWindowFlags_NoCollapse |
                                  ImGuiWindowFlags_NoResize |
@@ -157,7 +152,7 @@ void Menu::show() {
             ImGui::Separator();
 
             ImGui::Checkbox("player name list", &Settings::NameList::on);
-            ImGui::Checkbox("health locker", &Settings::HealthLocker::on);
+            ImGui::Checkbox("lockHealth locker", &Settings::HealthLocker::on);
             break;
         case Tab::Color:
             ImGui::Text("Color");
@@ -172,15 +167,15 @@ void Menu::show() {
                     (float *)&Settings::Esp::enemyColor.Value
             );
             ImGui::ColorEdit4(
-                    "full health",
+                    "full lockHealth",
                     (float *)&Settings::Esp::healthFullColor.Value
             );
             ImGui::ColorEdit4(
-                    "half health",
+                    "half lockHealth",
                     (float *)&Settings::Esp::healthHalfColor.Value
             );
             ImGui::ColorEdit4(
-                    "low health",
+                    "low lockHealth",
                     (float *)&Settings::Esp::healthLowColor.Value
             );
             break;

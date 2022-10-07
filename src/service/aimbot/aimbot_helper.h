@@ -5,20 +5,20 @@
 #include <functional>
 #include <vector>
 #include <memory>
-#include "game/interface/player_basic_interface.h"
+#include "game/interface/player_interface.h"
 
 namespace AimbotHelper {
 
-    typedef std::function<std::optional<std::shared_ptr<PlayerBasicInterface>>(
-            std::shared_ptr<PlayerBasicInterface>,
-    const std::vector<std::shared_ptr<PlayerBasicInterface>>&
+    typedef std::function<std::optional<std::shared_ptr<PlayerInterface>>(
+            std::shared_ptr<PlayerInterface>,
+            const std::vector<std::shared_ptr<PlayerInterface>>&
     )> TargetPicker;
 
     typedef std::function<bool()> Trigger;
 
     typedef std::function<void(
-            std::shared_ptr<PlayerBasicInterface>,
-            std::shared_ptr<PlayerBasicInterface>
+            std::shared_ptr<PlayerInterface>,
+            std::shared_ptr<PlayerInterface>
     )> Aimer;
 
     struct Strategy {
@@ -36,15 +36,19 @@ namespace AimbotHelper {
 
     bool rightKeyTrigger();
 
-    std::optional<std::shared_ptr<PlayerBasicInterface>> minAnglePicker(
-            std::shared_ptr<PlayerBasicInterface> localPlayer,
-            const std::vector<std::shared_ptr<PlayerBasicInterface>> &players
+    std::optional<std::shared_ptr<PlayerInterface>> minAnglePicker(
+            const std::shared_ptr<PlayerInterface>& localPlayer,
+            const std::vector<std::shared_ptr<PlayerInterface>> &players
     );
 
-    template<int divisor>
-    void speedChangeableAimer(
-            std::shared_ptr<PlayerBasicInterface> localPlayer,
-            std::shared_ptr<PlayerBasicInterface> targetPlayer
-    );
+    class SpeedChangeableAimer {
+        const float ratio;
+    public:
+        explicit SpeedChangeableAimer(float ratio) : ratio(ratio) {};
+        void operator()(
+                const std::shared_ptr<PlayerInterface>& localPlayer,
+                const std::shared_ptr<PlayerInterface>& targetPlayer
+        );
+    };
 }
 #endif //EVIL_CAT_SERVICE_AIMBOT_AIMBOT_HELPER_H

@@ -3,9 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/vector_angle.hpp>
-#include "game.h"
-#include "game/interface/player_basic_interface.h"
-#include "service/world_to_screen/world_to_screen.h"
+#include "world_to_screen/world_to_screen.h"
 #include "esp.h"
 
 namespace Settings::Esp {
@@ -30,11 +28,6 @@ namespace Settings::Esp {
     ImColor healthLowColor = ImColor(255, 120, 120, 255);
 }
 
-Esp &Esp::getInstance() {
-    static Esp instance;
-    return instance;
-}
-
 void Esp::callback() {
     if (!Settings::Esp::on) {
         return;
@@ -44,11 +37,9 @@ void Esp::callback() {
     WorldToScreen::getInstance().refresh();
 
     // get players
-    std::shared_ptr<PlayerBasicInterface>
-            localPlayer = Game::getInstance().getLocalPlayer();
+    std::shared_ptr<PlayerInterface> localPlayer = Module::game->getLocalPlayer();
 
-    std::vector<std::shared_ptr<PlayerBasicInterface>>
-            players = Game::getInstance().getPlayers();
+    std::vector<std::shared_ptr<PlayerInterface>> players = Module::game->getPlayers();
 
     // show esp box
     switch (Settings::Esp::boxType) {
@@ -83,8 +74,8 @@ void Esp::callback() {
 }
 
 void Esp::showEsp2D(
-        std::shared_ptr<PlayerBasicInterface> localPlayer,
-        const std::vector<std::shared_ptr<PlayerBasicInterface>> &players
+        const std::shared_ptr<PlayerInterface>& localPlayer,
+        const std::vector<std::shared_ptr<PlayerInterface>> &players
 ) {
 
     for (auto &player: players) {
@@ -122,8 +113,8 @@ void Esp::showEsp2D(
 }
 
 void Esp::showEsp3D(
-        std::shared_ptr<PlayerBasicInterface> localPlayer,
-        std::vector<std::shared_ptr<PlayerBasicInterface>> players
+        const std::shared_ptr<PlayerInterface>& localPlayer,
+        const std::vector<std::shared_ptr<PlayerInterface>>& players
 ) {
 
     for (const auto &player: players) {
@@ -134,7 +125,7 @@ void Esp::showEsp3D(
         glm::vec3 head = player->getCameraPosition();
         glm::vec3 feet = player->getPosition();
         glm::vec3 viewAngle = player->getViewAngle();
-        glm::vec3 orientation = Game::getInstance().viewAngleToOrientation(viewAngle);
+        glm::vec3 orientation = Module::game->viewAngleToOrientation(viewAngle);
         auto boxColor = player->getTeamId() == localPlayer->getTeamId() ?
                         Settings::Esp::teammateColor : Settings::Esp::enemyColor;
 
@@ -214,8 +205,8 @@ void Esp::showEsp3D(
 }
 
 void Esp::showViewLine(
-        std::shared_ptr<PlayerBasicInterface> localPlayer,
-        std::vector<std::shared_ptr<PlayerBasicInterface>> players
+        const std::shared_ptr<PlayerInterface>& localPlayer,
+        const std::vector<std::shared_ptr<PlayerInterface>>& players
 ) {
 
     for (const auto &player: players) {
@@ -225,7 +216,7 @@ void Esp::showViewLine(
 
         glm::vec3 head = player->getCameraPosition();
         glm::vec3 viewAngle = player->getViewAngle();
-        glm::vec3 orientation = Game::getInstance().viewAngleToOrientation(viewAngle);
+        glm::vec3 orientation = Module::game->viewAngleToOrientation(viewAngle);
         glm::vec3 viewLineEnd = head + orientation;
         auto viewLineColor = player->getTeamId() == localPlayer->getTeamId() ?
                              Settings::Esp::teammateColor : Settings::Esp::enemyColor;
@@ -250,8 +241,8 @@ void Esp::showViewLine(
 }
 
 void Esp::showHeadCircle(
-        std::shared_ptr<PlayerBasicInterface> localPlayer,
-        std::vector<std::shared_ptr<PlayerBasicInterface>> players
+        const std::shared_ptr<PlayerInterface>& localPlayer,
+        const std::vector<std::shared_ptr<PlayerInterface>>& players
 ) {
     for (const auto &player: players) {
         if (*player == *localPlayer || player->getHealth() <= 0) {
@@ -286,8 +277,8 @@ void Esp::showHeadCircle(
 }
 
 void Esp::showHeadBar(
-        std::shared_ptr<PlayerBasicInterface> localPlayer,
-        std::vector<std::shared_ptr<PlayerBasicInterface>> players
+        const std::shared_ptr<PlayerInterface>& localPlayer,
+        const std::vector<std::shared_ptr<PlayerInterface>>& players
 ) {
     for (const auto &player: players) {
         if (*player == *localPlayer || player->getHealth() <= 0) {
@@ -324,7 +315,7 @@ void Esp::showHeadBar(
                 barBorderColor
         );
 
-        // draw name health bar
+        // draw name lockHealth bar
         glm::vec2 upperAreaLeftTop = {
                 barLeftTop.x + 1,
                 barLeftTop.y + 1
@@ -396,8 +387,10 @@ void Esp::showHeadBar(
     }
 }
 
-void Esp::showDistance(std::shared_ptr<PlayerBasicInterface> localPlayer,
-                       std::vector<std::shared_ptr<PlayerBasicInterface>> players) {
+void Esp::showDistance(
+        const std::shared_ptr<PlayerInterface>& localPlayer,
+        const std::vector<std::shared_ptr<PlayerInterface>>& players
+) {
     for (const auto &player: players) {
         if (*player == *localPlayer || player->getHealth() <= 0) {
             continue;

@@ -2,10 +2,20 @@
 #include <TlHelp32.h>
 #include "process_memory_external.h"
 
-ProcessMemory &ProcessMemoryExternal::getInstance() {
-    static ProcessMemoryExternal instance;
-    return instance;
-}
+NTSTATUS(NTAPI *NtWow64ReadVirtualMemory64)(
+        IN  HANDLE   ProcessHandle,
+        IN  ULONG64  BaseAddress,
+        OUT PVOID    BufferData,
+        IN  ULONG64  BufferLength,
+        OUT PULONG64 ReturnLength OPTIONAL);
+
+NTSTATUS(NTAPI *NtWow64WriteVirtualMemory64)(
+        IN  HANDLE   ProcessHandle,
+        IN  ULONG64  BaseAddress,
+        OUT PVOID    BufferData,
+        IN  ULONG64  BufferLength,
+        OUT PULONG64 ReturnLength OPTIONAL);
+
 
 bool ProcessMemoryExternal::attach(const std::string &processName) {
     detach();
@@ -37,42 +47,54 @@ bool ProcessMemoryExternal::detach() {
     return true;
 }
 
-bool ProcessMemoryExternal::read(void *address, void *buffer, size_t size) {
+bool ProcessMemoryExternal::read(gameptr_t address, void *buffer, size_t size) {
     if (hProcess == nullptr || hProcess == INVALID_HANDLE_VALUE) {
         return false;
     }
 
-    SIZE_T bytesRead;
-    if (!ReadProcessMemory(
-            hProcess,
-            address,
-            buffer,
-            size,
-            &bytesRead
-    )) {
-        return false;
+    // if we are 32 bit process and we want to read a 64 bit address
+    // we need another function
+    if constexpr (sizeof(void *) == 4 && sizeof(gameptr_t) == 8) {
+        return (NtWow64ReadVirtualMemory64(
+                hProcess,
+                address,
+                buffer,
+                size,
+                nullptr
+        )) >= 0;
+    } else {
+        return ReadProcessMemory(
+                hProcess,
+                reinterpret_cast<void *>(address),
+                buffer,
+                size,
+                nullptr
+        );
     }
-
-    return bytesRead == size;
 }
 
-bool ProcessMemoryExternal::write(void *address, const void *buffer, size_t size) {
+bool ProcessMemoryExternal::write(gameptr_t address, const void *buffer, size_t size) {
     if (hProcess == nullptr || hProcess == INVALID_HANDLE_VALUE) {
         return false;
     }
 
-    SIZE_T bytesWritten;
-    if (!WriteProcessMemory(
-            hProcess,
-            address,
-            buffer,
-            size,
-            &bytesWritten
-    )) {
-        return false;
+    if constexpr (sizeof(void *) == 4 && sizeof(gameptr_t) == 8) {
+        return (NtWow64WriteVirtualMemory64(
+                hProcess,
+                address,
+                const_cast<void *>(buffer),
+                size,
+                nullptr
+        )) >= 0;
+    } else {
+        return WriteProcessMemory(
+                hProcess,
+                reinterpret_cast<void *>(address),
+                buffer,
+                size,
+                nullptr
+        );
     }
-
-    return bytesWritten == size;
 }
 
 DWORD ProcessMemoryExternal::getProcessIdByName(const std::string& processName) {

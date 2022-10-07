@@ -1,10 +1,7 @@
+#include <optional>
 #include <windows.h>
+#include "game_ptr.h"
 #include "process_info_internal.h"
-
-ProcessInfo &ProcessInfoInternal::getInstance() {
-    static ProcessInfoInternal instance;
-    return instance;
-}
 
 bool ProcessInfoInternal::attach(const std::string &processName) {
     return true;
@@ -14,29 +11,28 @@ bool ProcessInfoInternal::detach() {
     return true;
 }
 
-bool ProcessInfoInternal::getModuleAddress(const std::string &moduleName, void *&address) {
+std::optional<gameptr_t> ProcessInfoInternal::getModuleAddress(const std::string &moduleName) {
     if (moduleName.empty()) {
-        return false;
+        return std::nullopt;
     }
 
     // if the module is already recorded, return its base _this
     auto it = modulesAddress.find(moduleName);
     if (it != modulesAddress.end()) {
-        address = it->second;
-        return true;
+        return it->second;
     }
 
     // otherwise, find the module's base _this via GetModuleHandle
     HANDLE handle = GetModuleHandle(moduleName.c_str());
     if (handle == nullptr || handle == INVALID_HANDLE_VALUE) {
-        return false;
+        return std::nullopt;
     }
-    address = reinterpret_cast<void *>(handle);
+    auto address = reinterpret_cast<gameptr_t>(handle);
     CloseHandle(handle);
 
     // add the _this to our map
     modulesAddress[moduleName] = address;
-    return true;
+    return address;
 }
 
 bool ProcessInfoInternal::refresh() {

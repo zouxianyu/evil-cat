@@ -1,11 +1,6 @@
 #include <windows.h>
 #include "process_memory_internal.h"
 
-ProcessMemory &ProcessMemoryInternal::getInstance() {
-    static ProcessMemoryInternal instance;
-    return instance;
-}
-
 bool ProcessMemoryInternal::attach(const std::string &processName) {
     // no need to attach
     return true;
@@ -16,18 +11,21 @@ bool ProcessMemoryInternal::detach() {
     return true;
 }
 
-bool ProcessMemoryInternal::read(void *address, void *buffer, size_t size) {
+bool ProcessMemoryInternal::read(gameptr_t address, void *buffer, size_t size) {
     try {
-        memcpy(buffer, address, size);
+        // we cast the pointer to void * because the DLL to be injected must
+        // have the same bitness as the game, so the cast make sense
+        memcpy(buffer, reinterpret_cast<void *>(address), size);
         return true;
     } catch (...) {
         return false;
     }
 }
 
-bool ProcessMemoryInternal::write(void *address, const void *buffer, size_t size) {
+bool ProcessMemoryInternal::write(gameptr_t address, const void *buffer, size_t size) {
     try {
-        memcpy(address, buffer, size);
+        // the reason why we cast the pointer to void * is the same as above
+        memcpy(reinterpret_cast<void *>(address), buffer, size);
         return true;
     } catch (...) {
         return false;

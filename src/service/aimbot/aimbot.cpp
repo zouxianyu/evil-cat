@@ -3,8 +3,8 @@
 #include <optional>
 #include <glm/glm.hpp>
 #include <windows.h>
-#include "game.h"
-#include "game/interface/player_basic_interface.h"
+#include "module.h"
+#include "game/interface/player_interface.h"
 #include "aimbot_helper.h"
 #include "aimbot.h"
 
@@ -15,11 +15,6 @@ namespace Settings::Aimbot {
 }
 
 // TODO: add bone aimbot and traceline collision detection aimbot policy
-
-Aimbot &Aimbot::getInstance() {
-    static Aimbot instance;
-    return instance;
-}
 
 void Aimbot::callback() {
 
@@ -50,18 +45,16 @@ void Aimbot::callback() {
         return;
     }
 
-    std::shared_ptr<PlayerBasicInterface> localPlayer =
-            Game::getInstance().getLocalPlayer();
+    std::shared_ptr<PlayerInterface> localPlayer = Module::game->getLocalPlayer();
 
-    std::vector<std::shared_ptr<PlayerBasicInterface>> players =
-            Game::getInstance().getPlayers();
+    std::vector<std::shared_ptr<PlayerInterface>> players = Module::game->getPlayers();
 
     if (players.empty()) {
         return;
     }
 
     // if there's no aimbot target, find one and aim to it
-    std::optional<std::shared_ptr<PlayerBasicInterface>> enemy;
+    std::optional<std::shared_ptr<PlayerInterface>> enemy;
     if (aimbotTarget && (*aimbotTarget)->getHealth() > 0) {
         enemy = aimbotTarget;
     } else {

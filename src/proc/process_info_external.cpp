@@ -1,11 +1,8 @@
+#include <optional>
 #include <windows.h>
 #include <TlHelp32.h>
+#include "game_ptr.h"
 #include "process_info_external.h"
-
-ProcessInfo &ProcessInfoExternal::getInstance() {
-    static ProcessInfoExternal instance;
-    return instance;
-}
 
 bool ProcessInfoExternal::attach(const std::string &processName) {
     detach();
@@ -37,20 +34,19 @@ bool ProcessInfoExternal::detach() {
     return true;
 }
 
-bool ProcessInfoExternal::getModuleAddress(const std::string &moduleName, void *&address) {
+std::optional<gameptr_t> ProcessInfoExternal::getModuleAddress(const std::string &moduleName) {
     if (hProcess == nullptr || hProcess == INVALID_HANDLE_VALUE) {
-        return false;
+        return std::nullopt;
     }
 
     // if the module is already recorded, return its base address
     auto it = modulesAddress.find(moduleName);
     if (it != modulesAddress.end()) {
-        address = it->second;
-        return true;
+        return it->second;
     }
 
     // otherwise, find the module's base address by enumerating all modules
-    uintptr_t modBaseAddr = 0;
+    gameptr_t modBaseAddr = 0;
     HANDLE hSnap = CreateToolhelp32Snapshot(
             TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32,
             GetProcessId(hProcess)
@@ -65,17 +61,16 @@ bool ProcessInfoExternal::getModuleAddress(const std::string &moduleName, void *
             {
                 if (moduleName == modEntry.szModule)
                 {
-                    modBaseAddr = (uintptr_t)modEntry.modBaseAddr;
-                    address = reinterpret_cast<void*>(modBaseAddr);
-                    modulesAddress[moduleName] = address;
+                    modBaseAddr = reinterpret_cast<gameptr_t>(modEntry.modBaseAddr);
+                    modulesAddress[moduleName] = modBaseAddr;
                     CloseHandle(hSnap);
-                    return true;
+                    return modBaseAddr;
                 }
             } while (Module32Next(hSnap, &modEntry));
         }
     }
     CloseHandle(hSnap);
-    return false;
+    return std::nullopt;
 }
 
 bool ProcessInfoExternal::refresh() {
@@ -105,6 +100,7 @@ DWORD ProcessInfoExternal::getProcessIdByName(const std::string &processName) {
             return pe32.th32ProcessID;
         }
     } while (Process32Next(hProcessSnap, &pe32));
+    CloseHandle(hProcessSnap);
     return 0;
 
 }

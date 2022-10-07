@@ -6,7 +6,8 @@
 #include <vector>
 #include <memory>
 #include <glm/glm.hpp>
-#include "game/interface/player_basic_interface.h"
+#include "service/service_interface.h"
+#include "game/interface/player_interface.h"
 
 namespace Settings::Aimbot {
     extern bool on;
@@ -20,14 +21,12 @@ namespace Settings::Aimbot {
     extern Strategy strategy;
 }
 
-class Aimbot {
-    std::optional<std::shared_ptr<PlayerBasicInterface>> aimbotTarget = std::nullopt;
+class Aimbot : public ServiceInterface {
+    std::optional<std::shared_ptr<PlayerInterface>> aimbotTarget = std::nullopt;
 
 public:
-    static Aimbot &getInstance();
+    void callback() override;
 
-    void callback();
-    
 };
 
 #endif //EVIL_CAT_SERVICE_AIMBOT_AIMBOT_H

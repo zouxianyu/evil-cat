@@ -1,14 +1,10 @@
 #ifndef EVIL_CAT_VIEW_IMGUI_D3D9_OVERLAY_VIEW_H
 #define EVIL_CAT_VIEW_IMGUI_D3D9_OVERLAY_VIEW_H
 
-#include "view/view.h"
+#include "view/view_interface.h"
 
-class ImGuiD3D9Overlay : public View {
-
+class ImGuiD3D9Overlay : public ViewInterface {
 public:
-
-    static ImGuiD3D9Overlay &getInstance();
-
     bool initialize(const std::string &processName) override;
 
     bool loop() override;

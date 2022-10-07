@@ -1,6 +1,5 @@
 #include <vector>
 #include <memory>
-#include <iostream>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/vector_angle.hpp>
@@ -8,26 +7,22 @@
 #include "offset/offset.h"
 #include "mem/process_memory_accessor.h"
 #include "game.h"
+#include "game_ptr.h"
 
-Game &Game::getInstance() {
-    static Game instance;
-    return instance;
-}
-
-std::shared_ptr<PlayerBasicInterface> Game::getLocalPlayer() {
+std::shared_ptr<PlayerInterface> Game::getLocalPlayer() {
     return std::make_shared<Player>(
-        ProcessMemoryAccessor<void *>{
+        ProcessMemoryAccessor<gameptr_t>{
             "ac_client.exe",
             Offset::localPlayer
         }
     );
 }
 
-std::vector<std::shared_ptr<PlayerBasicInterface>> Game::getPlayers() {
-    std::vector<std::shared_ptr<PlayerBasicInterface>> players;
+std::vector<std::shared_ptr<PlayerInterface>> Game::getPlayers() {
+    std::vector<std::shared_ptr<PlayerInterface>> players;
 
     // get player list address
-    uintptr_t playerList = ProcessMemoryAccessor<uintptr_t>{
+    gameptr_t playerList = ProcessMemoryAccessor<gameptr_t>{
         "ac_client.exe",
         Offset::playerList
     };
@@ -40,26 +35,22 @@ std::vector<std::shared_ptr<PlayerBasicInterface>> Game::getPlayers() {
 
     // construct all player wrappers and put them into the vector
     for (int i = 0; i < n; i++) {
-        uintptr_t playerAddr = ProcessMemoryAccessor<uintptr_t>{
-            reinterpret_cast<uintptr_t *>(playerList + i * sizeof(uintptr_t))
+        gameptr_t playerAddr = ProcessMemoryAccessor<gameptr_t>{
+            playerList + i * sizeof(gameptr_t)
         };
         if (!playerAddr) {
             continue;
         }
-        players.emplace_back(std::make_shared<Player>(
-            reinterpret_cast<void *>(playerAddr)
-        ));
+        players.emplace_back(std::make_shared<Player>(playerAddr));
     }
     return players;
 }
 
-std::shared_ptr<glm::mat4> Game::getVPMatrix() {
-    return std::make_shared<glm::mat4>(
-        ProcessMemoryAccessor<glm::mat4>{
-            "ac_client.exe",
-            Offset::vpMatrix
-        }
-    );
+glm::mat4 Game::getVPMatrix() {
+    return ProcessMemoryAccessor<glm::mat4>{
+        "ac_client.exe",
+        Offset::vpMatrix
+    };
 }
 
 glm::vec2 Game::getWindowSize() {
