@@ -54,7 +54,11 @@ glm::mat4 Game::getVPMatrix() {
 }
 
 glm::vec2 Game::getWindowSize() {
-    return glm::vec2{1024, 768};
+    glm::vec<2, int> windowSize = ProcessMemoryAccessor<glm::vec<2, int>>{
+            "ac_client.exe",
+            Offset::windowSize
+    };
+    return glm::vec2{windowSize[0], windowSize[1]};
 }
 
 glm::vec3 Game::viewAngleToOrientation(glm::vec3 viewAngle) {
@@ -79,4 +83,10 @@ glm::vec3 Game::orientationToViewAngle(glm::vec3 orientation) {
     glm::vec3 orientationXYZ = glm::normalize(orientation);
     float beta = glm::pi<float>() / 2.0f - glm::angle(Z, orientationXYZ);
     return {alpha * 180.0f / glm::pi<float>(), beta * 180.0f / glm::pi<float>(), 0.0f};
+}
+
+float Game::getDistance(std::shared_ptr<PlayerInterface> player) {
+    glm::vec3 localPlayerPos = getLocalPlayer()->getPosition();
+    glm::vec3 playerPos = player->getPosition();
+    return glm::distance(localPlayerPos, playerPos) * 0.3f;
 }

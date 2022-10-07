@@ -16,6 +16,8 @@ public:
     glm::vec3 viewAngleToOrientation(glm::vec3 viewAngle) override;
 
     glm::vec3 orientationToViewAngle(glm::vec3 orientation) override;
+
+    float getDistance(std::shared_ptr<PlayerInterface> player) override;
 };
 
 #endif //EVIL_CAT_GAME_ASSAULT_CUBE_GAME_H

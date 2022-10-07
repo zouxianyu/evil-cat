@@ -405,14 +405,8 @@ void Esp::showDistance(
             continue;
         }
 
-        auto pos1 = localPlayer->getPosition();
-        auto pos2 = player->getPosition();
-        auto distance = (float) sqrt(
-                pow(pos1.x - pos2.x, 2) +
-                pow(pos1.y - pos2.y, 2) +
-                pow(pos1.z - pos2.z, 2)
-        );
-        std::string distanceStr = std::to_string((int) distance) + "m";
+        auto distance = Module::game->getDistance(player);
+        std::string distanceStr = std::to_string(distance) + "m";
         ImVec2 textSize = ImGui::CalcTextSize(distanceStr.c_str());
         ImGui::GetBackgroundDrawList()->AddText(
                 ImVec2(screenFeet->x - textSize.x / 2, screenFeet->y - textSize.y),
