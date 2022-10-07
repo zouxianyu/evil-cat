@@ -1,8 +1,6 @@
 #include <memory>
-#include <imgui.h>
 #include <glm/glm.hpp>
-#include "game.h"
-#include "mem/process_memory_accessor.h"
+#include "module.h"
 #include "world_to_screen.h"
 
 WorldToScreen &WorldToScreen::getInstance() {
@@ -13,10 +11,10 @@ WorldToScreen &WorldToScreen::getInstance() {
 bool WorldToScreen::refresh() {
 
     // refresh view projection matrix
-    vpMatrix = Game::getInstance().getVPMatrix();
+    vpMatrix = Module::game->getVPMatrix();
 
     // refresh window size
-    glm::vec2 windowSize = Game::getInstance().getWindowSize();
+    glm::vec2 windowSize = Module::game->getWindowSize();
     width = windowSize.x;
     height = windowSize.y;
 

@@ -1,10 +1,7 @@
 #include <iostream>
 #include <memory>
 #include <thread>
-#include "game.h"
-#include "init.h"
 #include "module.h"
-#include "service/service_interface.h"
 #include "mem/buffer_pool.h"
 #include "controller/controller.h"
 #include "settings.h"
@@ -13,7 +10,8 @@
 void entry() {
     // call the game specified initialization interface
     // to get the config (currently only gui callbacks and fast loop callbacks)
-    std::vector<std::unique_ptr<ServiceInterface>> services = init();
+    std::vector<std::unique_ptr<ServiceInterface>> services =
+            Module::servicesChooser->getServices();
 
     // do initialization of the core module
     Module::processInfo->attach(CONF_PROCESS_NAME);

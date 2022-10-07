@@ -54,6 +54,11 @@ void Player::setArmor(float armor) {
     ProcessMemoryAccessor<int>{_this + Offset::Player::armor} = (int)armor;
 }
 
-bool Player::operator==(const PlayerBasicInterface &other) const {
+glm::vec3 Player::getBonePosition(PlayerInterface::Bone boneType) {
+    // not implemented
+    return {};
+}
+
+bool Player::operator==(const PlayerInterface &other) const {
     return _this == dynamic_cast<const Player&>(other)._this;
 }

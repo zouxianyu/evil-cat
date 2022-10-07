@@ -1,5 +1,5 @@
-#ifndef EVIL_CAT_SERVICE_WORLD_TO_SCREEN_WORLD_TO_SCREEN_H
-#define EVIL_CAT_SERVICE_WORLD_TO_SCREEN_WORLD_TO_SCREEN_H
+#ifndef EVIL_CAT_WORLD_TO_SCREEN_WORLD_TO_SCREEN_H
+#define EVIL_CAT_WORLD_TO_SCREEN_WORLD_TO_SCREEN_H
 
 #include <optional>
 #include <functional>
@@ -18,4 +18,4 @@ public:
     std::optional<glm::vec2> translate(const glm::vec3 &world);
 };
 
-#endif //EVIL_CAT_SERVICE_WORLD_TO_SCREEN_WORLD_TO_SCREEN_H
+#endif //EVIL_CAT_WORLD_TO_SCREEN_WORLD_TO_SCREEN_H

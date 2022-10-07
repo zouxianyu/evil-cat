@@ -7,7 +7,7 @@
 #include <memory>
 #include <glm/glm.hpp>
 #include "service/service_interface.h"
-#include "game/interface/player_basic_interface.h"
+#include "game/interface/player_interface.h"
 
 namespace Settings::Aimbot {
     extern bool on;
@@ -22,10 +22,10 @@ namespace Settings::Aimbot {
 }
 
 class Aimbot : public ServiceInterface {
-    std::optional<std::shared_ptr<PlayerBasicInterface>> aimbotTarget = std::nullopt;
+    std::optional<std::shared_ptr<PlayerInterface>> aimbotTarget = std::nullopt;
 
 public:
-    void callback();
+    void callback() override;
 
 };
 

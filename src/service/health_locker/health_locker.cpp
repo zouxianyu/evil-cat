@@ -1,11 +1,11 @@
 #include <memory>
-#include "game.h"
-#include "interface/player_health_interface.h"
-#include "health_locker.h"
+#include "module.h"
 #include "controller/controller.h"
+#include "health_locker.h"
 
 namespace Settings::HealthLocker {
     bool on = false;
+    float lockHealth = 100.f;
 }
 
 void HealthLocker::callback() {
@@ -22,8 +22,7 @@ bool HealthLocker::fastLoopCallback() {
     if (!Settings::HealthLocker::on) {
         return false;
     }
-    std::shared_ptr<PlayerHealthInterface> localPlayer = Game::getInstance().getLocalPlayer();
-    localPlayer->setHealth(100);
+    Module::game->getLocalPlayer()->setHealth(Settings::HealthLocker::lockHealth);
     return true;
 }
 

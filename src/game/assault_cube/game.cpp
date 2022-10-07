@@ -1,16 +1,15 @@
 #include <vector>
 #include <memory>
-#include <iostream>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/vector_angle.hpp>
 #include "player.h"
 #include "offset/offset.h"
 #include "mem/process_memory_accessor.h"
-#include "module_config.h"
 #include "game.h"
+#include "game_ptr.h"
 
-std::shared_ptr<Player> Game::getLocalPlayer() {
+std::shared_ptr<PlayerInterface> Game::getLocalPlayer() {
     return std::make_shared<Player>(
         ProcessMemoryAccessor<gameptr_t>{
             "ac_client.exe",
@@ -19,8 +18,8 @@ std::shared_ptr<Player> Game::getLocalPlayer() {
     );
 }
 
-std::vector<std::shared_ptr<Player>> Game::getPlayers() {
-    std::vector<std::shared_ptr<Player>> players;
+std::vector<std::shared_ptr<PlayerInterface>> Game::getPlayers() {
+    std::vector<std::shared_ptr<PlayerInterface>> players;
 
     // get player list address
     gameptr_t playerList = ProcessMemoryAccessor<gameptr_t>{

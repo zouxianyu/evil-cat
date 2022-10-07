@@ -21,7 +21,7 @@ namespace Settings::Radar {
 
 class Radar : public ServiceInterface {
 public:
-    void callback();
+    void callback() override;
 
 };
 

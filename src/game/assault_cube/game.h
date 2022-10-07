@@ -1,24 +1,21 @@
 #ifndef EVIL_CAT_GAME_ASSAULT_CUBE_GAME_H
 #define EVIL_CAT_GAME_ASSAULT_CUBE_GAME_H
 
-#include <vector>
-#include <memory>
-#include "singleton.h"
-#include "player.h"
+#include "game/interface/game_interface.h"
 
-class Game : public Singleton<Game> {
+class Game : public GameInterface {
 public:
-    std::shared_ptr<Player> getLocalPlayer();
+    std::shared_ptr<PlayerInterface> getLocalPlayer() override;
 
-    std::vector<std::shared_ptr<Player>> getPlayers();
+    std::vector<std::shared_ptr<PlayerInterface>> getPlayers() override;
 
-    glm::mat4 getVPMatrix();
+    glm::mat4 getVPMatrix() override;
 
-    glm::vec2 getWindowSize();
+    glm::vec2 getWindowSize() override;
 
-    glm::vec3 viewAngleToOrientation(glm::vec3 viewAngle);
+    glm::vec3 viewAngleToOrientation(glm::vec3 viewAngle) override;
 
-    glm::vec3 orientationToViewAngle(glm::vec3 orientation);
+    glm::vec3 orientationToViewAngle(glm::vec3 orientation) override;
 };
 
 #endif //EVIL_CAT_GAME_ASSAULT_CUBE_GAME_H

@@ -5,9 +5,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/vector_angle.hpp>
 #include <windows.h>
-#include "game.h"
 #include "aimbot.h"
-#include "game/interface/player_basic_interface.h"
+#include "module.h"
 #include "aimbot_helper.h"
 
 static float getDeltaAngle(glm::vec3 v1, glm::vec3 v2) {
@@ -18,23 +17,24 @@ namespace AimbotHelper {
     Strategy rightButtonPrecise = {
             rightKeyTrigger,
             minAnglePicker,
-            speedChangeableAimer<1>
+            SpeedChangeableAimer(1.f)
     };
     Strategy rightButtonSmooth = {
             rightKeyTrigger,
             minAnglePicker,
-            speedChangeableAimer<3>
+            SpeedChangeableAimer(0.5f)
     };
     Strategy autoFollowPrecise = {
             leftKeyTrigger,
             minAnglePicker,
-            speedChangeableAimer<1>
+            SpeedChangeableAimer(1.f)
     };
     Strategy autoFollowSmooth = {
             leftKeyTrigger,
             minAnglePicker,
-            speedChangeableAimer<3>
+            SpeedChangeableAimer(0.5f)
     };
+
 }
 
 bool AimbotHelper::leftKeyTrigger() {
@@ -45,20 +45,20 @@ bool AimbotHelper::rightKeyTrigger() {
     return GetAsyncKeyState(VK_RBUTTON) & 0x8000;
 }
 
-std::optional<std::shared_ptr<PlayerBasicInterface>> AimbotHelper::minAnglePicker(
-        std::shared_ptr<PlayerBasicInterface> localPlayer,
-        const std::vector<std::shared_ptr<PlayerBasicInterface>> &players
+std::optional<std::shared_ptr<PlayerInterface>> AimbotHelper::minAnglePicker(
+        const std::shared_ptr<PlayerInterface>& localPlayer,
+        const std::vector<std::shared_ptr<PlayerInterface>> &players
 ) {
 
     // get local player orientation
     glm::vec3 localPlayerViewAngle = localPlayer->getViewAngle();
-    glm::vec3 localPlayerOrientation = Game::getInstance().viewAngleToOrientation(
+    glm::vec3 localPlayerOrientation = Module::game->viewAngleToOrientation(
             localPlayerViewAngle
     );
 
     // find the best enemy
     // maybe there's no valid enemy, so we use "optional" container
-    std::optional<std::shared_ptr<PlayerBasicInterface>> bestEnemy = std::nullopt;
+    std::optional<std::shared_ptr<PlayerInterface>> bestEnemy = std::nullopt;
     double minAngle = glm::pi<double>();
 
     for (auto &player: players) {
@@ -93,20 +93,19 @@ std::optional<std::shared_ptr<PlayerBasicInterface>> AimbotHelper::minAnglePicke
     return bestEnemy;
 }
 
-template<int divisor>
-void AimbotHelper::speedChangeableAimer(
-        std::shared_ptr<PlayerBasicInterface> localPlayer,
-        std::shared_ptr<PlayerBasicInterface> targetPlayer
+void AimbotHelper::SpeedChangeableAimer::operator()(
+        const std::shared_ptr<PlayerInterface>& localPlayer,
+        const std::shared_ptr<PlayerInterface>& targetPlayer
 ) {
     glm::vec3 targetPos = targetPlayer->getCameraPosition();
     glm::vec3 localPos = localPlayer->getCameraPosition();
     glm::vec3 vTarget = glm::normalize(targetPos - localPos);
-    glm::vec3 vCurrent = glm::normalize(Game::getInstance().viewAngleToOrientation(
+    glm::vec3 vCurrent = glm::normalize(Module::game->viewAngleToOrientation(
             localPlayer->getViewAngle()
     ));
     glm::vec3 vCross = glm::cross(vCurrent, vTarget);
-    float angle = glm::angle(vCurrent, vTarget) / divisor;
+    float angle = glm::angle(vCurrent, vTarget) * ratio;
     glm::vec3 vAim = glm::rotate(vCurrent, angle, vCross);
-    glm::vec3 aimViewAngle = Game::getInstance().orientationToViewAngle(vAim);
+    glm::vec3 aimViewAngle = Module::game->orientationToViewAngle(vAim);
     localPlayer->setViewAngle(aimViewAngle);
 }

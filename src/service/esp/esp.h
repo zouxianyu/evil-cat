@@ -3,8 +3,7 @@
 
 #include <vector>
 #include <imgui.h>
-#include "service/service_interface.h"
-#include "game/interface/player_basic_interface.h"
+#include "module.h"
 
 namespace Settings::Esp {
     extern bool on;
@@ -32,37 +31,37 @@ namespace Settings::Esp {
 
 class Esp : public ServiceInterface {
     void showEsp2D(
-            std::shared_ptr<PlayerBasicInterface> localPlayer,
-            const std::vector<std::shared_ptr<PlayerBasicInterface>> &players
+            const std::shared_ptr<PlayerInterface>& localPlayer,
+            const std::vector<std::shared_ptr<PlayerInterface>> &players
     );
 
     void showEsp3D(
-            std::shared_ptr<PlayerBasicInterface> localPlayer,
-            std::vector<std::shared_ptr<PlayerBasicInterface>> players
+            const std::shared_ptr<PlayerInterface>& localPlayer,
+            const std::vector<std::shared_ptr<PlayerInterface>>& players
     );
 
     void showViewLine(
-            std::shared_ptr<PlayerBasicInterface> localPlayer,
-            std::vector<std::shared_ptr<PlayerBasicInterface>> players
+            const std::shared_ptr<PlayerInterface>& localPlayer,
+            const std::vector<std::shared_ptr<PlayerInterface>>& players
     );
 
     void showHeadBar(
-            std::shared_ptr<PlayerBasicInterface> localPlayer,
-            std::vector<std::shared_ptr<PlayerBasicInterface>> players
+            const std::shared_ptr<PlayerInterface>& localPlayer,
+            const std::vector<std::shared_ptr<PlayerInterface>>& players
     );
 
     void showHeadCircle(
-            std::shared_ptr<PlayerBasicInterface> localPlayer,
-            std::vector<std::shared_ptr<PlayerBasicInterface>> players
+            const std::shared_ptr<PlayerInterface>& localPlayer,
+            const std::vector<std::shared_ptr<PlayerInterface>>& players
     );
 
     void showDistance(
-            std::shared_ptr<PlayerBasicInterface> localPlayer,
-            std::vector<std::shared_ptr<PlayerBasicInterface>> players
+            const std::shared_ptr<PlayerInterface>& localPlayer,
+            const std::vector<std::shared_ptr<PlayerInterface>>& players
     );
 
 public:
-    void callback();
+    void callback() override;
 
 };
 
