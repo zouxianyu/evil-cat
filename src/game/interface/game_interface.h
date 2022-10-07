@@ -20,6 +20,8 @@ public:
 
     virtual glm::vec3 orientationToViewAngle(glm::vec3 orientation) = 0;
 
+    virtual float getDistance(std::shared_ptr<PlayerInterface> player) = 0;
+
     virtual ~GameInterface() = default;
 };
 
