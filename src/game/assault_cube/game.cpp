@@ -54,7 +54,11 @@ glm::mat4 Game::getVPMatrix() {
 }
 
 glm::vec2 Game::getWindowSize() {
-    return glm::vec2{1024, 768};
+    glm::vec<2, int> windowSize = ProcessMemoryAccessor<glm::vec<2, int>>{
+            "ac_client.exe",
+            Offset::windowSize
+    };
+    return glm::vec2{windowSize[0], windowSize[1]};
 }
 
 glm::vec3 Game::viewAngleToOrientation(glm::vec3 viewAngle) {
