@@ -62,8 +62,8 @@ public:
     // we think the player is a teammate, otherwise, the player is an enemy
     virtual int getTeamId() = 0;
 
-    // get the lockHealth of the player
-    // show lockHealth bar over the player when the ESP is on
+    // get the health of the player
+    // show health bar over the player when the ESP is on
     virtual float getHealth() = 0;
 
     virtual void setHealth(float health) = 0;

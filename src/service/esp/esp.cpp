@@ -8,7 +8,7 @@
 
 namespace Settings::Esp {
     bool on = true;
-    BoxType boxType = BoxType::show2D;
+    BoxType boxType = BoxType::show3D;
     bool showViewLine = true;
     bool showHeadBar = true;
     bool showHeadCircle = true;
@@ -84,23 +84,25 @@ void Esp::showEsp2D(
             continue;
         }
 
-        glm::vec3 head = player->getCameraPosition();
         glm::vec3 feet = player->getPosition();
+        glm::vec3 top = feet;
+        top.z += player->getHeight();
+
         ImColor boxColor = player->getTeamId() == localPlayer->getTeamId() ?
                            Settings::Esp::teammateColor : Settings::Esp::enemyColor;
 
         // show box 2d
-        std::optional<glm::vec2> screenHead =
-                WorldToScreen::getInstance().translate(head);
+        std::optional<glm::vec2> screenTop =
+                WorldToScreen::getInstance().translate(top);
 
         std::optional<glm::vec2> screenFeet =
                 WorldToScreen::getInstance().translate(feet);
 
-        if (!screenHead || !screenFeet) {
+        if (!screenTop || !screenFeet) {
             continue;
         }
 
-        float height = screenFeet->y - screenHead->y;
+        float height = screenFeet->y - screenTop->y;
         float width = height / 2;
 
 
@@ -122,15 +124,17 @@ void Esp::showEsp3D(
             continue;
         }
 
-        glm::vec3 head = player->getCameraPosition();
         glm::vec3 feet = player->getPosition();
+        glm::vec3 top = feet;
+        top.z += player->getHeight();
+
         glm::vec3 viewAngle = player->getViewAngle();
         glm::vec3 orientation = Module::game->viewAngleToOrientation(viewAngle);
         auto boxColor = player->getTeamId() == localPlayer->getTeamId() ?
                         Settings::Esp::teammateColor : Settings::Esp::enemyColor;
 
         // show box 3d
-        float height = head.z - feet.z;
+        float height = top.z - feet.z;
         float width = height / 2;
         glm::vec4 corners[8] = {
                 {width / 2,  width / 2,  0,      1},
@@ -214,26 +218,26 @@ void Esp::showViewLine(
             continue;
         }
 
-        glm::vec3 head = player->getCameraPosition();
+        glm::vec3 camera = player->getCameraPosition();
         glm::vec3 viewAngle = player->getViewAngle();
         glm::vec3 orientation = Module::game->viewAngleToOrientation(viewAngle);
-        glm::vec3 viewLineEnd = head + orientation;
+        glm::vec3 viewLineEnd = camera + orientation;
         auto viewLineColor = player->getTeamId() == localPlayer->getTeamId() ?
                              Settings::Esp::teammateColor : Settings::Esp::enemyColor;
 
         // show view line
-        std::optional<glm::vec2> screenHead =
-                WorldToScreen::getInstance().translate(head);
+        std::optional<glm::vec2> screenCamera =
+                WorldToScreen::getInstance().translate(camera);
 
         std::optional<glm::vec2> screenViewLineEnd =
                 WorldToScreen::getInstance().translate(viewLineEnd);
 
-        if (!screenHead || !screenViewLineEnd) {
+        if (!screenCamera || !screenViewLineEnd) {
             continue;
         }
 
         ImGui::GetBackgroundDrawList()->AddLine(
-                ImVec2(screenHead->x, screenHead->y),
+                ImVec2(screenCamera->x, screenCamera->y),
                 ImVec2(screenViewLineEnd->x, screenViewLineEnd->y),
                 viewLineColor
         );
@@ -253,7 +257,7 @@ void Esp::showHeadCircle(
                                Settings::Esp::teammateColor : Settings::Esp::enemyColor;
 
         // show head circle
-        glm::vec3 head = player->getCameraPosition();
+        glm::vec3 head = player->getBonePosition(Bone::head);
         glm::vec3 feet = player->getPosition();
 
         std::optional<glm::vec2> screenHead =
@@ -266,6 +270,9 @@ void Esp::showHeadCircle(
             continue;
         }
 
+        // if we want to calculate the head radius
+        // we should get the player height on screen
+        // and divide it by a constant
         float headRadius = (screenFeet->y - screenHead->y) / 12.f;
 
         ImGui::GetBackgroundDrawList()->AddCircle(
@@ -286,7 +293,8 @@ void Esp::showHeadBar(
         }
 
         glm::vec3 feet = player->getPosition();
-        glm::vec3 top = {feet.x, feet.y, feet.z + player->getHeight()};
+        glm::vec3 top = feet;
+        top.z += player->getHeight();
 
         // calculate the head bar position
         std::optional<glm::vec2> screenTop =
@@ -315,7 +323,7 @@ void Esp::showHeadBar(
                 barBorderColor
         );
 
-        // draw name lockHealth bar
+        // draw name health bar
         glm::vec2 upperAreaLeftTop = {
                 barLeftTop.x + 1,
                 barLeftTop.y + 1
@@ -406,7 +414,7 @@ void Esp::showDistance(
         }
 
         auto distance = Module::game->getDistance(player);
-        std::string distanceStr = std::to_string(distance) + "m";
+        std::string distanceStr = std::to_string((int)std::round(distance)) + "m";
         ImVec2 textSize = ImGui::CalcTextSize(distanceStr.c_str());
         ImGui::GetBackgroundDrawList()->AddText(
                 ImVec2(screenFeet->x - textSize.x / 2, screenFeet->y - textSize.y),
