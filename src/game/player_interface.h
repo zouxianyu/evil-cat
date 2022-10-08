@@ -4,29 +4,31 @@
 #include <string>
 #include <glm/glm.hpp>
 
+// bone types
+enum class Bone : int {
+    head,
+    neck,
+    leftShoulder,
+    rightShoulder,
+    leftElbow,
+    rightElbow,
+    leftHand,
+    rightHand,
+    spine,
+    hip,
+    leftHip,
+    rightHip,
+    leftKnee,
+    rightKnee,
+    leftFoot,
+    rightFoot,
+};
+
 // this interface contains basic information about a player
 // use this interface to get basic information about a player in the core of the framework
 // so you can draw basic esp on the screen
 class PlayerInterface {
 public:
-    enum class Bone {
-        Head,
-        Neck,
-        LeftShoulder,
-        RightShoulder,
-        LeftElbow,
-        RightElbow,
-        LeftHand,
-        RightHand,
-        Spine,
-        Hip,
-        LeftHip,
-        RightHip,
-        LeftKnee,
-        RightKnee,
-        LeftFoot,
-        RightFoot,
-    };
 
     // get the position of the player
     // we assume the position represents the bottom center of the player
@@ -60,8 +62,8 @@ public:
     // we think the player is a teammate, otherwise, the player is an enemy
     virtual int getTeamId() = 0;
 
-    // get the lockHealth of the player
-    // show lockHealth bar over the player when the ESP is on
+    // get the health of the player
+    // show health bar over the player when the ESP is on
     virtual float getHealth() = 0;
 
     virtual void setHealth(float health) = 0;

@@ -12,17 +12,19 @@
 namespace Settings::Aimbot {
     extern bool on;
     extern float maxAngle;
+    extern float moveRatio;
     enum class Strategy : int {
-        rightButtonPrecise,
-        rightButtonSmooth,
-        autoFollowPrecise,
-        autoFollowSmooth
+        triggerOnRightButton,
+        triggerOnLeftButton,
     };
     extern Strategy strategy;
+    extern bool useBoneAimer;
+    extern Bone bone;
+    extern float nonBoneAimerRelativeHeight;
 }
 
 class Aimbot : public ServiceInterface {
-    std::optional<std::shared_ptr<PlayerInterface>> aimbotTarget = std::nullopt;
+    std::optional<std::shared_ptr<PlayerInterface>> optAimbotTarget = std::nullopt;
 
 public:
     void callback() override;

@@ -96,10 +96,26 @@ void Menu::show() {
     );
     const char *boxType[] = { "2D", "3D" };
     const char *aimbotStrategy[] = {
-            "right button precise",
-            "right button smooth",
-            "auto follow precise",
-            "auto follow smooth",
+            "right button",
+            "auto follow"
+    };
+    const char *aimbotBone[] = {
+            "head",
+            "neck",
+            "left shoulder",
+            "right shoulder",
+            "left elbow",
+            "right elbow",
+            "left hand",
+            "right hand",
+            "spine",
+            "hip",
+            "left hip",
+            "right hip",
+            "left knee",
+            "right knee",
+            "left foot",
+            "right foot",
     };
     switch (tab) {
         case Tab::Info:
@@ -123,6 +139,7 @@ void Menu::show() {
                     IM_ARRAYSIZE(boxType)
             );
             ImGui::PopItemWidth();
+            ImGui::Checkbox("bone", &Settings::Esp::showBone);
             ImGui::Checkbox("view line", &Settings::Esp::showViewLine);
             ImGui::Checkbox("head bar", &Settings::Esp::showHeadBar);
             ImGui::Checkbox("head circle", &Settings::Esp::showHeadCircle);
@@ -142,6 +159,28 @@ void Menu::show() {
                     0.f,
                     180.f
             );
+            ImGui::SliderFloat(
+                    "move ratio",
+                    &Settings::Aimbot::moveRatio,
+                    0.05,
+                    1.f
+            );
+            ImGui::Checkbox("bone aimer", &Settings::Aimbot::useBoneAimer);
+            if (Settings::Aimbot::useBoneAimer) {
+                ImGui::Combo(
+                        "aim at",
+                        (int *) &Settings::Aimbot::bone,
+                        aimbotBone,
+                        IM_ARRAYSIZE(aimbotBone)
+                );
+            } else {
+                ImGui::SliderFloat(
+                        "relative height",
+                        &Settings::Aimbot::nonBoneAimerRelativeHeight,
+                        0.f,
+                        1.f
+                );
+            }
             ImGui::Separator();
 
             ImGui::Checkbox("2D radar", &Settings::Radar::on);
@@ -152,7 +191,7 @@ void Menu::show() {
             ImGui::Separator();
 
             ImGui::Checkbox("player name list", &Settings::NameList::on);
-            ImGui::Checkbox("lockHealth locker", &Settings::HealthLocker::on);
+            ImGui::Checkbox("health locker", &Settings::HealthLocker::on);
             break;
         case Tab::Color:
             ImGui::Text("Color");
@@ -167,15 +206,15 @@ void Menu::show() {
                     (float *)&Settings::Esp::enemyColor.Value
             );
             ImGui::ColorEdit4(
-                    "full lockHealth",
+                    "full health",
                     (float *)&Settings::Esp::healthFullColor.Value
             );
             ImGui::ColorEdit4(
-                    "half lockHealth",
+                    "half health",
                     (float *)&Settings::Esp::healthHalfColor.Value
             );
             ImGui::ColorEdit4(
-                    "low lockHealth",
+                    "low health",
                     (float *)&Settings::Esp::healthLowColor.Value
             );
             break;

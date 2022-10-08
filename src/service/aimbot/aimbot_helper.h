@@ -27,10 +27,8 @@ namespace AimbotHelper {
         Aimer aimer;
     };
 
-    extern Strategy rightButtonPrecise;
-    extern Strategy rightButtonSmooth;
-    extern Strategy autoFollowPrecise;
-    extern Strategy autoFollowSmooth;
+    extern Strategy triggerOnRightButton;
+    extern Strategy triggerOnLeftButton;
 
     bool leftKeyTrigger();
 
@@ -41,14 +39,9 @@ namespace AimbotHelper {
             const std::vector<std::shared_ptr<PlayerInterface>> &players
     );
 
-    class SpeedChangeableAimer {
-        const float ratio;
-    public:
-        explicit SpeedChangeableAimer(float ratio) : ratio(ratio) {};
-        void operator()(
-                const std::shared_ptr<PlayerInterface>& localPlayer,
-                const std::shared_ptr<PlayerInterface>& targetPlayer
-        );
-    };
+    void speedChangeableAimer(
+            const std::shared_ptr<PlayerInterface> &localPlayer,
+            const std::shared_ptr<PlayerInterface> &targetPlayer
+    );
 }
 #endif //EVIL_CAT_SERVICE_AIMBOT_AIMBOT_HELPER_H
