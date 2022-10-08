@@ -54,7 +54,7 @@ void Player::setArmor(float armor) {
     ProcessMemoryAccessor<int>{_this + Offset::Player::armor} = (int)armor;
 }
 
-glm::vec3 Player::getBonePosition(PlayerInterface::Bone boneType) {
+glm::vec3 Player::getBonePosition(Bone boneType) {
     // not implemented
     return {};
 }

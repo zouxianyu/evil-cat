@@ -4,29 +4,31 @@
 #include <string>
 #include <glm/glm.hpp>
 
+// bone types
+enum class Bone {
+    Head,
+    Neck,
+    LeftShoulder,
+    RightShoulder,
+    LeftElbow,
+    RightElbow,
+    LeftHand,
+    RightHand,
+    Spine,
+    Hip,
+    LeftHip,
+    RightHip,
+    LeftKnee,
+    RightKnee,
+    LeftFoot,
+    RightFoot,
+};
+
 // this interface contains basic information about a player
 // use this interface to get basic information about a player in the core of the framework
 // so you can draw basic esp on the screen
 class PlayerInterface {
 public:
-    enum class Bone {
-        Head,
-        Neck,
-        LeftShoulder,
-        RightShoulder,
-        LeftElbow,
-        RightElbow,
-        LeftHand,
-        RightHand,
-        Spine,
-        Hip,
-        LeftHip,
-        RightHip,
-        LeftKnee,
-        RightKnee,
-        LeftFoot,
-        RightFoot,
-    };
 
     // get the position of the player
     // we assume the position represents the bottom center of the player
