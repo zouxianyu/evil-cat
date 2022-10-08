@@ -139,6 +139,7 @@ void Menu::show() {
                     IM_ARRAYSIZE(boxType)
             );
             ImGui::PopItemWidth();
+            ImGui::Checkbox("bone", &Settings::Esp::showBone);
             ImGui::Checkbox("view line", &Settings::Esp::showViewLine);
             ImGui::Checkbox("head bar", &Settings::Esp::showHeadBar);
             ImGui::Checkbox("head circle", &Settings::Esp::showHeadCircle);

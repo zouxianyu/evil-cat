@@ -12,6 +12,7 @@ namespace Settings::Esp {
         show3D
     };
     extern BoxType boxType;
+    extern bool showBone;
     extern bool showViewLine;
     extern bool showHeadBar;
     extern bool showHeadCircle;
@@ -19,6 +20,7 @@ namespace Settings::Esp {
 
     extern ImColor teammateColor;
     extern ImColor enemyColor;
+    extern ImColor boneColor;
 
     extern float barMoveUp;
     extern float barWidth;
@@ -56,6 +58,11 @@ class Esp : public ServiceInterface {
     );
 
     void showDistance(
+            const std::shared_ptr<PlayerInterface>& localPlayer,
+            const std::vector<std::shared_ptr<PlayerInterface>>& players
+    );
+
+    void showBone(
             const std::shared_ptr<PlayerInterface>& localPlayer,
             const std::vector<std::shared_ptr<PlayerInterface>>& players
     );

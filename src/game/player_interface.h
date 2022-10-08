@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 
 // bone types
-enum class Bone {
+enum class Bone : int {
     head,
     neck,
     leftShoulder,
@@ -22,6 +22,7 @@ enum class Bone {
     rightKnee,
     leftFoot,
     rightFoot,
+    max,
 };
 
 // this interface contains basic information about a player
