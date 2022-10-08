@@ -19,6 +19,7 @@ namespace Settings::Aimbot {
         autoFollowSmooth
     };
     extern Strategy strategy;
+    extern Bone bone;
 }
 
 class Aimbot : public ServiceInterface {

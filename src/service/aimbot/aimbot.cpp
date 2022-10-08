@@ -11,6 +11,7 @@ namespace Settings::Aimbot {
     bool on = true;
     float maxAngle = glm::radians(10.f);
     Strategy strategy = Strategy::autoFollowSmooth;
+    Bone bone = Bone::head;
 }
 
 // TODO: add bone aimbot and traceline collision detection aimbot policy
