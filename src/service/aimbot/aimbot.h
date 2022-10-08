@@ -7,7 +7,7 @@
 #include <memory>
 #include <glm/glm.hpp>
 #include "service/service_interface.h"
-#include "game/interface/player_interface.h"
+#include "game/player_interface.h"
 
 namespace Settings::Aimbot {
     extern bool on;

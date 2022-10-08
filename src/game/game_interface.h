@@ -1,10 +1,10 @@
-#ifndef EVIL_CAT_GAME_INTERFACE_GAME_INTERFACE_H
-#define EVIL_CAT_GAME_INTERFACE_GAME_INTERFACE_H
+#ifndef EVIL_CAT_GAME_GAME_INTERFACE_H
+#define EVIL_CAT_GAME_GAME_INTERFACE_H
 
 #include <vector>
 #include <memory>
 #include <glm/glm.hpp>
-#include "game/interface/player_interface.h"
+#include "game/player_interface.h"
 
 class GameInterface {
 public:
@@ -25,4 +25,4 @@ public:
     virtual ~GameInterface() = default;
 };
 
-#endif //EVIL_CAT_GAME_INTERFACE_GAME_INTERFACE_H
+#endif //EVIL_CAT_GAME_GAME_INTERFACE_H

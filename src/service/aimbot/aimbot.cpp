@@ -2,9 +2,8 @@
 #include <functional>
 #include <optional>
 #include <glm/glm.hpp>
-#include <windows.h>
 #include "module.h"
-#include "game/interface/player_interface.h"
+#include "game/player_interface.h"
 #include "aimbot_helper.h"
 #include "aimbot.h"
 

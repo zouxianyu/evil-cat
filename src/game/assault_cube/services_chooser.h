@@ -1,7 +1,7 @@
 #ifndef EVIL_CAT_GAME_ASSAULT_CUBE_SERVICES_CHOOSER_H
 #define EVIL_CAT_GAME_ASSAULT_CUBE_SERVICES_CHOOSER_H
 
-#include "game/interface/services_chooser_interface.h"
+#include "game/services_chooser_interface.h"
 
 class ServicesChooser : public ServicesChooserInterface {
 public:

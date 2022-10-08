@@ -1,7 +1,7 @@
 #ifndef EVIL_CAT_GAME_ASSAULT_CUBE_MENU_H
 #define EVIL_CAT_GAME_ASSAULT_CUBE_MENU_H
 
-#include "game/interface/menu_interface.h"
+#include "game/menu_interface.h"
 
 class Menu : public MenuInterface {
 public:
