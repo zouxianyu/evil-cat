@@ -59,11 +59,6 @@ glm::vec3 Player::getBonePosition(Bone boneType) {
         case Bone::head: {
             return ProcessMemoryAccessor<glm::vec3>{_this + Offset::Player::head};
         }
-        case Bone::spine:{
-            glm::vec3 spinePos = getPosition();
-            spinePos.z += getHeight() * 0.6f;
-            return spinePos;
-        }
         default: {
             return {0, 0, 0};
         }
