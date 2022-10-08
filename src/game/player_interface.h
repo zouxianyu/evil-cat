@@ -6,22 +6,22 @@
 
 // bone types
 enum class Bone {
-    Head,
-    Neck,
-    LeftShoulder,
-    RightShoulder,
-    LeftElbow,
-    RightElbow,
-    LeftHand,
-    RightHand,
-    Spine,
-    Hip,
-    LeftHip,
-    RightHip,
-    LeftKnee,
-    RightKnee,
-    LeftFoot,
-    RightFoot,
+    head,
+    neck,
+    leftShoulder,
+    rightShoulder,
+    leftElbow,
+    rightElbow,
+    leftHand,
+    rightHand,
+    spine,
+    hip,
+    leftHip,
+    rightHip,
+    leftKnee,
+    rightKnee,
+    leftFoot,
+    rightFoot,
 };
 
 // this interface contains basic information about a player
