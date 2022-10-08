@@ -17,7 +17,7 @@ float Player::getHeight() {
 }
 
 glm::vec3 Player::getCameraPosition() {
-    return ProcessMemoryAccessor<glm::vec3>{_this + Offset::Player::head};
+    return getBonePosition(Bone::head);
 }
 
 glm::vec3 Player::getViewAngle() {
@@ -55,8 +55,19 @@ void Player::setArmor(float armor) {
 }
 
 glm::vec3 Player::getBonePosition(Bone boneType) {
-    // not implemented
-    return {};
+    switch (boneType) {
+        case Bone::head: {
+            return ProcessMemoryAccessor<glm::vec3>{_this + Offset::Player::head};
+        }
+        case Bone::spine:{
+            glm::vec3 spinePos = getPosition();
+            spinePos.z += getHeight() * 0.6f;
+            return spinePos;
+        }
+        default: {
+            return {0, 0, 0};
+        }
+    }
 }
 
 bool Player::operator==(const PlayerInterface &other) const {
