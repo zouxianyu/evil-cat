@@ -1,7 +1,7 @@
 #ifndef EVIL_CAT_GAME_ASSAULT_CUBE_GAME_H
 #define EVIL_CAT_GAME_ASSAULT_CUBE_GAME_H
 
-#include "game/interface/game_interface.h"
+#include "game/game_interface.h"
 
 class Game : public GameInterface {
 public:

@@ -1,5 +1,5 @@
-#ifndef EVIL_CAT_GAME_INTERFACE_PLAYER_INTERFACE_H
-#define EVIL_CAT_GAME_INTERFACE_PLAYER_INTERFACE_H
+#ifndef EVIL_CAT_GAME_PLAYER_INTERFACE_H
+#define EVIL_CAT_GAME_PLAYER_INTERFACE_H
 
 #include <string>
 #include <glm/glm.hpp>
@@ -78,4 +78,4 @@ public:
     virtual ~PlayerInterface() = default;
 };
 
-#endif //EVIL_CAT_GAME_INTERFACE_PLAYER_INTERFACE_H
+#endif //EVIL_CAT_GAME_PLAYER_INTERFACE_H

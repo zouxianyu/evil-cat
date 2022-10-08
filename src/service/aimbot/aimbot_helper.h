@@ -5,7 +5,7 @@
 #include <functional>
 #include <vector>
 #include <memory>
-#include "game/interface/player_interface.h"
+#include "game/player_interface.h"
 
 namespace AimbotHelper {
 

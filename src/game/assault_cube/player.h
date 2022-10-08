@@ -2,7 +2,7 @@
 #define EVIL_CAT_GAME_ASSAULT_CUBE_PLAYER_H
 
 #include "game_ptr.h"
-#include "game/interface/player_interface.h"
+#include "game/player_interface.h"
 
 class Player : public PlayerInterface {
 
