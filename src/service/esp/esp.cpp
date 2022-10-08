@@ -4,6 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/vector_angle.hpp>
 #include "world_to_screen/world_to_screen.h"
+#include "magic_enum.h"
 #include "esp.h"
 
 namespace Settings::Esp {
@@ -448,8 +449,8 @@ void Esp::showBone(
 
         // get all bone positions
         bool showPlayer = true;
-        glm::vec2 boneScreenPositions[static_cast<int>(Bone::max)];
-        for (int i = 0; i < static_cast<int>(Bone::max); i++) {
+        glm::vec2 boneScreenPositions[magic_enum::enum_count<Bone>()];
+        for (int i = 0; i < magic_enum::enum_count<Bone>(); i++) {
             glm::vec3 bonePosition = player->getBonePosition(static_cast<Bone>(i));
             std::optional<glm::vec2> screenPosition =
                     WorldToScreen::getInstance().translate(bonePosition);

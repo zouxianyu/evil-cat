@@ -22,7 +22,6 @@ enum class Bone : int {
     rightKnee,
     leftFoot,
     rightFoot,
-    max,
 };
 
 // this interface contains basic information about a player
