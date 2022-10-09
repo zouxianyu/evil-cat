@@ -14,13 +14,13 @@ template<typename T>
 class ProcessMemoryAccessor {
     // check T's type
     // if T is not a pod type, we cannot directly read/write it
-    static_assert(std::is_pod_v<T>, "T must be a POD type");
+    static_assert(std::is_trivial_v<T>, "T must be a POD type");
 
-    gameptr_t address;
+    gameptr_t address{};
 
-    bool cache;
+    bool cache{};
 
-    bool bad;
+    bool bad{};
 public:
 
     ProcessMemoryAccessor(const ProcessMemoryAccessor &) = delete;

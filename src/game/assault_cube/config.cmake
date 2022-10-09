@@ -8,6 +8,7 @@ add_compile_definitions(CONF_PROCESS_NAME="ac_client.exe")
 
 # game pointer width
 add_compile_definitions(gameptr_t=uint32_t)
+add_compile_definitions(gamesize_t=uint32_t)
 
 # use buffer pool can improve performance when you are using
 # a external build, especially when using a R/W driver

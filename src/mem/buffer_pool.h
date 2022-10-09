@@ -22,9 +22,9 @@ class BufferPool : public Singleton<BufferPool> {
     std::optional<PageCache> getPageCache(gameptr_t alignedAddress, bool allocate);
 public:
 
-    bool read(gameptr_t address, void *buffer, size_t size, bool cache);
+    bool read(gameptr_t address, void *buffer, gamesize_t size, bool cache);
 
-    bool write(gameptr_t address, const void *buffer, size_t size);
+    bool write(gameptr_t address, const void *buffer, gamesize_t size);
 
     bool refresh();
 };

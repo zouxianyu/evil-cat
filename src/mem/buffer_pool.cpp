@@ -2,7 +2,7 @@
 #include "module.h"
 #include "buffer_pool.h"
 
-bool BufferPool::read(gameptr_t address, void *buffer, size_t size, bool cache) {
+bool BufferPool::read(gameptr_t address, void *buffer, gamesize_t size, bool cache) {
 #ifndef CONF_USE_BUFFER_POOL
     return Module::processMemory->read(address, buffer, size);
 #else
@@ -22,7 +22,7 @@ bool BufferPool::read(gameptr_t address, void *buffer, size_t size, bool cache) 
         }
 
         // get read size of the current cacheline
-        size_t n = (std::min)(
+        gamesize_t n = (std::min)(
                 CONF_BUFFER_POOL_CACHE_LINE_SIZE - (address - addrAlign),
                 size
         );
@@ -30,7 +30,7 @@ bool BufferPool::read(gameptr_t address, void *buffer, size_t size, bool cache) 
         // copy data to the buffer
         memmove(buffer,
                 reinterpret_cast<void *>(
-                        reinterpret_cast<gameptr_t>(&*cachedAddress) + (address - addrAlign)
+                        reinterpret_cast<uintptr_t>(&*cachedAddress) + (address - addrAlign)
                 ),
                 n
         );
@@ -45,13 +45,13 @@ bool BufferPool::read(gameptr_t address, void *buffer, size_t size, bool cache) 
 #endif
 }
 
-bool BufferPool::write(gameptr_t address, const void *buffer, size_t size) {
+bool BufferPool::write(gameptr_t address, const void *buffer, gamesize_t size) {
 #ifdef CONF_USE_BUFFER_POOL
     // copy this variable to avoid modifying the original one
     // because at last we will use the original one
     gameptr_t _address = address;
     const void *_buffer = buffer;
-    size_t _size = size;
+    gamesize_t _size = size;
 
     // use loop to write cache line by line
     // we use write-through policy here,
@@ -63,7 +63,7 @@ bool BufferPool::write(gameptr_t address, const void *buffer, size_t size) {
         std::optional<PageCache> cachedAddress = getPageCache(addrAlign, false);
 
         // get write size of the current cacheline
-        size_t n = (std::min)(
+        gamesize_t n = (std::min)(
                 CONF_BUFFER_POOL_CACHE_LINE_SIZE - (_address - addrAlign),
                 _size
         );

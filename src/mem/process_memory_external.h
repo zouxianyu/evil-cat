@@ -15,9 +15,9 @@ public:
 
     bool detach() override;
 
-    bool read(gameptr_t address, void *buffer, size_t size) override;
+    bool read(gameptr_t address, void *buffer, gamesize_t size) override;
 
-    bool write(gameptr_t address, const void *buffer, size_t size) override;
+    bool write(gameptr_t address, const void *buffer, gamesize_t size) override;
 
 };
 
