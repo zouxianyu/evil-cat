@@ -12,7 +12,6 @@ namespace Module {
 
     extern const std::unique_ptr<GameInterface> game;
     extern const std::unique_ptr<MenuInterface> menu;
-    extern const std::unique_ptr<ServicesChooserInterface> servicesChooser;
 };
 
 #endif //EVIL_CAT_MODULE_H

@@ -2,7 +2,6 @@
 #define EVIL_CAT_MEM_PROCESS_MEMORY_INTERNAL_H
 
 #include <unordered_map>
-#include "game_ptr.h"
 #include "process_memory_interface.h"
 
 class ProcessMemoryInternal : public ProcessMemoryInterface {
@@ -12,9 +11,9 @@ public:
 
     bool detach() override;
 
-    bool read(gameptr_t address, void *buffer, size_t size) override;
+    bool read(gameptr_t address, void *buffer, gamesize_t size) override;
 
-    bool write(gameptr_t address, const void *buffer, size_t size) override;
+    bool write(gameptr_t address, const void *buffer, gamesize_t size) override;
 
 };
 

@@ -11,7 +11,7 @@ bool ProcessMemoryInternal::detach() {
     return true;
 }
 
-bool ProcessMemoryInternal::read(gameptr_t address, void *buffer, size_t size) {
+bool ProcessMemoryInternal::read(gameptr_t address, void *buffer, gamesize_t size) {
     try {
         // we cast the pointer to void * because the DLL to be injected must
         // have the same bitness as the game, so the cast make sense
@@ -22,7 +22,7 @@ bool ProcessMemoryInternal::read(gameptr_t address, void *buffer, size_t size) {
     }
 }
 
-bool ProcessMemoryInternal::write(gameptr_t address, const void *buffer, size_t size) {
+bool ProcessMemoryInternal::write(gameptr_t address, const void *buffer, gamesize_t size) {
     try {
         // the reason why we cast the pointer to void * is the same as above
         memcpy(reinterpret_cast<void *>(address), buffer, size);

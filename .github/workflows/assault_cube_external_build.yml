@@ -1,4 +1,4 @@
-name: build
+name: assault_cube_external_build
 
 on:
   push:
@@ -10,6 +10,10 @@ env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
 
+  # game name
+  GAME_NAME: assault_cube
+  COMPILE_TYPE: external
+
 jobs:
   build:
     # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
@@ -17,20 +21,31 @@ jobs:
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: windows-2019
 
+    strategy:
+      matrix:
+        arch:
+          - x86
+          - amd64
+
     steps:
     - uses: actions/checkout@v3
       with:
         submodules: 'recursive'
     
-    - name: Configure build for x86
+    - name: Configure build environment
       uses: ilammy/msvc-dev-cmd@v1
       with:
-        arch: x86
+        arch: ${{ matrix.arch }}
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -G "Ninja"
+      run: >
+        cmake
+        -B ${{github.workspace}}/build
+        -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        -DGAME_NAME=${{env.GAME_NAME}}
+        -G "Ninja"
 
     - name: Build
       # Build your program with the given configuration
@@ -39,5 +54,6 @@ jobs:
     - name: Upload
       uses: actions/upload-artifact@v3
       with:
-        path: ${{github.workspace}}/build/evil-cat.exe
+        name: ${{env.GAME_NAME}}_${{env.COMPILE_TYPE}}_${{matrix.arch}}
+        path: ${{github.workspace}}/build/${{env.GAME_NAME}}_cheat.exe
         if-no-files-found: error

@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <imgui.h>
+#include "service/service_interface.h"
 #include "module.h"
 
 namespace Settings::Esp {

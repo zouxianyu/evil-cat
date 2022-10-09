@@ -4,7 +4,6 @@
 #include <array>
 #include <cstdint>
 #include <glm/glm.hpp>
-#include "offset_helper.h"
 
 namespace Offset {
 

@@ -3,7 +3,6 @@
 
 #include <optional>
 #include <windows.h>
-#include "game_ptr.h"
 #include "process_info_interface.h"
 
 class ProcessInfoExternal : public ProcessInfoInterface {

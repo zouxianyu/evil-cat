@@ -1,7 +1,9 @@
 #include <iostream>
 #include <memory>
 #include <thread>
+#include <type_traits>
 #include "module.h"
+#include "service_config.h"
 #include "mem/buffer_pool.h"
 #include "controller/controller.h"
 #include "settings.h"
@@ -10,8 +12,7 @@
 void entry() {
     // call the game specified initialization interface
     // to get the config (currently only gui callbacks and fast loop callbacks)
-    std::vector<std::unique_ptr<ServiceInterface>> services =
-            Module::servicesChooser->getServices();
+    ServicesTypeList services;
 
     // do initialization of the core module
     Module::processInfo->attach(CONF_PROCESS_NAME);
@@ -19,13 +20,17 @@ void entry() {
     Module::view->initialize(CONF_PROCESS_NAME);
 
     // resolve GUI callbacks
-    for (const auto &service: services) {
-        Controller::getInstance().addGuiCallback(
-                [&service] {
-                    service->callback();
-                }
-        );
-    }
+    // for each in services, add them to gui callback
+    // fucking stupid tuple and confusing template
+    std::apply([&](auto &&... service) {
+        (Controller::getInstance().addGuiCallback( [&service] {
+            static_assert(
+                    std::is_base_of_v<ServiceInterface, std::decay_t<decltype(service)>>,
+                    "service must be derived from ServiceInterface"
+            );
+            service.callback();
+        }), ...);
+    }, services);
 
     // we need to add a buffer pool refresh callback
     // because the cache need to be flushed each frame

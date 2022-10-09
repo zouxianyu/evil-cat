@@ -47,7 +47,7 @@ bool ProcessMemoryExternal::detach() {
     return true;
 }
 
-bool ProcessMemoryExternal::read(gameptr_t address, void *buffer, size_t size) {
+bool ProcessMemoryExternal::read(gameptr_t address, void *buffer, gamesize_t size) {
     if (hProcess == nullptr || hProcess == INVALID_HANDLE_VALUE) {
         return false;
     }
@@ -73,7 +73,7 @@ bool ProcessMemoryExternal::read(gameptr_t address, void *buffer, size_t size) {
     }
 }
 
-bool ProcessMemoryExternal::write(gameptr_t address, const void *buffer, size_t size) {
+bool ProcessMemoryExternal::write(gameptr_t address, const void *buffer, gamesize_t size) {
     if (hProcess == nullptr || hProcess == INVALID_HANDLE_VALUE) {
         return false;
     }
