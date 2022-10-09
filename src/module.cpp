@@ -16,6 +16,4 @@ namespace Module {
 
     const std::unique_ptr<MenuInterface> menu = std::make_unique<MenuImpl>();
 
-    const std::unique_ptr<ServicesChooserInterface> servicesChooser =
-            std::make_unique<ServicesChooserImpl>();
 }
