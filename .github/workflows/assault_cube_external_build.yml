@@ -12,6 +12,7 @@ env:
 
   # game name
   GAME_NAME: assault_cube
+  COMPILE_TYPE: external
 
 jobs:
   build:
@@ -53,6 +54,6 @@ jobs:
     - name: Upload
       uses: actions/upload-artifact@v3
       with:
-        name: ${{env.GAME_NAME}}-${{matrix.arch}}
+        name: ${{env.GAME_NAME}}_${{env.COMPILE_TYPE}}_${{matrix.arch}}
         path: ${{github.workspace}}/build/${{env.GAME_NAME}}_cheat.exe
         if-no-files-found: error
