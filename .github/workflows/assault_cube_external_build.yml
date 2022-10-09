@@ -53,5 +53,6 @@ jobs:
     - name: Upload
       uses: actions/upload-artifact@v3
       with:
+        name: ${{env.GAME_NAME}}-${{matrix.arch}}
         path: ${{github.workspace}}/build/${{env.GAME_NAME}}_cheat.exe
         if-no-files-found: error
