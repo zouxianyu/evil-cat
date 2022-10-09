@@ -8,6 +8,7 @@
 // the 'main' is the entry of the executable file
 // we call that 'external entry'
 int main(int argc, char *argv[]) {
+    SetProcessDPIAware();
     // just call the real entry
     entry();
     return 0;
