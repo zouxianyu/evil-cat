@@ -1,3 +1,5 @@
+#ifdef CONF_INTERNAL_COMPILE
+
 #include <thread>
 #include <windows.h>
 #include "entry/entry.h"
@@ -43,3 +45,5 @@ BOOL APIENTRY DllMain(HMODULE hModule,
     }
     return TRUE;
 }
+
+#endif

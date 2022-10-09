@@ -1,3 +1,6 @@
+#ifndef CONF_INTERNAL_COMPILE
+
+#include <dwmapi.h>
 #include "entry/entry.h"
 
 // this is the external entry
@@ -9,3 +12,5 @@ int main(int argc, char *argv[]) {
     entry();
     return 0;
 }
+
+#endif

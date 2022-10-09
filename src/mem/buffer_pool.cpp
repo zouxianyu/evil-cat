@@ -1,10 +1,9 @@
 #include <algorithm>
-#include "game_ptr.h"
 #include "module.h"
 #include "buffer_pool.h"
 
 bool BufferPool::read(gameptr_t address, void *buffer, size_t size, bool cache) {
-#ifndef USE_BUFFER_POOL
+#ifndef CONF_USE_BUFFER_POOL
     return Module::processMemory->read(address, buffer, size);
 #else
     // if we don't want to use the cache, just read from the memory directly
@@ -14,7 +13,7 @@ bool BufferPool::read(gameptr_t address, void *buffer, size_t size, bool cache) 
 
     // use loop to read cache line by line
     while (size > 0) {
-        gameptr_t addrAlign = ROUND_DOWN(address, BUFFER_POOL_CACHE_LINE_SIZE);
+        gameptr_t addrAlign = ROUND_DOWN(address, CONF_BUFFER_POOL_CACHE_LINE_SIZE);
 
         // get cache info by the aligned read address
         std::optional<PageCache> cachedAddress = getPageCache(addrAlign, true);
@@ -24,7 +23,7 @@ bool BufferPool::read(gameptr_t address, void *buffer, size_t size, bool cache) 
 
         // get read size of the current cacheline
         size_t n = (std::min)(
-                BUFFER_POOL_CACHE_LINE_SIZE - (address - addrAlign),
+                CONF_BUFFER_POOL_CACHE_LINE_SIZE - (address - addrAlign),
                 size
         );
 
@@ -39,7 +38,7 @@ bool BufferPool::read(gameptr_t address, void *buffer, size_t size, bool cache) 
         // adjust pointers
         size -= n;
         buffer = reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(buffer) + n);
-        address = addrAlign + BUFFER_POOL_CACHE_LINE_SIZE;
+        address = addrAlign + CONF_BUFFER_POOL_CACHE_LINE_SIZE;
     }
 
     return true;
@@ -47,7 +46,7 @@ bool BufferPool::read(gameptr_t address, void *buffer, size_t size, bool cache) 
 }
 
 bool BufferPool::write(gameptr_t address, const void *buffer, size_t size) {
-#ifdef USE_BUFFER_POOL
+#ifdef CONF_USE_BUFFER_POOL
     // copy this variable to avoid modifying the original one
     // because at last we will use the original one
     gameptr_t _address = address;
@@ -58,14 +57,14 @@ bool BufferPool::write(gameptr_t address, const void *buffer, size_t size) {
     // we use write-through policy here,
     // because we want to matain the cache consistency
     while (_size > 0) {
-        gameptr_t addrAlign = ROUND_DOWN(_address, BUFFER_POOL_CACHE_LINE_SIZE);
+        gameptr_t addrAlign = ROUND_DOWN(_address, CONF_BUFFER_POOL_CACHE_LINE_SIZE);
 
         // get cache info by the aligned read address
         std::optional<PageCache> cachedAddress = getPageCache(addrAlign, false);
 
         // get write size of the current cacheline
         size_t n = (std::min)(
-                BUFFER_POOL_CACHE_LINE_SIZE - (_address - addrAlign),
+                CONF_BUFFER_POOL_CACHE_LINE_SIZE - (_address - addrAlign),
                 _size
         );
 
@@ -83,7 +82,7 @@ bool BufferPool::write(gameptr_t address, const void *buffer, size_t size) {
         // adjust pointers
         _size -= n;
         _buffer = reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(_buffer) + n);
-        _address = addrAlign + BUFFER_POOL_CACHE_LINE_SIZE;
+        _address = addrAlign + CONF_BUFFER_POOL_CACHE_LINE_SIZE;
     }
 #endif
     // we should write it to the memory anyway
@@ -91,7 +90,7 @@ bool BufferPool::write(gameptr_t address, const void *buffer, size_t size) {
 }
 
 bool BufferPool::refresh() {
-#ifndef USE_BUFFER_POOL
+#ifndef CONF_USE_BUFFER_POOL
     return true;
 #else
     std::lock_guard lock(cacheMapMutex);
@@ -123,7 +122,7 @@ BufferPool::getPageCache(gameptr_t alignedAddress, bool allocate) {
     if (!Module::processMemory->read(
             alignedAddress,
             &pageCache,
-            BUFFER_POOL_CACHE_LINE_SIZE
+            CONF_BUFFER_POOL_CACHE_LINE_SIZE
     )) {
         return std::nullopt;
     }

@@ -1,6 +1,5 @@
 #include <optional>
 #include <windows.h>
-#include "game_ptr.h"
 #include "process_info_internal.h"
 
 bool ProcessInfoInternal::attach(const std::string &processName) {

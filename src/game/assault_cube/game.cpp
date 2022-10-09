@@ -7,7 +7,6 @@
 #include "offset/offset.h"
 #include "mem/process_memory_accessor.h"
 #include "game.h"
-#include "game_ptr.h"
 
 std::shared_ptr<PlayerInterface> Game::getLocalPlayer() {
     return std::make_shared<Player>(

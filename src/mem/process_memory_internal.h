@@ -2,7 +2,6 @@
 #define EVIL_CAT_MEM_PROCESS_MEMORY_INTERNAL_H
 
 #include <unordered_map>
-#include "game_ptr.h"
 #include "process_memory_interface.h"
 
 class ProcessMemoryInternal : public ProcessMemoryInterface {

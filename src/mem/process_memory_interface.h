@@ -2,7 +2,6 @@
 #define EVIL_CAT_MEM_PROCESS_MEMORY_INTERFACE_H
 
 #include <string>
-#include "game_ptr.h"
 
 class ProcessMemoryInterface {
 public:

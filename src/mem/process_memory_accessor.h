@@ -6,7 +6,6 @@
 #include <type_traits>
 #include "module_config.h"
 #include "module.h"
-#include "game_ptr.h"
 #include "log.h"
 #include "buffer_pool.h"
 

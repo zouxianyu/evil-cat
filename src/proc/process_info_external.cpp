@@ -1,7 +1,6 @@
 #include <optional>
 #include <windows.h>
 #include <TlHelp32.h>
-#include "game_ptr.h"
 #include "process_info_external.h"
 
 bool ProcessInfoExternal::attach(const std::string &processName) {

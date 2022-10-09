@@ -4,7 +4,6 @@
 #include <optional>
 #include <unordered_map>
 #include <string>
-#include "game_ptr.h"
 #include "process_info_interface.h"
 
 class ProcessInfoInternal : public ProcessInfoInterface {
