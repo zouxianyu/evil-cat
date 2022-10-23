@@ -1,6 +1,6 @@
 #include <windows.h>
 #include <TlHelp32.h>
-#include "process_memory_external.h"
+#include "process_external.h"
 
 NTSTATUS(NTAPI *NtWow64ReadVirtualMemory64)(
         IN  HANDLE   ProcessHandle,
@@ -16,8 +16,7 @@ NTSTATUS(NTAPI *NtWow64WriteVirtualMemory64)(
         IN  ULONG64  BufferLength,
         OUT PULONG64 ReturnLength OPTIONAL);
 
-
-bool ProcessMemoryExternal::attach(const std::string &processName) {
+bool ProcessExternal::attach(const std::string &processName) {
     detach();
 
     if (processName.empty()) {
@@ -37,7 +36,7 @@ bool ProcessMemoryExternal::attach(const std::string &processName) {
     return true;
 }
 
-bool ProcessMemoryExternal::detach() {
+bool ProcessExternal::detach() {
     if (hProcess == nullptr || hProcess == INVALID_HANDLE_VALUE) {
         return false;
     }
@@ -47,14 +46,50 @@ bool ProcessMemoryExternal::detach() {
     return true;
 }
 
-bool ProcessMemoryExternal::read(gameptr_t address, void *buffer, gamesize_t size) {
+gameptr_t ProcessExternal::getModuleAddress(const std::string &moduleName) {
+    if (hProcess == nullptr || hProcess == INVALID_HANDLE_VALUE) {
+        return 0;
+    }
+
+    HANDLE hSnap = CreateToolhelp32Snapshot(
+            TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32,
+            GetProcessId(hProcess)
+    );
+
+    // invalid snapshot
+    if (hSnap == nullptr || hSnap == INVALID_HANDLE_VALUE) {
+        return 0;
+    }
+
+    // try to find the module address
+    MODULEENTRY32 modEntry;
+    modEntry.dwSize = sizeof(modEntry);
+    if (Module32First(hSnap, &modEntry))
+    {
+        do
+        {
+            if (moduleName == modEntry.szModule)
+            {
+                gameptr_t modBaseAddr = reinterpret_cast<gameptr_t>(modEntry.modBaseAddr);
+                CloseHandle(hSnap);
+                return modBaseAddr;
+            }
+        } while (Module32Next(hSnap, &modEntry));
+    }
+
+    // not found
+    CloseHandle(hSnap);
+    return 0;
+}
+
+bool ProcessExternal::read(gameptr_t address, void *buffer, gamesize_t size) {
     if (hProcess == nullptr || hProcess == INVALID_HANDLE_VALUE) {
         return false;
     }
 
     // if we are 32 bit process and we want to read a 64 bit address
     // we need another function
-    if constexpr (sizeof(void *) == 4 && sizeof(gameptr_t) == 8) {
+    if (sizeof(void *) == 4 && sizeof(gameptr_t) == 8) {
         return (NtWow64ReadVirtualMemory64(
                 hProcess,
                 address,
@@ -73,12 +108,12 @@ bool ProcessMemoryExternal::read(gameptr_t address, void *buffer, gamesize_t siz
     }
 }
 
-bool ProcessMemoryExternal::write(gameptr_t address, const void *buffer, gamesize_t size) {
+bool ProcessExternal::write(gameptr_t address, const void *buffer, gamesize_t size) {
     if (hProcess == nullptr || hProcess == INVALID_HANDLE_VALUE) {
         return false;
     }
 
-    if constexpr (sizeof(void *) == 4 && sizeof(gameptr_t) == 8) {
+    if (sizeof(void *) == 4 && sizeof(gameptr_t) == 8) {
         return (NtWow64WriteVirtualMemory64(
                 hProcess,
                 address,
@@ -97,13 +132,13 @@ bool ProcessMemoryExternal::write(gameptr_t address, const void *buffer, gamesiz
     }
 }
 
-DWORD ProcessMemoryExternal::getProcessIdByName(const std::string& processName) {
+DWORD ProcessExternal::getProcessIdByName(const std::string &processName) {
     //use the process name to get the process id via CreateToolhelp32Snapshot
     HANDLE hProcessSnap = CreateToolhelp32Snapshot(
             TH32CS_SNAPPROCESS,
             0
     );
-    if (hProcessSnap == INVALID_HANDLE_VALUE) {
+    if (hProcessSnap == nullptr || hProcessSnap == INVALID_HANDLE_VALUE) {
         return 0;
     }
     // loop through all the processes and find the one we want
@@ -119,5 +154,6 @@ DWORD ProcessMemoryExternal::getProcessIdByName(const std::string& processName) 
             return pe32.th32ProcessID;
         }
     } while (Process32Next(hProcessSnap, &pe32));
+    CloseHandle(hProcessSnap);
     return 0;
 }
