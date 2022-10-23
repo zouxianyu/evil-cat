@@ -35,7 +35,6 @@ list(APPEND HEADERS src)
 list(APPEND HEADERS lib/glm)
 list(APPEND HEADERS lib/imgui)
 list(APPEND HEADERS lib/imgui/backends)
-list(APPEND HEADERS "lib/DirectX-SDK/Include")
 #game specified headers
 list(APPEND HEADERS "src/game/${GAME_NAME}")
 
