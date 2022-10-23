@@ -1,4 +1,4 @@
-#include "mem/process_memory_accessor.h"
+#include "mem/memory_accessor.h"
 #include "offset/player.h"
 #include "player.h"
 
@@ -7,7 +7,7 @@ Player::Player(gameptr_t address)
 }
 
 glm::vec3 Player::getPosition() {
-    return ProcessMemoryAccessor<glm::vec3>{_this + Offset::Player::feet};
+    return MemoryAccessor<glm::vec3>{_this + Offset::Player::feet};
 }
 
 float Player::getHeight() {
@@ -17,47 +17,47 @@ float Player::getHeight() {
 }
 
 glm::vec3 Player::getCameraPosition() {
-    return ProcessMemoryAccessor<glm::vec3>{_this + Offset::Player::head};
+    return MemoryAccessor<glm::vec3>{_this + Offset::Player::head};
 }
 
 glm::vec3 Player::getViewAngle() {
-    return ProcessMemoryAccessor<glm::vec3>{_this + Offset::Player::viewAngle};
+    return MemoryAccessor<glm::vec3>{_this + Offset::Player::viewAngle};
 }
 
 void Player::setViewAngle(glm::vec3 angle) {
-    ProcessMemoryAccessor<glm::vec3>{_this + Offset::Player::viewAngle} = angle;
+    MemoryAccessor<glm::vec3>{_this + Offset::Player::viewAngle} = angle;
 }
 
 std::string Player::getName() {
-    Offset::Name name = ProcessMemoryAccessor<Offset::Name>{_this + Offset::Player::name};
+    Offset::Name name = MemoryAccessor<Offset::Name>{_this + Offset::Player::name};
     *name.rbegin() = '\0';
     return name.data();
 }
 
 int Player::getTeamId() {
-    return (int)ProcessMemoryAccessor<uint8_t>{_this + Offset::Player::team};
+    return (int)MemoryAccessor<uint8_t>{_this + Offset::Player::team};
 }
 
 float Player::getHealth() {
-    return (float)ProcessMemoryAccessor<int>{_this + Offset::Player::health};
+    return (float)MemoryAccessor<int>{_this + Offset::Player::health};
 }
 
 void Player::setHealth(float health) {
-    ProcessMemoryAccessor<int>{_this + Offset::Player::health} = (int)health;
+    MemoryAccessor<int>{_this + Offset::Player::health} = (int)health;
 }
 
 float Player::getArmor() {
-    return (float)ProcessMemoryAccessor<int>{_this + Offset::Player::armor};
+    return (float)MemoryAccessor<int>{_this + Offset::Player::armor};
 }
 
 void Player::setArmor(float armor) {
-    ProcessMemoryAccessor<int>{_this + Offset::Player::armor} = (int)armor;
+    MemoryAccessor<int>{_this + Offset::Player::armor} = (int)armor;
 }
 
 glm::vec3 Player::getBonePosition(Bone boneType) {
     switch (boneType) {
         case Bone::head: {
-            glm::vec3 head = ProcessMemoryAccessor<glm::vec3>{_this + Offset::Player::head};
+            glm::vec3 head = MemoryAccessor<glm::vec3>{_this + Offset::Player::head};
             head.z += 0.25f;
             return head;
         }
