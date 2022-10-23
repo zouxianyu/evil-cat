@@ -4,12 +4,10 @@
 //////////////////////////////////////////////////////////////////////////
 // choose framework module
 
-#include "mem/process_memory_external.h"
-#include "proc/process_info_external.h"
+#include "proc/process_external.h"
 #include "view/imgui_d3d9_external/view.h"
 
-using ProcessMemoryImpl = ProcessMemoryExternal;
-using ProcessInfoImpl = ProcessInfoExternal;
+using ProcessImpl = ProcessExternal;
 using ViewImpl = ImGuiD3D9ExternalView;
 
 

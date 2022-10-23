@@ -5,12 +5,12 @@
 #include <glm/gtx/vector_angle.hpp>
 #include "player.h"
 #include "offset/offset.h"
-#include "mem/process_memory_accessor.h"
+#include "mem/memory_accessor.h"
 #include "game.h"
 
 std::shared_ptr<PlayerInterface> Game::getLocalPlayer() {
     return std::make_shared<Player>(
-        ProcessMemoryAccessor<gameptr_t>{
+            MemoryAccessor<gameptr_t>{
             "ac_client.exe",
             Offset::localPlayer
         }
@@ -21,20 +21,20 @@ std::vector<std::shared_ptr<PlayerInterface>> Game::getPlayers() {
     std::vector<std::shared_ptr<PlayerInterface>> players;
 
     // get player list address
-    gameptr_t playerList = ProcessMemoryAccessor<gameptr_t>{
+    gameptr_t playerList = MemoryAccessor<gameptr_t>{
         "ac_client.exe",
         Offset::playerList
     };
 
     // get player count
-    int n = ProcessMemoryAccessor<int>{
+    int n = MemoryAccessor<int>{
         "ac_client.exe",
         Offset::playerCount
     };
 
     // construct all player wrappers and put them into the vector
     for (int i = 0; i < n; i++) {
-        gameptr_t playerAddr = ProcessMemoryAccessor<gameptr_t>{
+        gameptr_t playerAddr = MemoryAccessor<gameptr_t>{
             playerList + i * sizeof(gameptr_t)
         };
         if (!playerAddr) {
@@ -46,14 +46,14 @@ std::vector<std::shared_ptr<PlayerInterface>> Game::getPlayers() {
 }
 
 glm::mat4 Game::getVPMatrix() {
-    return ProcessMemoryAccessor<glm::mat4>{
+    return MemoryAccessor<glm::mat4>{
         "ac_client.exe",
         Offset::vpMatrix
     };
 }
 
 glm::vec2 Game::getWindowSize() {
-    glm::vec<2, int> windowSize = ProcessMemoryAccessor<glm::vec<2, int>>{
+    glm::vec<2, int> windowSize = MemoryAccessor<glm::vec<2, int>>{
             "ac_client.exe",
             Offset::windowSize
     };
