@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <mutex>
 #include "module.h"
 #include "buffer_pool.h"
 
@@ -129,9 +130,33 @@ BufferPool::getPageCache(gameptr_t alignedAddress, bool allocate) {
 
     // insert it in to the cache map
     // so that we can use it next time
-    cacheMap.insert(std::make_pair(alignedAddress, pageCache));
+    cacheMap.insert({alignedAddress, pageCache});
 
     return pageCache;
+}
+
+gameptr_t BufferPool::getModuleAddress(const std::string &moduleName) {
+    // try to find it from the cache
+    {
+        std::lock_guard lock(moduleAddressMutex);
+        auto it = moduleAddressMap.find(moduleName);
+        if (it != moduleAddressMap.end()) {
+            return it->second;
+        }
+    }
+
+    // get it from the next level interface
+    gameptr_t moduleAddress = Module::processMemory->getModuleAddress(moduleName);
+    if (!moduleAddress) {
+        return 0;
+    }
+
+    // insert it in to the cache
+    {
+        std::lock_guard lock(moduleAddressMutex);
+        moduleAddressMap.insert({moduleName, moduleAddress});
+    }
+    return moduleAddress;
 }
 
 

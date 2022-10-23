@@ -37,11 +37,8 @@ public:
             const std::vector<gameptr_t> &offsets = {},
             bool cache = true
     ) {
-        gameptr_t moduleBase{};
-        if (auto result = Module::processInfo->getModuleAddress(moduleName)) {
-            moduleBase = *result;
-            bad = false;
-        } else {
+        gameptr_t moduleBase = BufferPool::getInstance().getModuleAddress(moduleName);
+        if (!moduleBase) {
             LOG_DEBUG << "Failed to get module address for " << moduleName << std::endl;
             bad = true;
             return;
