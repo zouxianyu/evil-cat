@@ -1,5 +1,5 @@
-#ifndef EVIL_CAT_MEM_PROCESS_MEMORY_ACCESSOR_H
-#define EVIL_CAT_MEM_PROCESS_MEMORY_ACCESSOR_H
+#ifndef EVIL_CAT_MEM_MEMORY_ACCESSOR_H
+#define EVIL_CAT_MEM_MEMORY_ACCESSOR_H
 
 #include <string>
 #include <vector>
@@ -11,7 +11,7 @@
 
 
 template<typename T>
-class ProcessMemoryAccessor {
+class MemoryAccessor {
     // check T's type
     // if T is not a pod type, we cannot directly read/write it
     static_assert(std::is_trivial_v<T>, "T must be a POD type");
@@ -23,15 +23,15 @@ class ProcessMemoryAccessor {
     bool bad{};
 public:
 
-    ProcessMemoryAccessor(const ProcessMemoryAccessor &) = delete;
+    MemoryAccessor(const MemoryAccessor &) = delete;
 
-    ProcessMemoryAccessor &operator=(const ProcessMemoryAccessor &) = delete;
+    MemoryAccessor &operator=(const MemoryAccessor &) = delete;
 
-    ProcessMemoryAccessor(ProcessMemoryAccessor &&) = delete;
+    MemoryAccessor(MemoryAccessor &&) = delete;
 
-    ProcessMemoryAccessor &operator=(ProcessMemoryAccessor &&) = delete;
+    MemoryAccessor &operator=(MemoryAccessor &&) = delete;
 
-    explicit ProcessMemoryAccessor(
+    explicit MemoryAccessor(
             std::string moduleName,
             gameptr_t moduleOffset,
             const std::vector<gameptr_t> &offsets = {},
@@ -56,7 +56,7 @@ public:
         this->cache = cache;
     }
 
-    explicit ProcessMemoryAccessor(
+    explicit MemoryAccessor(
             gameptr_t address,
             const std::vector<gameptr_t> &offsets = {},
             bool cache = true
@@ -92,15 +92,15 @@ public:
         return get();
     }
 
-    ProcessMemoryAccessor<T> &operator=(const T &value) {
+    MemoryAccessor<T> &operator=(const T &value) {
         set(value);
         return *this;
     }
 
-    ProcessMemoryAccessor<T> &operator=(T &&value) {
+    MemoryAccessor<T> &operator=(T &&value) {
         set(value);
         return *this;
     }
 };
 
-#endif //EVIL_CAT_MEM_PROCESS_MEMORY_ACCESSOR_H
+#endif //EVIL_CAT_MEM_MEMORY_ACCESSOR_H

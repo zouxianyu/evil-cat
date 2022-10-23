@@ -5,11 +5,11 @@
 
 bool BufferPool::read(gameptr_t address, void *buffer, gamesize_t size, bool cache) {
 #ifndef CONF_USE_BUFFER_POOL
-    return Module::processMemory->read(address, buffer, size);
+    return Module::process->read(address, buffer, size);
 #else
     // if we don't want to use the cache, just read from the memory directly
     if (!cache) {
-        return Module::processMemory->read(address, buffer, size);
+        return Module::process->read(address, buffer, size);
     }
 
     // use loop to read cache line by line
@@ -87,7 +87,7 @@ bool BufferPool::write(gameptr_t address, const void *buffer, gamesize_t size) {
     }
 #endif
     // we should write it to the memory anyway
-    return Module::processMemory->write(address, buffer, size);
+    return Module::process->write(address, buffer, size);
 }
 
 bool BufferPool::refresh() {
@@ -120,7 +120,7 @@ BufferPool::getPageCache(gameptr_t alignedAddress, bool allocate) {
     // allocate a new cache line and read it from the target address
     // from the next level interface
     PageCache pageCache;
-    if (!Module::processMemory->read(
+    if (!Module::process->read(
             alignedAddress,
             &pageCache,
             CONF_BUFFER_POOL_CACHE_LINE_SIZE
@@ -146,7 +146,7 @@ gameptr_t BufferPool::getModuleAddress(const std::string &moduleName) {
     }
 
     // get it from the next level interface
-    gameptr_t moduleAddress = Module::processMemory->getModuleAddress(moduleName);
+    gameptr_t moduleAddress = Module::process->getModuleAddress(moduleName);
     if (!moduleAddress) {
         return 0;
     }

@@ -15,8 +15,7 @@ void entry() {
     ServicesTypeList services;
 
     // do initialization of the core module
-    Module::processInfo->attach(CONF_PROCESS_NAME);
-    Module::processMemory->attach(CONF_PROCESS_NAME);
+    Module::process->attach(CONF_PROCESS_NAME);
     Module::view->initialize(CONF_PROCESS_NAME);
 
     // resolve GUI callbacks
@@ -64,7 +63,6 @@ void entry() {
     // because the ProcessMemory and ProcessInfo is singleton
     // we can't use RAII to do the cleanup
     // so just do it manually, although it doesn't look good
-    Module::processMemory->detach();
-    Module::processInfo->detach();
+    Module::process->detach();
 
 }

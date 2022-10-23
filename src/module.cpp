@@ -4,11 +4,7 @@
 
 namespace Module {
 
-    const std::unique_ptr<ProcessMemoryInterface> processMemory =
-            std::make_unique<ProcessMemoryImpl>();
-
-    const std::unique_ptr<ProcessInfoInterface> processInfo =
-            std::make_unique<ProcessInfoImpl>();
+    const std::unique_ptr<ProcessInterface> process = std::make_unique<ProcessImpl>();
 
     const std::unique_ptr<ViewInterface> view = std::make_unique<ViewImpl>();
 
