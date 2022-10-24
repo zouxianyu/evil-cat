@@ -7,7 +7,7 @@
 // if we compile it as an executable file
 // the 'main' is the entry of the executable file
 // we call that 'external entry'
-int main(int argc, char *argv[]) {
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
     SetProcessDPIAware();
     // just call the real entry
     entry();
