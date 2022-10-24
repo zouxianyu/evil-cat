@@ -45,3 +45,6 @@ file(GLOB_RECURSE DX_STATIC_LIBS_X86 "lib/DirectX-SDK/Lib/x86/*.lib")
 file(GLOB_RECURSE DX_STATIC_LIBS_X64 "lib/DirectX-SDK/Lib/x64/*.lib")
 list(APPEND DX_STATIC_LIBS ${DX_STATIC_LIBS_X86} ${DX_STATIC_LIBS_X64})
 target_link_libraries(${TARGET_NAME} ${DX_STATIC_LIBS})
+
+# no terminal
+target_link_options(${TARGET_NAME} PRIVATE "/SUBSYSTEM:WINDOWS")
