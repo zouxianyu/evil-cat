@@ -8,7 +8,15 @@ namespace Settings::HealthLocker {
     float lockHealth = 100.f;
 }
 
-void HealthLocker::callback() {
+std::string HealthLocker::getName() {
+    return "health locker";
+}
+
+void HealthLocker::menuCallback() {
+
+}
+
+void HealthLocker::serviceCallback() {
     static bool previous = false;
     if (Settings::HealthLocker::on && !previous) {
         Controller::getInstance().addFastLoopCallback(

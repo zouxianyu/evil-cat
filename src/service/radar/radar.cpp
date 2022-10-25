@@ -20,7 +20,15 @@ namespace Settings::Radar {
     ImColor enemyColor = ImColor(255, 0, 0, 255);
 }
 
-void Radar::callback() {
+std::string Radar::getName() {
+    return "radar";
+}
+
+void Radar::menuCallback() {
+
+}
+
+void Radar::serviceCallback() {
     if (!Settings::Radar::on) {
         return;
     }

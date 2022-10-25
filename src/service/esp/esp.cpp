@@ -31,7 +31,15 @@ namespace Settings::Esp {
     ImColor healthLowColor = ImColor(255, 120, 120, 255);
 }
 
-void Esp::callback() {
+std::string Esp::getName() {
+    return "ESP";
+}
+
+void Esp::menuCallback() {
+
+}
+
+void Esp::serviceCallback() {
     if (!Settings::Esp::on) {
         return;
     }

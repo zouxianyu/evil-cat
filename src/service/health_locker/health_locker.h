@@ -12,8 +12,11 @@ class HealthLocker : public ServiceInterface {
     bool fastLoopCallback();
 
 public:
-    void callback() override;
+    std::string getName() override;
 
+    void menuCallback() override;
+
+    void serviceCallback() override;
 };
 
 #endif //EVIL_CAT_SERVICE_HEALTH_LOCKER_HEALTH_LOCKER_H

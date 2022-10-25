@@ -8,7 +8,15 @@ namespace Settings::NameList {
     bool on = false;
 }
 
-void NameList::callback() {
+std::string NameList::getName() {
+    return "name list";
+}
+
+void NameList::menuCallback() {
+
+}
+
+void NameList::serviceCallback() {
 
     if (!Settings::NameList::on) {
         return;

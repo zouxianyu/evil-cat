@@ -9,8 +9,11 @@ namespace Settings::NameList {
 
 class NameList : public ServiceInterface {
 public:
-    void callback() override;
+    std::string getName() override;
 
+    void menuCallback() override;
+
+    void serviceCallback() override;
 };
 
 #endif //EVIL_CAT_SERVICE_NAME_LIST_NAME_LIST_H

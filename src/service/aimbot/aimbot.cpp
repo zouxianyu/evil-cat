@@ -45,7 +45,15 @@ namespace Settings::Aimbot {
 
 // TODO: add bone aimbot and traceline collision detection aimbot policy
 
-void Aimbot::callback() {
+std::string Aimbot::getName() {
+    return "aimbot";
+}
+
+void Aimbot::menuCallback() {
+
+}
+
+void Aimbot::serviceCallback() {
 
     if (!Settings::Aimbot::on) {
         return;
