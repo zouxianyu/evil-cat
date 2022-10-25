@@ -7,21 +7,25 @@
 // generally, we call this function in the 'init' stage
 // we add all the GUI callbacks to the GUI thread
 
-bool Controller::addGuiCallback(const std::function<void()>& callback) {
-    std::lock_guard lock(guiCallbacksMutex);
-    guiCallbacks.emplace_back(callback);
-    return true;
+void Controller::addServiceCallback(const std::function<void()> &callback) {
+    serviceCallbacks.emplace_back(callback);
 }
 
 // this function is invoked from the GUI thread
 // we call all the gui callbacks here
 // e.g. if the 'ESP' is on, we call the ESP callback to draw boxes around the players
 
-void Controller::callGuiCallbacks() {
-    std::lock_guard lock(guiCallbacksMutex);
-    for (const auto& callback : guiCallbacks) {
-        callback();
-    }
+const std::vector<std::function<void()>> &Controller::getServiceCallbacks() const {
+    return serviceCallbacks;
+}
+
+void Controller::addMenuCallback(const std::string &name, const std::function<void()> &callback) {
+    menuCallbacks.emplace_back(name, callback);
+}
+
+const std::vector<std::pair<std::string, std::function<void()>>> &
+Controller::getMenuCallbacks() const {
+    return menuCallbacks;
 }
 
 // fast loop is designed to adapt 'lock health', 'lock position', ...
@@ -33,7 +37,7 @@ void Controller::callGuiCallbacks() {
 // calling it in the loop, return false means the callback want to be removed
 // from the fast loop callback list.
 
-bool Controller::addFastLoopCallback(const std::function<bool()>& callback) {
+void Controller::addFastLoopCallback(const std::function<bool()> &callback) {
     std::lock_guard lock(fastLoopCallbacksMutex);
     fastLoopCallbacks.emplace_back(callback);
 
@@ -41,8 +45,6 @@ bool Controller::addFastLoopCallback(const std::function<bool()>& callback) {
     // because if we don't use this feature, the fast loop thread will sleep
     // we don't want to consume too much CPU cycles :)
     fastLoopCV.notify_one();
-
-    return true;
 }
 
 // a wapper function to read 'exit' flag in 'Settings' holding mutex
