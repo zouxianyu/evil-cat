@@ -1,4 +1,5 @@
 #include <memory>
+#include <imgui.h>
 #include "module.h"
 #include "controller/controller.h"
 #include "health_locker.h"
@@ -13,7 +14,8 @@ std::string HealthLocker::getName() {
 }
 
 void HealthLocker::menuCallback() {
-
+    ImGui::Checkbox("on", &Settings::HealthLocker::on);
+    ImGui::SliderFloat("health", &Settings::HealthLocker::lockHealth, 0.f, 100.f);
 }
 
 void HealthLocker::serviceCallback() {

@@ -13,7 +13,7 @@ std::string NameList::getName() {
 }
 
 void NameList::menuCallback() {
-
+    ImGui::Checkbox("name list", &Settings::NameList::on);
 }
 
 void NameList::serviceCallback() {

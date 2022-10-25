@@ -25,7 +25,15 @@ std::string Radar::getName() {
 }
 
 void Radar::menuCallback() {
-
+    ImGui::Checkbox("radar", &Settings::Radar::on);
+    ImGui::Checkbox("rotate", &Settings::Radar::rotate);
+    ImGui::SliderFloat("radius", &Settings::Radar::radius, 0.f, 100.f);
+    ImGui::SliderFloat("scale", &Settings::Radar::scale, 0.f, 10.f);
+    ImGui::Separator();
+    ImGui::ColorEdit4("background color", (float *)&Settings::Radar::backgroundColor.Value);
+    ImGui::ColorEdit4("border color", (float *)&Settings::Radar::borderColor.Value);
+    ImGui::ColorEdit4("teammate color", (float *)&Settings::Radar::teammateColor.Value);
+    ImGui::ColorEdit4("enemy color", (float *) &Settings::Radar::enemyColor.Value);
 }
 
 void Radar::serviceCallback() {

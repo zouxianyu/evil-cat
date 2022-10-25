@@ -36,7 +36,25 @@ std::string Esp::getName() {
 }
 
 void Esp::menuCallback() {
-
+    const char *boxType[] = { "2D", "3D" };
+    ImGui::Checkbox("ESP", &Settings::Esp::on);
+    ImGui::Combo(
+            "box type",
+            (int *) &Settings::Esp::boxType,
+            boxType,
+            IM_ARRAYSIZE(boxType)
+    );
+    ImGui::Checkbox("bone", &Settings::Esp::showBone);
+    ImGui::Checkbox("view line", &Settings::Esp::showViewLine);
+    ImGui::Checkbox("head bar", &Settings::Esp::showHeadBar);
+    ImGui::Checkbox("head circle", &Settings::Esp::showHeadCircle);
+    ImGui::Checkbox("distance", &Settings::Esp::showDistance);
+    ImGui::Separator();
+    ImGui::ColorEdit4("teammate", (float *)&Settings::Esp::teammateColor.Value);
+    ImGui::ColorEdit4("enemy",(float *)&Settings::Esp::enemyColor.Value);
+    ImGui::ColorEdit4("full health",(float *)&Settings::Esp::healthFullColor.Value);
+    ImGui::ColorEdit4("half health",(float *)&Settings::Esp::healthHalfColor.Value);
+    ImGui::ColorEdit4("low health",(float *)&Settings::Esp::healthLowColor.Value);
 }
 
 void Esp::serviceCallback() {
