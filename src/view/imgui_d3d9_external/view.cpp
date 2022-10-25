@@ -70,7 +70,9 @@ void ImGuiD3D9ExternalView::Draw() {
 //    RGBA White = { 255,255,255,255 };
 //    DrawStrokeText(30, 44, &White, FpsInfo);
 
-    Controller::getInstance().callGuiCallbacks();
+    for (auto &callback : Controller::getInstance().getServiceCallbacks()) {
+        callback();
+    }
 }
 
 void ImGuiD3D9ExternalView::Render() {
@@ -86,7 +88,7 @@ void ImGuiD3D9ExternalView::Render() {
     if (Settings::showMenu) {
         InputHandler();
 //        ImGui::ShowDemoWindow();
-        Module::menu->show();
+        menu.show();
         SetWindowLong(Overlay.Hwnd, GWL_EXSTYLE, WS_EX_TOOLWINDOW);
         UpdateWindow(Overlay.Hwnd);
         SetFocus(Overlay.Hwnd);
@@ -271,11 +273,6 @@ void ImGuiD3D9ExternalView::ProcessCheck() {
     }
 }
 
-ImGuiD3D9ExternalView &ImGuiD3D9ExternalView::getInstance() {
-    static ImGuiD3D9ExternalView instance;
-    return instance;
-}
-
 bool ImGuiD3D9ExternalView::initialize(const std::string &processName) {
     targetProcess = processName;
     return true;
@@ -328,9 +325,3 @@ bool ImGuiD3D9ExternalView::loop() {
     processCheckThread.join();
     return true;
 }
-
-ImGuiD3D9ExternalView::ImGuiD3D9ExternalView() {
-//    _this = this;
-}
-
-

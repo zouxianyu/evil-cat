@@ -27,8 +27,11 @@ class Aimbot : public ServiceInterface {
     std::optional<std::shared_ptr<PlayerInterface>> optAimbotTarget = std::nullopt;
 
 public:
-    void callback() override;
+    std::string getName() override;
 
+    void menuCallback() override;
+
+    void serviceCallback() override;
 };
 
 #endif //EVIL_CAT_SERVICE_AIMBOT_AIMBOT_H

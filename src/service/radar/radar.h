@@ -21,8 +21,11 @@ namespace Settings::Radar {
 
 class Radar : public ServiceInterface {
 public:
-    void callback() override;
+    std::string getName() override;
 
+    void menuCallback() override;
+
+    void serviceCallback() override;
 };
 
 #endif //EVIL_CAT_SERVICE_RADAR_RADAR_H

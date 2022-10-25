@@ -2,6 +2,7 @@
 #include <functional>
 #include <optional>
 #include <glm/glm.hpp>
+#include <imgui.h>
 #include "module.h"
 #include "game/player_interface.h"
 #include "aimbot_helper.h"
@@ -45,7 +46,71 @@ namespace Settings::Aimbot {
 
 // TODO: add bone aimbot and traceline collision detection aimbot policy
 
-void Aimbot::callback() {
+std::string Aimbot::getName() {
+    return "aimbot";
+}
+
+void Aimbot::menuCallback() {
+    const char *aimbotStrategy[] = {
+            "right button",
+            "auto follow"
+    };
+    const char *aimbotBone[] = {
+            "head",
+            "neck",
+            "left shoulder",
+            "right shoulder",
+            "left elbow",
+            "right elbow",
+            "left hand",
+            "right hand",
+            "spine",
+            "hip",
+            "left hip",
+            "right hip",
+            "left knee",
+            "right knee",
+            "left foot",
+            "right foot",
+    };
+    ImGui::Checkbox("aimbot", &Settings::Aimbot::on);
+    ImGui::Combo(
+            "strategy",
+            (int *) &Settings::Aimbot::strategy,
+            aimbotStrategy,
+            IM_ARRAYSIZE(aimbotStrategy)
+    );
+    ImGui::SliderAngle(
+            "max angle",
+            &Settings::Aimbot::maxAngle,
+            0.f,
+            180.f
+    );
+    ImGui::SliderFloat(
+            "move ratio",
+            &Settings::Aimbot::moveRatio,
+            0.05,
+            1.f
+    );
+    ImGui::Checkbox("bone aimer", &Settings::Aimbot::useBoneAimer);
+    if (Settings::Aimbot::useBoneAimer) {
+        ImGui::Combo(
+                "aim at",
+                (int *) &Settings::Aimbot::bone,
+                aimbotBone,
+                IM_ARRAYSIZE(aimbotBone)
+        );
+    } else {
+        ImGui::SliderFloat(
+                "relative height",
+                &Settings::Aimbot::nonBoneAimerRelativeHeight,
+                0.f,
+                1.f
+        );
+    }
+}
+
+void Aimbot::serviceCallback() {
 
     if (!Settings::Aimbot::on) {
         return;

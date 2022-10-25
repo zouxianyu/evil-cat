@@ -69,8 +69,11 @@ class Esp : public ServiceInterface {
     );
 
 public:
-    void callback() override;
+    std::string getName() override;
 
+    void menuCallback() override;
+
+    void serviceCallback() override;
 };
 
 #endif //EVIL_CAT_SERVICE_ESP_ESP_H

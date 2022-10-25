@@ -8,9 +8,9 @@
 
 class Controller : public Singleton<Controller> {
 
-    std::vector<std::function<void()>> guiCallbacks;
+    std::vector<std::function<void()>> serviceCallbacks;
 
-    std::mutex guiCallbacksMutex;
+    std::vector<std::pair<std::string, std::function<void()>>> menuCallbacks;
 
     std::vector<std::function<bool()>> fastLoopCallbacks;
 
@@ -19,11 +19,15 @@ class Controller : public Singleton<Controller> {
     std::condition_variable fastLoopCV;
 
 public:
-    bool addGuiCallback(const std::function<void()>& callback);
+    void addServiceCallback(const std::function<void()> &callback);
 
-    void callGuiCallbacks();
+    const std::vector<std::function<void()>> &getServiceCallbacks() const;
 
-    bool addFastLoopCallback(const std::function<bool()>& callback);
+    void addMenuCallback(const std::string &name, const std::function<void()> &callback);
+
+    const std::vector<std::pair<std::string, std::function<void()>>> &getMenuCallbacks() const;
+
+    void addFastLoopCallback(const std::function<bool()> &callback);
 
     void callFastLoopCallbacks();
 

@@ -22,22 +22,33 @@ void entry() {
     // for each in services, add them to gui callback
     // fucking stupid tuple and confusing template
     std::apply([&](auto &&... service) {
-        (Controller::getInstance().addGuiCallback( [&service] {
+        (Controller::getInstance().addServiceCallback( [&service] {
             static_assert(
                     std::is_base_of_v<ServiceInterface, std::decay_t<decltype(service)>>,
                     "service must be derived from ServiceInterface"
             );
-            service.callback();
+            service.serviceCallback();
         }), ...);
     }, services);
 
     // we need to add a buffer pool refresh callback
     // because the cache need to be flushed each frame
-    Controller::getInstance().addGuiCallback(
+    Controller::getInstance().addServiceCallback(
             [inst = &BufferPool::getInstance()] {
                 inst->refresh();
             }
     );
+
+    // add menu callback
+    std::apply([&](auto &&... service) {
+        (Controller::getInstance().addMenuCallback(service.getName(), [&service] {
+            static_assert(
+                    std::is_base_of_v<ServiceInterface, std::decay_t<decltype(service)>>,
+                    "service must be derived from ServiceInterface"
+            );
+            service.menuCallback();
+        }), ...);
+    }, services);
 
     // create the fast loop thread
     // the code inside the fast loop is a busy-wait loop

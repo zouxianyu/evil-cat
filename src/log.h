@@ -14,9 +14,7 @@ public:
     DummyLogStream() : std::ostream(&dummyBuffer) {}
 };
 
-#define DEBUG_ENABLE 0
-
-#if (DEBUG_ENABLE)
+#if (_DEBUG)
 #define LOG_DEBUG (std::cout<<"[debug]")
 #else
 #define LOG_DEBUG (DummyLogStream())

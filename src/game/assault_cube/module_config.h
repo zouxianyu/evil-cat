@@ -15,9 +15,7 @@ using ViewImpl = ImGuiD3D9ExternalView;
 // choose game specific module
 
 #include "game.h"
-#include "menu.h"
 
 using GameImpl = Game;
-using MenuImpl = Menu;
 
 #endif //EVIL_CAT_GAME_ASSAULT_CUBE_MODULE_CONFIG_H
