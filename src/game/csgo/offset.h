@@ -96,6 +96,7 @@ namespace hazedumper {
         constexpr auto m_szLastPlaceName = 0x35C4;
         constexpr auto m_thirdPersonViewAngles = 0x31E8;
         constexpr auto m_vecOrigin = 0x138;
+        constexpr auto m_viewAngle = 0x12C;
         constexpr auto m_vecVelocity = 0x114;
         constexpr auto m_vecViewOffset = 0x108;
         constexpr auto m_viewPunchAngle = 0x3030;
