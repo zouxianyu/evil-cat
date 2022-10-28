@@ -11,8 +11,7 @@
 std::shared_ptr<PlayerInterface> Game::getLocalPlayer() {
     return std::make_shared<Player>(
             MemoryAccessor<gameptr_t>{
-                    "engine.dll", hazedumper::signatures::dwClientState,
-                    {hazedumper::signatures::dwClientState_GetLocalPlayer}
+                    "client.dll", hazedumper::signatures::dwLocalPlayer,
             }
     );
 }
