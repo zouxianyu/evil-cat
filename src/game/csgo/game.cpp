@@ -90,5 +90,5 @@ glm::vec3 Game::orientationToViewAngle(glm::vec3 orientation) {
 float Game::getDistance(std::shared_ptr<PlayerInterface> player) {
     glm::vec3 localPlayerPos = getLocalPlayer()->getPosition();
     glm::vec3 playerPos = player->getPosition();
-    return glm::distance(localPlayerPos, playerPos) * 0.3f;
+    return glm::distance(localPlayerPos, playerPos) * 0.015f;
 }
