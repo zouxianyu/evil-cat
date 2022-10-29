@@ -20,6 +20,8 @@ namespace Settings::Esp {
     ImColor enemyColor = ImColor(255, 0, 0, 225);
     ImColor boneColor = ImColor(234, 240, 68, 255);
 
+    float viewLineScale = 10.f;
+
     float barMoveUp = 15.f;
     float barWidth = 125.f;
     float barHeight = 35.f;
@@ -255,7 +257,7 @@ void Esp::showViewLine(
         glm::vec3 camera = player->getCameraPosition();
         glm::vec3 viewAngle = player->getViewAngle();
         glm::vec3 orientation = Module::game->viewAngleToOrientation(viewAngle);
-        glm::vec3 viewLineEnd = camera + orientation;
+        glm::vec3 viewLineEnd = camera + orientation * Settings::Esp::viewLineScale;
         auto viewLineColor = player->getTeamId() == localPlayer->getTeamId() ?
                              Settings::Esp::teammateColor : Settings::Esp::enemyColor;
 
