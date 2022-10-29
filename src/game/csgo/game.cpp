@@ -53,10 +53,11 @@ std::vector<std::shared_ptr<PlayerInterface>> Game::getPlayers() {
 }
 
 glm::mat4 Game::getVPMatrix() {
-    return MemoryAccessor<glm::mat4>{
+    glm::mat4 mat = MemoryAccessor<glm::mat4>{
             "client.dll",
             hazedumper::signatures::dwViewMatrix
     };
+    return glm::transpose(mat);
 }
 
 glm::vec2 Game::getWindowSize() {
