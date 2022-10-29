@@ -67,26 +67,25 @@ glm::vec2 Game::getWindowSize() {
 
 glm::vec3 Game::viewAngleToOrientation(glm::vec3 viewAngle) {
     glm::vec3 Z = glm::vec3(0.0f, 0.0f, 1.0f);
-    glm::vec3 negtiveY = glm::vec3(0.0f, -1.0f, 0.0f);
-    float alpha = viewAngle.x * glm::pi<float>() / 180.0f;
-    float beta = viewAngle.y * glm::pi<float>() / 180.0f;
-    glm::vec3 vecXY = glm::rotate(negtiveY, alpha, Z);
-    glm::vec3 axis = glm::normalize(glm::cross(vecXY, Z));
-    glm::vec3 vecXYZ = glm::normalize(glm::rotate(vecXY, beta, axis));
-    return vecXYZ;
+    glm::vec3 X = glm::vec3(1.0f, 0.0f, 0.0f);
+    float alpha = glm::radians(viewAngle.y);
+    float beta = -glm::radians(viewAngle.x);
+    glm::vec3 vXY = glm::normalize(glm::rotate(X, alpha, Z));
+    glm::vec3 vCross = glm::normalize(glm::cross(vXY,Z));
+    glm::vec3 vXYZ = glm::normalize(glm::rotate(vXY, beta, vCross));
+    return vXYZ;
 }
 
 glm::vec3 Game::orientationToViewAngle(glm::vec3 orientation) {
-    glm::vec3 X = glm::vec3(1.0f, 0.0f, 0.0f);
     glm::vec3 Z = glm::vec3(0.0f, 0.0f, 1.0f);
-    glm::vec3 negtiveY = glm::vec3(0.0f, -1.0f, 0.0f);
-    glm::vec3 orientationXY = glm::normalize(
-            glm::vec3(orientation.x, orientation.y, 0.f)
-    );
-    float alpha = glm::orientedAngle(negtiveY, orientationXY, Z);
-    glm::vec3 orientationXYZ = glm::normalize(orientation);
-    float beta = glm::pi<float>() / 2.0f - glm::angle(Z, orientationXYZ);
-    return {alpha * 180.0f / glm::pi<float>(), beta * 180.0f / glm::pi<float>(), 0.0f};
+    glm::vec3 X = glm::vec3(1.0f, 0.0f, 0.0f);
+    glm::vec3 vXY = glm::normalize(glm::vec3(orientation.x, orientation.y, 0.0f));
+    glm::vec3 vXYZ = glm::normalize(orientation);
+    float alpha = glm::orientedAngle(X, vXY, Z);
+    float beta = glm::angle(vXYZ, Z) - glm::pi<float>() / 2.0f;
+    alpha = glm::clamp(glm::degrees(alpha), -180.0f, 180.0f);
+    beta = glm::clamp(glm::degrees(beta), -89.0f, 89.0f);
+    return {beta, alpha, 0.0f};
 }
 
 float Game::getDistance(std::shared_ptr<PlayerInterface> player) {
