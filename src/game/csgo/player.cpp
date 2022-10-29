@@ -110,6 +110,19 @@ bool Player::operator==(const PlayerInterface &other) const {
 void LocalPlayer::setViewAngle(glm::vec3 angle) {
     // because we cannot modify the view angle inside the player object
     // we can only modify it inside the engine.dll
+
+    // recoil control
+    glm::vec3 punchAngle = MemoryAccessor<glm::vec3>{
+            _this + hazedumper::netvars::m_aimPunchAngle
+    };
+    angle -= punchAngle * 2.f;
+
+    // clamp the angle
+    angle.x = glm::clamp(angle.x, -89.f, 89.f);
+    angle.y = glm::clamp(angle.y, -180.f, 180.f);
+    angle.z = 0.f;
+
+    // write it to the local player view angle
     MemoryAccessor<glm::vec3>{
             "engine.dll", hazedumper::signatures::dwClientState,
             {hazedumper::signatures::dwClientState_ViewAngles}
