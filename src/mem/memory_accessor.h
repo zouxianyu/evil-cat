@@ -81,6 +81,13 @@ public:
         return value;
     }
 
+    void get(T* addr, size_t n) const {
+        if (bad) {
+            return;
+        }
+        BufferPool::getInstance().read(address, addr, sizeof(T) * n, cache);
+    }
+
     void set(const T &value) {
         if (bad) {
             return;
