@@ -23,10 +23,10 @@ inline static bool isValidPlayer(gameptr_t entity) {
 std::vector<std::shared_ptr<PlayerInterface>> Game::getPlayers() {
     std::vector<std::shared_ptr<PlayerInterface>> players;
 
-    // get player list address
-    gameptr_t playerList = MemoryAccessor<gameptr_t>{
-            "client.dll",
-            hazedumper::signatures::dwEntityList
+    // get max player count
+    int playerMaxCount = MemoryAccessor<int>{
+            "engine.dll", hazedumper::signatures::dwClientState,
+            {hazedumper::signatures::dwClientState_MaxPlayer}
     };
 
     // define player entry
@@ -37,19 +37,17 @@ std::vector<std::shared_ptr<PlayerInterface>> Game::getPlayers() {
         gameptr_t prev;
     };
 
-    // rec info
-    gameptr_t head = playerList;
-    gameptr_t curr = head;
+    auto entries = std::make_unique<PlayerEntry[]>(playerMaxCount);
+    MemoryAccessor<PlayerEntry>{
+            "client.dll",hazedumper::signatures::dwEntityList
+    }.get(entries.get(), playerMaxCount);
 
-    // get all players
-    PlayerEntry entry;
-    do {
-        entry = MemoryAccessor<PlayerEntry>{curr};
-        if (entry.player && isValidPlayer(entry.player)) {
+    for (int i = 0; i < playerMaxCount; i++) {
+        auto &entry = entries[i];
+        if (entry.player) {
             players.emplace_back(std::make_shared<Player>(entry.player));
         }
-        curr = entry.next;
-    } while (entry.next != head);
+    }
 
     return players;
 }
