@@ -20,7 +20,8 @@ using ServicesTypeList = std::tuple<
 // change defalut settings
 
 inline static void changeDefaultSettings() {
-    Settings::Esp::viewLineScale = 20.f;
+    Settings::Esp::viewLineScale = 30.f;
+    Settings::Radar::scale = 0.05f;
 }
 
 #endif //EVIL_CAT_GAME_CSGO_SERVICE_CONFIG_H
