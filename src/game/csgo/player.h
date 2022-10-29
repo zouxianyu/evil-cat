@@ -5,9 +5,10 @@
 
 class Player : public PlayerInterface {
 
-    gameptr_t _this;
-
     glm::vec3 getBoneById(int id);
+
+protected:
+    gameptr_t _this;
 
 public:
     explicit Player(gameptr_t address);
