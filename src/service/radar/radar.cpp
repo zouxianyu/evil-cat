@@ -36,6 +36,14 @@ void Radar::menuCallback() {
     ImGui::ColorEdit4("enemy color", (float *) &Settings::Radar::enemyColor.Value);
 }
 
+inline static glm::vec2 rightHandleFix(glm::vec2 in) {
+#ifndef GLM_LEFT_HANDED
+    return {-in.x, in.y};
+#else
+    return in;
+#endif
+}
+
 void Radar::serviceCallback() {
     if (!Settings::Radar::on) {
         return;
@@ -45,12 +53,7 @@ void Radar::serviceCallback() {
 
     glm::vec3 localPosition = localPlayer->getPosition();
 
-    glm::vec3 defaultViewAngle = {0.f, 0.f, 0.f};
-    glm::vec3 defaultOrientation = Module::game->viewAngleToOrientation(defaultViewAngle);
-
-    glm::vec2 defaultOrientation2D = glm::normalize(
-            glm::vec2{defaultOrientation.x, defaultOrientation.y}
-    );
+    glm::vec2 defaultOrientation2D = {0.f, -1.f};
 
     glm::vec3 currentViewAngle = localPlayer->getViewAngle();
     glm::vec3 currentOrientation = Module::game->viewAngleToOrientation(currentViewAngle);
@@ -89,7 +92,7 @@ void Radar::serviceCallback() {
 
     ImVec2 drawingCenter = ImVec2(radarPosition.x, radarPosition.y);
     glm::vec2 vDrawingEnd =
-            radarPosition + Settings::Radar::viewLineScale * currentOrientation2D;
+            radarPosition + Settings::Radar::viewLineScale * rightHandleFix(currentOrientation2D);
     ImVec2 drawingEnd = ImVec2(vDrawingEnd.x, vDrawingEnd.y);
 
     ImGui::GetBackgroundDrawList()->AddCircleFilled(
@@ -136,6 +139,7 @@ void Radar::serviceCallback() {
         if (Settings::Radar::rotate) {
             playerPosition2D = glm::rotate(playerPosition2D, alpha);
         }
+        playerPosition2D = rightHandleFix(playerPosition2D);
 
         glm::vec3 playerViewAngle = player->getViewAngle();
 
@@ -148,6 +152,7 @@ void Radar::serviceCallback() {
         if (Settings::Radar::rotate) {
             playerOrientation2D = glm::rotate(playerOrientation2D, alpha);
         }
+        playerOrientation2D = rightHandleFix(playerOrientation2D);
 
         playerPosition2D += radarPosition;
 
