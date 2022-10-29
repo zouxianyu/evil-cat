@@ -57,17 +57,11 @@ void Player::setArmor(float armor) {
 }
 
 glm::vec3 Player::getBoneById(int id) {
-    glm::vec3 result{};
-    result.x = MemoryAccessor<float>{
-            _this + hazedumper::netvars::m_dwBoneMatrix + (id * 0x30) + 0xC
+    glm::mat3x4 mem = MemoryAccessor<glm::mat3x4>{
+            _this + hazedumper::netvars::m_dwBoneMatrix,
+            {static_cast<gameptr_t>(id * 0x30)}
     };
-    result.y = MemoryAccessor<float>{
-            _this + hazedumper::netvars::m_dwBoneMatrix + (id * 0x30) + 0x1C
-    };
-    result.z = MemoryAccessor<float>{
-            _this + hazedumper::netvars::m_dwBoneMatrix + (id * 0x30) + 0x2C
-    };
-    return result;
+    return {mem[0][3], mem[1][3], mem[2][3]};
 }
 
 glm::vec3 Player::getBonePosition(Bone boneType) {
