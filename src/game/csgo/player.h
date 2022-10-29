@@ -3,9 +3,19 @@
 
 #include "game/player_interface.h"
 
+// for bone id
+// https://guidedhacking.com/threads/csgo-bone-esp-models-updated.10496/
+enum class PlayerType {
+    ctm_idf,
+    tm_leet,
+    unknown
+};
+
 class Player : public PlayerInterface {
 
     glm::vec3 getBoneById(int id);
+
+    PlayerType getPlayerType();
 
 protected:
     gameptr_t _this;

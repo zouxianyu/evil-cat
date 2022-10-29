@@ -1,3 +1,4 @@
+#include "magic_enum.h"
 #include "mem/memory_accessor.h"
 #include "offset.h"
 #include "player.h"
@@ -64,42 +65,87 @@ glm::vec3 Player::getBoneById(int id) {
     return {mem[0][3], mem[1][3], mem[2][3]};
 }
 
+
+template<PlayerType T>
+constexpr std::array<int, magic_enum::enum_count<Bone>()>
+getBoneIdList() {
+    return {};
+}
+
+template<>
+constexpr std::array<int, magic_enum::enum_count<Bone>()>
+getBoneIdList<PlayerType::ctm_idf>() {
+    std::array<int, magic_enum::enum_count<Bone>()> map{};
+    map[static_cast<int>(Bone::head)] = 8;
+    map[static_cast<int>(Bone::neck)] = 7;
+    map[static_cast<int>(Bone::leftShoulder)] = 11;
+    map[static_cast<int>(Bone::rightShoulder)] = 41;
+    map[static_cast<int>(Bone::leftElbow)] = 12;
+    map[static_cast<int>(Bone::rightElbow)] = 42;
+    map[static_cast<int>(Bone::leftHand)] = 13;
+    map[static_cast<int>(Bone::rightHand)] = 43;
+    map[static_cast<int>(Bone::spine)] = 5;
+    map[static_cast<int>(Bone::hip)] = 0;
+    map[static_cast<int>(Bone::leftHip)] = 70;
+    map[static_cast<int>(Bone::rightHip)] = 77;
+    map[static_cast<int>(Bone::leftKnee)] = 71;
+    map[static_cast<int>(Bone::rightKnee)] = 78;
+    map[static_cast<int>(Bone::leftFoot)] = 72;
+    map[static_cast<int>(Bone::rightFoot)] = 79;
+    return map;
+}
+
+template<>
+constexpr std::array<int, magic_enum::enum_count<Bone>()>
+getBoneIdList<PlayerType::tm_leet>() {
+    std::array<int, magic_enum::enum_count<Bone>()> map{};
+    map[static_cast<int>(Bone::head)] = 8;
+    map[static_cast<int>(Bone::neck)] = 7;
+    map[static_cast<int>(Bone::leftShoulder)] = 11;
+    map[static_cast<int>(Bone::rightShoulder)] = 39;
+    map[static_cast<int>(Bone::leftElbow)] = 12;
+    map[static_cast<int>(Bone::rightElbow)] = 40;
+    map[static_cast<int>(Bone::leftHand)] = 13;
+    map[static_cast<int>(Bone::rightHand)] = 41;
+    map[static_cast<int>(Bone::spine)] = 5;
+    map[static_cast<int>(Bone::hip)] = 0;
+    map[static_cast<int>(Bone::leftHip)] = 66;
+    map[static_cast<int>(Bone::rightHip)] = 73;
+    map[static_cast<int>(Bone::leftKnee)] = 67;
+    map[static_cast<int>(Bone::rightKnee)] = 74;
+    map[static_cast<int>(Bone::leftFoot)] = 68;
+    map[static_cast<int>(Bone::rightFoot)] = 75;
+    return map;
+}
+
+PlayerType Player::getPlayerType() {
+    // get model name
+    using ModelPath = std::array<char, 64>;
+    ModelPath name = MemoryAccessor<ModelPath>{
+            _this + 0x6C,
+            {0x4}
+    };
+    *name.rbegin() = '\0';
+    std::string modelName = name.data();
+
+    // compare model name
+    if (modelName.find("ctm_idf") != std::string::npos) {
+        return PlayerType::ctm_idf;
+    } else if (modelName.find("tm_leet") != std::string::npos) {
+        return PlayerType::tm_leet;
+    } else {
+        return PlayerType::unknown;
+    }
+}
+
 glm::vec3 Player::getBonePosition(Bone boneType) {
-    switch (boneType) {
-        case Bone::head:
-            return getBoneById(8);
-        case Bone::neck:
-            return getBoneById(7);
-        case Bone::leftShoulder:
-            return getBoneById(11);
-        case Bone::rightShoulder:
-            return getBoneById(41);
-        case Bone::leftElbow:
-            return getBoneById(12);
-        case Bone::rightElbow:
-            return getBoneById(42);
-        case Bone::leftHand:
-            return getBoneById(13);
-        case Bone::rightHand:
-            return getBoneById(43);
-        case Bone::spine:
-            return getBoneById(5);
-        case Bone::hip:
-            return getBoneById(0);
-        case Bone::leftHip:
-            return getBoneById(70);
-        case Bone::rightHip:
-            return getBoneById(77);
-        case Bone::leftKnee:
-            return getBoneById(71);
-        case Bone::rightKnee:
-            return getBoneById(78);
-        case Bone::leftFoot:
-            return getBoneById(72);
-        case Bone::rightFoot:
-            return getBoneById(79);
+    switch (getPlayerType()) {
+        case PlayerType::ctm_idf:
+            return getBoneById(getBoneIdList<PlayerType::ctm_idf>()[static_cast<int>(boneType)]);
+        case PlayerType::tm_leet:
+            return getBoneById(getBoneIdList<PlayerType::tm_leet>()[static_cast<int>(boneType)]);
         default:
-            return getBoneById(8);
+            return getBoneById(getBoneIdList<PlayerType::unknown>()[static_cast<int>(boneType)]);
     }
 }
 
