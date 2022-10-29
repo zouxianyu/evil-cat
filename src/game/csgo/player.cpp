@@ -31,7 +31,21 @@ void Player::setViewAngle(glm::vec3 angle) {
 }
 
 std::string Player::getName() {
-    return "player";
+    uint32_t id = MemoryAccessor<uint32_t>{_this + 0x64};
+
+    using Name = std::array<char, 128>;
+    Name name = MemoryAccessor<Name>{
+            "engine.dll", hazedumper::signatures::dwClientState,
+            {
+                    hazedumper::signatures::dwClientState_PlayerInfo,
+                    0x40,
+                    0xC,
+                    0x28 + (id - 1) * 0x34,
+                    0x10
+            }
+    };
+    *name.rbegin() = '\0';
+    return name.data();
 }
 
 int Player::getTeamId() {
