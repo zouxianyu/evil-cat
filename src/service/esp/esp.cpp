@@ -20,7 +20,7 @@ namespace Settings::Esp {
     ImColor enemyColor = ImColor(255, 0, 0, 225);
     ImColor boneColor = ImColor(234, 240, 68, 255);
 
-    float viewLineScale = 10.f;
+    float viewLineScale = 1.f;
 
     float barMoveUp = 15.f;
     float barWidth = 125.f;
@@ -187,10 +187,12 @@ void Esp::showEsp3D(
         glm::vec3 orientation2d =
                 glm::normalize(glm::vec3(orientation.x, orientation.y, 0));
 
+        glm::vec3 axisX = glm::vec3(1.f, 0.f, 0.f);
+        glm::vec3 axisZ = glm::vec3(0.f, 0.f, 1.f);
         glm::mat4 esp3dRotation = glm::rotate(
                 glm::mat4(1.0f),
-                glm::angle(orientation2d, glm::vec3(1.f, 0.f, 0.f)),
-                glm::vec3(0.0f, 0.0f, 1.0f)
+                glm::orientedAngle(axisX, orientation2d, axisZ),
+                axisZ
         );
         glm::mat4 esp3dTranslate = glm::translate(glm::mat4(1.0f), feet);
         for (auto &v: corners) {
