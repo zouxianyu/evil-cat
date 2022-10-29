@@ -40,4 +40,13 @@ public:
 
 };
 
+class LocalPlayer : public Player {
+public:
+    using Player::Player;
+
+    glm::vec3 getViewAngle() override;
+
+    void setViewAngle(glm::vec3 angle) override;
+};
+
 #endif //EVIL_CAT_GAME_CSGO_PLAYER_H

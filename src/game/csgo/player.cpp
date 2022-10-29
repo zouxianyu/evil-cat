@@ -21,18 +21,12 @@ glm::vec3 Player::getCameraPosition() {
 }
 
 glm::vec3 Player::getViewAngle() {
-    return MemoryAccessor<glm::vec3>{_this + hazedumper::netvars::m_viewAngle}.get() +
-           MemoryAccessor<glm::vec3>{_this + hazedumper::netvars::m_aimPunchAngle}.get()
-           * 2.f;
+    return MemoryAccessor<glm::vec3>{_this + hazedumper::netvars::m_viewAngle};
 }
 
 void Player::setViewAngle(glm::vec3 angle) {
-    // because we cannot modify the view angle inside the player object
-    // we can only modify it inside the engine.dll
-    MemoryAccessor<glm::vec3>{
-            "engine.dll", hazedumper::signatures::dwClientState,
-            {hazedumper::signatures::dwClientState_ViewAngles}
-    } = angle;
+    // not support
+    return;
 }
 
 std::string Player::getName() {
@@ -117,4 +111,20 @@ glm::vec3 Player::getBonePosition(Bone boneType) {
 
 bool Player::operator==(const PlayerInterface &other) const {
     return _this == dynamic_cast<const Player &>(other)._this;
+}
+
+void LocalPlayer::setViewAngle(glm::vec3 angle) {
+    // because we cannot modify the view angle inside the player object
+    // we can only modify it inside the engine.dll
+    MemoryAccessor<glm::vec3>{
+            "engine.dll", hazedumper::signatures::dwClientState,
+            {hazedumper::signatures::dwClientState_ViewAngles}
+    } = angle;
+}
+
+glm::vec3 LocalPlayer::getViewAngle() {
+    return MemoryAccessor<glm::vec3>{
+            "engine.dll", hazedumper::signatures::dwClientState,
+            {hazedumper::signatures::dwClientState_ViewAngles}
+    };
 }

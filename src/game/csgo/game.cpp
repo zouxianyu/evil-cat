@@ -9,7 +9,7 @@
 #include "game.h"
 
 std::shared_ptr<PlayerInterface> Game::getLocalPlayer() {
-    return std::make_shared<Player>(
+    return std::make_shared<LocalPlayer>(
             MemoryAccessor<gameptr_t>{
                     "client.dll", hazedumper::signatures::dwLocalPlayer,
             }
