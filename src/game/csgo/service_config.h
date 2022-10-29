@@ -16,4 +16,11 @@ using ServicesTypeList = std::tuple<
         Radar
 >;
 
+//////////////////////////////////////////////////////////////////////////
+// change defalut settings
+
+inline static void changeDefaultSettings() {
+    Settings::Esp::viewLineScale = 20.f;
+}
+
 #endif //EVIL_CAT_GAME_CSGO_SERVICE_CONFIG_H

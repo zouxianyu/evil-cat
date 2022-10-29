@@ -20,4 +20,12 @@ using ServicesTypeList = std::tuple<
         HealthLocker
 >;
 
+//////////////////////////////////////////////////////////////////////////
+// change defalut settings
+
+inline static void changeDefaultSettings() {
+    // e.g.
+    // Settings::Esp::viewLineScale = 20.f;
+}
+
 #endif //EVIL_CAT_GAME_ASSAULT_CUBE_SERVICE_CONFIG_H

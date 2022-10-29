@@ -10,6 +10,9 @@
 #include "entry.h"
 
 void entry() {
+    // change default settings
+    changeDefaultSettings();
+
     // call the game specified initialization interface
     // to get the config (currently only gui callbacks and fast loop callbacks)
     ServicesTypeList services;
