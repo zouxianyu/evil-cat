@@ -3,11 +3,6 @@
 #include "module.h"
 #include "world_to_screen.h"
 
-WorldToScreen &WorldToScreen::getInstance() {
-    static WorldToScreen instance;
-    return instance;
-}
-
 bool WorldToScreen::refresh() {
 
     // refresh view projection matrix

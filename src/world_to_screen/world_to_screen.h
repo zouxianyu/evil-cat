@@ -4,15 +4,14 @@
 #include <optional>
 #include <functional>
 #include <glm/glm.hpp>
+#include "singleton.h"
 
-class WorldToScreen {
+class WorldToScreen : public Singleton<WorldToScreen> {
     glm::mat4 vpMatrix; // cached view matrix
     float width;
     float height;
 
 public:
-    static WorldToScreen &getInstance();
-
     bool refresh();
 
     std::optional<glm::vec2> translate(const glm::vec3 &world);
