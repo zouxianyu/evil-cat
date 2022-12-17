@@ -1,4 +1,5 @@
 #include <vector>
+#include <filesystem>
 #include "process_helper.h"
 #include "process_driver_util.h"
 
@@ -26,13 +27,26 @@ bool ProcessDriverUtil::attach(const std::string &processName) {
     }
 
     pid = pids[0];
+
+    // try to open driver
+    if (openDriver()) {
+        return true;
+    }
+
+    // try to load driver
+    if (!driverLoader->load(std::filesystem::absolute(DRIVER_PATH).string(), DISPLAY_NAME)) {
+        return false;
+    }
+
+    // try to open driver again
     return openDriver();
 }
 
 bool ProcessDriverUtil::detach() {
     pid = 0;
     closeDriver();
-    return true;
+    // unload driver
+    return driverLoader->unload(DISPLAY_NAME);
 }
 
 gameptr_t ProcessDriverUtil::getModuleAddress(const std::string &moduleName) {
