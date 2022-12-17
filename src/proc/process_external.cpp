@@ -1,5 +1,6 @@
 #include <windows.h>
 #include <TlHelp32.h>
+#include "process_helper.h"
 #include "process_external.h"
 
 NTSTATUS(NTAPI *NtWow64ReadVirtualMemory64)(
@@ -23,7 +24,12 @@ bool ProcessExternal::attach(const std::string &processName) {
         return false;
     }
 
-    DWORD pid = getProcessIdByName(processName);
+    std::vector<uint32_t> pids = ProcessHelper::getProcessIdsByName(processName);
+    if (pids.empty()) {
+        return false;
+    }
+
+    DWORD pid = pids[0];
     hProcess = OpenProcess(
             PROCESS_ALL_ACCESS,
             FALSE,
@@ -130,30 +136,4 @@ bool ProcessExternal::write(gameptr_t address, const void *buffer, gamesize_t si
                 nullptr
         );
     }
-}
-
-DWORD ProcessExternal::getProcessIdByName(const std::string &processName) {
-    //use the process name to get the process id via CreateToolhelp32Snapshot
-    HANDLE hProcessSnap = CreateToolhelp32Snapshot(
-            TH32CS_SNAPPROCESS,
-            0
-    );
-    if (hProcessSnap == nullptr || hProcessSnap == INVALID_HANDLE_VALUE) {
-        return 0;
-    }
-    // loop through all the processes and find the one we want
-    PROCESSENTRY32 pe32;
-    pe32.dwSize = sizeof(PROCESSENTRY32);
-    if (!Process32First(hProcessSnap, &pe32)) {
-        CloseHandle(hProcessSnap);
-        return 0;
-    }
-    do {
-        if (processName == pe32.szExeFile) {
-            CloseHandle(hProcessSnap);
-            return pe32.th32ProcessID;
-        }
-    } while (Process32Next(hProcessSnap, &pe32));
-    CloseHandle(hProcessSnap);
-    return 0;
 }

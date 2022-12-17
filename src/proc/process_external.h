@@ -8,8 +8,6 @@ class ProcessExternal : public ProcessInterface {
 
     HANDLE hProcess = nullptr;
 
-    DWORD getProcessIdByName(const std::string& processName);
-
 public:
     bool attach(const std::string &processName) override;
 

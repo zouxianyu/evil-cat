@@ -7,3 +7,6 @@
 [submodule "lib/DirectX-SDK"]
 	path = lib/DirectX-SDK
 	url = https://github.com/ReactiioN1337/DirectX-SDK
+[submodule "lib/drv-loader"]
+	path = lib/drv-loader
+	url = https://github.com/Midi12/drv-loader

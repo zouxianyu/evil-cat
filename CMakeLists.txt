@@ -22,6 +22,7 @@ file(GLOB_RECURSE MY_SOURCES_MODULES
         "${PROJECT_SOURCE_DIR}/src/service/*.cpp"
         "${PROJECT_SOURCE_DIR}/src/view/*.cpp"
         "${PROJECT_SOURCE_DIR}/src/world_to_screen/*.cpp"
+        "${PROJECT_SOURCE_DIR}/src/driver_loader/*.cpp"
         )
 file(GLOB_RECURSE MY_SOURCES_GAME "${PROJECT_SOURCE_DIR}/src/game/${GAME_NAME}/*.cpp")
 list(APPEND MY_SOURCES ${MY_SOURCES_TOP} ${MY_SOURCES_MODULES} ${MY_SOURCES_GAME})
@@ -57,6 +58,8 @@ file(GLOB_RECURSE DX_STATIC_LIBS_X86 "lib/DirectX-SDK/Lib/x86/*.lib")
 file(GLOB_RECURSE DX_STATIC_LIBS_X64 "lib/DirectX-SDK/Lib/x64/*.lib")
 list(APPEND DX_STATIC_LIBS ${DX_STATIC_LIBS_X86} ${DX_STATIC_LIBS_X64})
 target_link_libraries(${TARGET_NAME} ${DX_STATIC_LIBS})
+
+target_link_libraries(${TARGET_NAME} "ntdll.lib")
 
 # no terminal
 target_link_options(${TARGET_NAME} PRIVATE "/SUBSYSTEM:WINDOWS")
