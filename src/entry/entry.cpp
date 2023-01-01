@@ -6,6 +6,7 @@
 #include "service_config.h"
 #include "mem/buffer_pool.h"
 #include "controller/controller.h"
+#include "proc/process_helper.h"
 #include "settings.h"
 #include "entry.h"
 
@@ -18,8 +19,14 @@ void entry() {
     ServicesTypeList services;
 
     // do initialization of the core module
-    Module::process->attach(CONF_PROCESS_NAME);
-    Module::view->initialize(CONF_PROCESS_NAME);
+    uint32_t pid;
+    while ((pid = ProcessHelper::getProcessIdByName(
+            CONF_PROCESS_NAME, CONF_PROCESS_INDEX)) == 0) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+
+    Module::process->attach(pid);
+    Module::view->initialize(pid);
 
     // resolve GUI callbacks
     // for each in services, add them to gui callback

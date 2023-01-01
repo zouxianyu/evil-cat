@@ -17,19 +17,9 @@ NTSTATUS(NTAPI *NtWow64WriteVirtualMemory64)(
         IN  ULONG64  BufferLength,
         OUT PULONG64 ReturnLength OPTIONAL);
 
-bool ProcessExternal::attach(const std::string &processName) {
+bool ProcessExternal::attach(uint32_t pid) {
     detach();
 
-    if (processName.empty()) {
-        return false;
-    }
-
-    std::vector<uint32_t> pids = ProcessHelper::getProcessIdsByName(processName);
-    if (pids.empty()) {
-        return false;
-    }
-
-    DWORD pid = pids[0];
     hProcess = OpenProcess(
             PROCESS_ALL_ACCESS,
             FALSE,

@@ -7,7 +7,7 @@
 
 class ImGuiD3D9ExternalView : public ViewInterface {
 
-    std::string targetProcess;
+    uint32_t targetProcessPid;
 
     Menu menu;
 
@@ -26,7 +26,7 @@ class ImGuiD3D9ExternalView : public ViewInterface {
     void ProcessCheck();
 public:
 
-    bool initialize(const std::string &processName) override;
+    bool initialize(uint32_t pid) override;
 
     bool loop() override;
 

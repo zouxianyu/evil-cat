@@ -7,7 +7,7 @@
 
 class ViewInterface {
 public:
-    virtual bool initialize(const std::string &processName) = 0;
+    virtual bool initialize(uint32_t pid) = 0;
 
     virtual bool loop() = 0;
 

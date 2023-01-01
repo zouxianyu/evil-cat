@@ -9,7 +9,7 @@ class ProcessExternal : public ProcessInterface {
     HANDLE hProcess = nullptr;
 
 public:
-    bool attach(const std::string &processName) override;
+    bool attach(uint32_t pid) override;
 
     bool detach() override;
 

@@ -1,7 +1,7 @@
 #include <windows.h>
 #include "process_internal.h"
 
-bool ProcessInternal::attach(const std::string &processName) {
+bool ProcessInternal::attach(uint32_t pid) {
     return true;
 }
 
