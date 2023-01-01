@@ -453,7 +453,7 @@ void Esp::showDistance(
 
         auto distance = Module::game->getDistance(player);
         std::string distanceStr = std::to_string((int)std::round(distance)) + "m";
-        ImVec2 textSize = ImGui::CalcTextSize(distanceStr.c_str());
+        ImVec2 textSize(distanceStr.length() * 11.f, 22.f);
         Module::view->drawString(
                 ImVec2(screenFeet->x - textSize.x / 2, screenFeet->y - textSize.y),
                 ImColor(255, 255, 255),
