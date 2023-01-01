@@ -32,3 +32,30 @@ std::vector<uint32_t> ProcessHelper::getProcessIdsByName(const std::string &proc
 
     return found;
 }
+
+bool ProcessHelper::isAlive(uint32_t pid) {
+    SmartHandle hProcess {OpenProcess(
+            PROCESS_QUERY_INFORMATION,
+            FALSE,
+            pid
+    )};
+
+    if (!hProcess.is_valid()) {
+        return false;
+    }
+
+    DWORD exitCode;
+    if (!GetExitCodeProcess(hProcess.get(), &exitCode)) {
+        return false;
+    }
+
+    return exitCode == STILL_ACTIVE;
+}
+
+uint32_t ProcessHelper::getProcessIdByName(const std::string& processName, size_t index) {
+    std::vector<uint32_t> pids = ProcessHelper::getProcessIdsByName(processName);
+    if (pids.size() <= index) {
+        return 0;
+    }
+    return pids[index];
+}
