@@ -26,10 +26,10 @@ void NameList::serviceCallback() {
 
     for (int i = 0; i < players.size(); i++) {
         PlayerInterface &player = *players[i];
-        ImGui::GetBackgroundDrawList()->AddText(
+        Module::view->drawString(
                 ImVec2(0, i * ImGui::GetTextLineHeightWithSpacing()),
                 ImColor(255, 255, 255),
-                player.getName().c_str()
+                player.getName()
         );
     }
 }

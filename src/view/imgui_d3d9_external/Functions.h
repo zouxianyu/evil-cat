@@ -1,17 +1,10 @@
+#include "proc/process_helper.h"
 DWORD GetProcessId(LPCSTR ProcessName) {
-	PROCESSENTRY32 pt;
-	HANDLE hsnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-	pt.dwSize = sizeof(PROCESSENTRY32);
-	if (Process32First(hsnap, &pt)) {
-		do {
-			if (!lstrcmpi(pt.szExeFile, ProcessName)) {
-				CloseHandle(hsnap);
-				return pt.th32ProcessID;
-			}
-		} while (Process32Next(hsnap, &pt));
-	}
-	CloseHandle(hsnap);
-	return 0;
+    std::vector<uint32_t> pids = ProcessHelper::getProcessIdsByName(ProcessName);
+    if (pids.size() <= CONF_PROCESS_INDEX) {
+        return 0;
+    }
+    return pids[CONF_PROCESS_INDEX];
 }
 
 std::string RandomString(int len) {

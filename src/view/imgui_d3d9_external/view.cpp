@@ -325,3 +325,96 @@ bool ImGuiD3D9ExternalView::loop() {
     processCheckThread.join();
     return true;
 }
+
+void ImGuiD3D9ExternalView::drawRect(
+        ImVec2 p1,
+        ImVec2 p2,
+        ImColor col,
+        float rounding,
+        ImDrawFlags flags,
+        float thickness
+) {
+    ImGui::GetBackgroundDrawList()->AddRect(
+            p1,
+            p2,
+            col,
+            rounding,
+            flags,
+            thickness
+    );
+}
+
+void ImGuiD3D9ExternalView::drawRectFilled(
+        ImVec2 p1,
+        ImVec2 p2,
+        ImColor col,
+        float rounding,
+        ImDrawFlags flags
+) {
+    ImGui::GetBackgroundDrawList()->AddRectFilled(
+            p1,
+            p2,
+            col,
+            rounding,
+            flags
+    );
+}
+
+void ImGuiD3D9ExternalView::drawLine(
+        ImVec2 p1,
+        ImVec2 p2,
+        ImColor col,
+        float thickness
+) {
+    ImGui::GetBackgroundDrawList()->AddLine(
+            p1,
+            p2,
+            col,
+            thickness
+    );
+}
+
+void ImGuiD3D9ExternalView::drawCircle(
+        ImVec2 center,
+        float radius,
+        ImColor col,
+        int segments,
+        float thickness
+) {
+    ImGui::GetBackgroundDrawList()->AddCircle(
+            center,
+            radius,
+            col,
+            segments,
+            thickness
+    );
+}
+
+void ImGuiD3D9ExternalView::drawCircleFilled(
+        ImVec2 center,
+        float radius,
+        ImColor col,
+        int segments
+) {
+    ImGui::GetBackgroundDrawList()->AddCircleFilled(
+            center,
+            radius,
+            col,
+            segments
+    );
+}
+
+void ImGuiD3D9ExternalView::drawString(
+        ImVec2 pos,
+        ImColor col,
+        const std::string &str
+) {
+    ImGui::GetBackgroundDrawList()->AddText(
+            pos,
+            col,
+            str.c_str()
+    );
+}
+
+
+
