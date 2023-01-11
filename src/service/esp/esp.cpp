@@ -64,9 +64,6 @@ void Esp::serviceCallback() {
         return;
     }
 
-    // get the new view projection matrix and window size of the frame
-    WorldToScreen::getInstance().refresh();
-
     // get players
     std::shared_ptr<PlayerInterface> localPlayer = Module::game->getLocalPlayer();
 
@@ -128,11 +125,8 @@ void Esp::showEsp2D(
                            Settings::Esp::teammateColor : Settings::Esp::enemyColor;
 
         // show box 2d
-        std::optional<glm::vec2> screenTop =
-                WorldToScreen::getInstance().translate(top);
-
-        std::optional<glm::vec2> screenFeet =
-                WorldToScreen::getInstance().translate(feet);
+        std::optional<glm::vec2> screenTop = WorldToScreen::translate(top);
+        std::optional<glm::vec2> screenFeet = WorldToScreen::translate(feet);
 
         if (!screenTop || !screenFeet) {
             continue;
@@ -203,9 +197,7 @@ void Esp::showEsp3D(
         // translate to screen coordination
         bool notShow = false;
         for (int j = 0; j < 8; j++) {
-            std::optional<glm::vec2> result = WorldToScreen::getInstance().translate(
-                    corners[j]
-            );
+            std::optional<glm::vec2> result = WorldToScreen::translate(corners[j]);
             if (!result) {
                 notShow = true;
                 break;
@@ -264,11 +256,8 @@ void Esp::showViewLine(
                              Settings::Esp::teammateColor : Settings::Esp::enemyColor;
 
         // show view line
-        std::optional<glm::vec2> screenCamera =
-                WorldToScreen::getInstance().translate(camera);
-
-        std::optional<glm::vec2> screenViewLineEnd =
-                WorldToScreen::getInstance().translate(viewLineEnd);
+        std::optional<glm::vec2> screenCamera = WorldToScreen::translate(camera);
+        std::optional<glm::vec2> screenViewLineEnd = WorldToScreen::translate(viewLineEnd);
 
         if (!screenCamera || !screenViewLineEnd) {
             continue;
@@ -298,11 +287,8 @@ void Esp::showHeadCircle(
         glm::vec3 head = player->getBonePosition(Bone::head);
         glm::vec3 feet = player->getPosition();
 
-        std::optional<glm::vec2> screenHead =
-                WorldToScreen::getInstance().translate(head);
-
-        std::optional<glm::vec2> screenFeet =
-                WorldToScreen::getInstance().translate(feet);
+        std::optional<glm::vec2> screenHead = WorldToScreen::translate(head);
+        std::optional<glm::vec2> screenFeet = WorldToScreen::translate(feet);
 
         if (!screenHead || !screenFeet) {
             continue;
@@ -335,8 +321,7 @@ void Esp::showHeadBar(
         top.z += player->getHeight();
 
         // calculate the head bar position
-        std::optional<glm::vec2> screenTop =
-                WorldToScreen::getInstance().translate(top);
+        std::optional<glm::vec2> screenTop = WorldToScreen::translate(top);
 
         if (!screenTop) {
             continue;
@@ -444,8 +429,7 @@ void Esp::showDistance(
 
         glm::vec3 feet = player->getPosition();
 
-        std::optional<glm::vec2> screenFeet =
-                WorldToScreen::getInstance().translate(feet);
+        std::optional<glm::vec2> screenFeet = WorldToScreen::translate(feet);
 
         if (!screenFeet) {
             continue;
@@ -483,8 +467,7 @@ void Esp::showBone(
         glm::vec2 boneScreenPositions[magic_enum::enum_count<Bone>()];
         for (int i = 0; i < magic_enum::enum_count<Bone>(); i++) {
             glm::vec3 bonePosition = player->getBonePosition(static_cast<Bone>(i));
-            std::optional<glm::vec2> screenPosition =
-                    WorldToScreen::getInstance().translate(bonePosition);
+            std::optional<glm::vec2> screenPosition = WorldToScreen::translate(bonePosition);
             if (!screenPosition) {
                 showPlayer = false;
                 break;

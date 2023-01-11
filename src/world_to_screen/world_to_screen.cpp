@@ -3,20 +3,12 @@
 #include "module.h"
 #include "world_to_screen.h"
 
-bool WorldToScreen::refresh() {
-
-    // refresh view projection matrix
-    vpMatrix = Module::game->getVPMatrix();
-
-    // refresh window size
-    glm::vec2 windowSize = Module::game->getWindowSize();
-    width = windowSize.x;
-    height = windowSize.y;
-
-    return true;
-}
-
 std::optional<glm::vec2> WorldToScreen::translate(const glm::vec3 &world) {
+
+    glm::mat4 vpMatrix = Module::game->getVPMatrix();
+    glm::vec2 windowSize = Module::game->getWindowSize();
+    const float &width = windowSize.x;
+    const float &height = windowSize.y;
 
     // calculate clip coordinates
     glm::vec4 clip = vpMatrix * glm::vec4{world.x, world.y, world.z, 1.0f};

@@ -4,6 +4,7 @@
 #include <type_traits>
 #include "module.h"
 #include "service_config.h"
+#include "cache/cache.h"
 #include "mem/buffer_pool.h"
 #include "controller/controller.h"
 #include "proc/process_helper.h"
@@ -43,11 +44,7 @@ void entry() {
 
     // we need to add a buffer pool refresh callback
     // because the cache need to be flushed each frame
-    Controller::getInstance().addServiceCallback(
-            [inst = &BufferPool::getInstance()] {
-                inst->refresh();
-            }
-    );
+    Controller::getInstance().addServiceCallback(Cache::refresh);
 
     // add menu callback
     std::apply([&](auto &&... service) {
