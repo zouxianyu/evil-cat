@@ -26,8 +26,9 @@ void NameList::serviceCallback() {
 
     for (int i = 0; i < players.size(); i++) {
         PlayerInterface &player = *players[i];
+        // TODO: get string size via View interface
         Module::view->drawString(
-                ImVec2(0, i * ImGui::GetTextLineHeightWithSpacing()),
+                ImVec2(0, i * 11),
                 ImColor(255, 255, 255),
                 player.getName()
         );
