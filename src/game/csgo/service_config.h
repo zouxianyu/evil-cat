@@ -4,13 +4,13 @@
 //////////////////////////////////////////////////////////////////////////
 // choose your services
 
-#include <tuple> // type list container
+#include "service/service_container.h"
 
 #include "service/aimbot/aimbot.h"
 #include "service/esp/esp.h"
 #include "service/radar/radar.h"
 
-using ServicesTypeList = std::tuple<
+using ServiceList = ServiceContainer<
         Aimbot,
         Esp,
         Radar
