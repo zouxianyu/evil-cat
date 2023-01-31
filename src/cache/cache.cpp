@@ -3,37 +3,29 @@
 #include "cache.h"
 
 namespace Cache::Detail {
-    std::set<CacheRegistry *> *objects;
-
-    std::set<CacheRegistry *> *getObjects();
+    std::set<CacheRegistry *> &getObjects();
 }
 
 using namespace Cache::Detail;
 
-// no concurrency here, so no need to use call_once
 // we do this because the initialization order of static variables is undefined
-// we should allocate the set before any CacheRegistry is constructed
-std::set<CacheRegistry *> *Cache::Detail::getObjects() {
-    if (!objects) {
-        objects = new std::set<CacheRegistry *>();
-    }
+// we should allocate the set before any CacheRegistry is constructed,
+// so we use local static variable here
+std::set<CacheRegistry *> &Cache::Detail::getObjects() {
+    static std::set<CacheRegistry *> objects;
     return objects;
 }
 
 void Cache::ctor(CacheRegistry *registry) {
-    getObjects()->insert(registry);
+    getObjects().insert(registry);
 }
 
 void Cache::dtor(CacheRegistry *registry) {
-    getObjects()->erase(registry);
-    if (getObjects()->empty()) {
-        delete objects;
-        objects = nullptr;
-    }
+    getObjects().erase(registry);
 }
 
 void Cache::refresh() {
-    for (CacheRegistry *object: *getObjects()) {
+    for (CacheRegistry *object: getObjects()) {
         object->refresh();
     }
 }
