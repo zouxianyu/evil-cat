@@ -85,7 +85,7 @@ bool ProcessExternal::read(gameptr_t address, void *buffer, gamesize_t size) {
 
     // if we are 32 bit process and we want to read a 64 bit address
     // we need another function
-    if (sizeof(void *) == 4 && sizeof(gameptr_t) == 8) {
+    if constexpr (sizeof(void *) == 4 && sizeof(gameptr_t) == 8) {
         return (NtWow64ReadVirtualMemory64(
                 hProcess,
                 address,
@@ -109,7 +109,7 @@ bool ProcessExternal::write(gameptr_t address, const void *buffer, gamesize_t si
         return false;
     }
 
-    if (sizeof(void *) == 4 && sizeof(gameptr_t) == 8) {
+    if constexpr (sizeof(void *) == 4 && sizeof(gameptr_t) == 8) {
         return (NtWow64WriteVirtualMemory64(
                 hProcess,
                 address,
