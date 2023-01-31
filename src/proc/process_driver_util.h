@@ -26,7 +26,7 @@ class ProcessDriverUtil : public ProcessInterface {
     void closeDriver();
 
 public:
-    bool attach(const std::string &processName) override;
+    bool attach(uint32_t pid) override;
 
     bool detach() override;
 

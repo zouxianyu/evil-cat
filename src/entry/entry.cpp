@@ -4,8 +4,10 @@
 #include <type_traits>
 #include "module.h"
 #include "service_config.h"
+#include "cache/cache.h"
 #include "mem/buffer_pool.h"
 #include "controller/controller.h"
+#include "proc/process_helper.h"
 #include "settings.h"
 #include "entry.h"
 
@@ -15,51 +17,43 @@ void entry() {
 
     // call the game specified initialization interface
     // to get the config (currently only gui callbacks and fast loop callbacks)
-    ServicesTypeList services;
 
     // do initialization of the core module
-    Module::process->attach(CONF_PROCESS_NAME);
-    Module::view->initialize(CONF_PROCESS_NAME);
+    uint32_t pid;
+    while ((pid = ProcessHelper::getProcessIdByName(
+            CONF_PROCESS_NAME, CONF_PROCESS_INDEX)) == 0) {
+        using namespace std::chrono_literals;
+        std::this_thread::sleep_for(100ms);
+    }
 
+    Module::process->attach(pid);
+    Module::view->initialize(pid);
+
+    std::vector<std::unique_ptr<ServiceInterface>> services = ServiceList::make();
     // resolve GUI callbacks
     // for each in services, add them to gui callback
-    // fucking stupid tuple and confusing template
-    std::apply([&](auto &&... service) {
-        (Controller::getInstance().addServiceCallback( [&service] {
-            static_assert(
-                    std::is_base_of_v<ServiceInterface, std::decay_t<decltype(service)>>,
-                    "service must be derived from ServiceInterface"
-            );
-            service.serviceCallback();
-        }), ...);
-    }, services);
+    for (std::unique_ptr<ServiceInterface> &service : services) {
+        Controller::getInstance().addServiceCallback([&service] {
+            service->serviceCallback();
+        });
+    }
 
     // we need to add a buffer pool refresh callback
     // because the cache need to be flushed each frame
-    Controller::getInstance().addServiceCallback(
-            [inst = &BufferPool::getInstance()] {
-                inst->refresh();
-            }
-    );
+    Controller::getInstance().addServiceCallback(Cache::refresh);
 
     // add menu callback
-    std::apply([&](auto &&... service) {
-        (Controller::getInstance().addMenuCallback(service.getName(), [&service] {
-            static_assert(
-                    std::is_base_of_v<ServiceInterface, std::decay_t<decltype(service)>>,
-                    "service must be derived from ServiceInterface"
-            );
-            service.menuCallback();
-        }), ...);
-    }, services);
+    for (std::unique_ptr<ServiceInterface> &service : services) {
+        Controller::getInstance().addMenuCallback(service->getName(), [&service] {
+            service->serviceCallback();
+        });
+    }
 
     // create the fast loop thread
     // the code inside the fast loop is a busy-wait loop
-    std::thread fastLoopThread{
-            [inst = &Controller::getInstance()] {
-                inst->callFastLoopCallbacks();
-            }
-    };
+    std::thread fastLoopThread([] {
+        Controller::getInstance().callFastLoopCallbacks();
+    });
 
     // create the gui thread
     Module::view->loop();

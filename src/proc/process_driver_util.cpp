@@ -20,13 +20,11 @@ void ProcessDriverUtil::closeDriver() {
     driverHandle.reset();
 }
 
-bool ProcessDriverUtil::attach(const std::string &processName) {
-    std::vector<uint32_t> pids = ProcessHelper::getProcessIdsByName(processName);
-    if (pids.empty()) {
+bool ProcessDriverUtil::attach(uint32_t pid) {
+    if (!pid) {
         return false;
     }
-
-    pid = pids[0];
+    this->pid = pid;
 
     // try to open driver
     if (openDriver()) {

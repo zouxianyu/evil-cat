@@ -1,31 +1,12 @@
-#ifndef EVIL_CAT_VIEW_IMGUI_D3D9_EXTERNAL_VIEW_H
-#define EVIL_CAT_VIEW_IMGUI_D3D9_EXTERNAL_VIEW_H
+#ifndef EVIL_CAT_VIEW_IMGUI_VIEW_VIEW_H
+#define EVIL_CAT_VIEW_IMGUI_VIEW_VIEW_H
 
 #include <string>
-#include "view/menu.h"
+#include <chrono>
 #include "view/view_interface.h"
 
-class ImGuiD3D9ExternalView : public ViewInterface {
-
-    uint32_t targetProcessPid;
-
-    Menu menu;
-
-    void SetupWindow();
-
-    bool DirectXInit();
-
-    void MainLoop();
-
-    void Render();
-
-    void Draw();
-
-    void InputHandler();
-
-    void ProcessCheck();
+class ImGuiDWMView : public ViewInterface {
 public:
-
     bool initialize(uint32_t pid) override;
 
     bool loop() override;
@@ -75,6 +56,18 @@ public:
             const std::string &str
     ) override;
 
+private:
+    enum { FRAME_PER_SECOND = 60 };
+
+    uint32_t targetPid;
+
+    bool isTargetWindowOnTop();
+
+    std::pair<ImVec2, ImVec2> getTopWindowRect();
+
+    void waitForNextFrame(std::chrono::time_point<std::chrono::steady_clock> start);
+
+    void render();
 };
 
-#endif //EVIL_CAT_VIEW_IMGUI_D3D9_EXTERNAL_VIEW_H
+#endif //EVIL_CAT_VIEW_IMGUI_VIEW_VIEW_H

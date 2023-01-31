@@ -5,6 +5,7 @@
 
 # tell me the process name so I can attach to it
 add_compile_definitions(CONF_PROCESS_NAME="csgo.exe")
+add_compile_definitions(CONF_PROCESS_INDEX=0)
 
 # game pointer width
 add_compile_definitions(gameptr_t=uint32_t)

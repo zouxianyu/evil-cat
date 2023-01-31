@@ -4,12 +4,12 @@
 #add_compile_definitions(CONF_INTERNAL_COMPILE)
 
 # tell me the process name so I can attach to it
-add_compile_definitions(CONF_PROCESS_NAME="ac_client.exe")
-add_compile_definitions(CONF_PROCESS_INDEX=0)
+add_compile_definitions(CONF_PROCESS_NAME="TslGame.exe")
+add_compile_definitions(CONF_PROCESS_INDEX=1)
 
 # game pointer width
-add_compile_definitions(gameptr_t=uint32_t)
-add_compile_definitions(gamesize_t=uint32_t)
+add_compile_definitions(gameptr_t=uint64_t)
+add_compile_definitions(gamesize_t=uint64_t)
 
 # use buffer pool can improve performance when you are using
 # a external build, especially when using a R/W driver

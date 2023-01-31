@@ -1,62 +1,64 @@
-#ifndef EVIL_CAT_VIEW_VIEW_INTERFACE_H
-#define EVIL_CAT_VIEW_VIEW_INTERFACE_H
+#ifndef DWM_OVERLAY_COMM_DRAW_H
+#define DWM_OVERLAY_COMM_DRAW_H
 
 #include <string>
-#include <functional>
 #include <imgui.h>
 
-class ViewInterface {
-public:
-    virtual bool initialize(uint32_t pid) = 0;
+namespace Draw {
+    bool initialize();
 
-    virtual bool loop() = 0;
+    void begin();
 
-    virtual void drawRect(
+    void end();
+
+    void disable();
+
+    void setClipRect(ImVec2 p1, ImVec2 p2);
+
+    void drawRect(
             ImVec2 p1,
             ImVec2 p2,
             ImColor col,
             float rounding = 0.0f,
             ImDrawFlags flags = 0,
             float thickness = 1.0f
-    ) = 0;
+    );
 
-    virtual void drawRectFilled(
+    void drawRectFilled(
             ImVec2 p1,
             ImVec2 p2,
             ImColor col,
             float rounding = 0.0f,
             ImDrawFlags flags = 0
-    ) = 0;
+    );
 
-    virtual void drawLine(
+    void drawLine(
             ImVec2 p1,
             ImVec2 p2,
             ImColor col,
             float thickness = 1.0f
-    ) = 0;
+    );
 
-    virtual void drawCircle(
+    void drawCircle(
             ImVec2 center,
             float radius,
             ImColor col,
             int segments = 0,
             float thickness = 1.0f
-    ) = 0;
+    );
 
-    virtual void drawCircleFilled(
+    void drawCircleFilled(
             ImVec2 center,
             float radius,
             ImColor col,
             int segments = 0
-    ) = 0;
+    );
 
-    virtual void drawString(
+    void drawString(
             ImVec2 pos,
             ImColor col,
             const std::string &str
-    ) = 0;
+    );
+}
 
-    virtual ~ViewInterface() = default;
-};
-
-#endif //EVIL_CAT_VIEW_VIEW_INTERFACE_H
+#endif //DWM_OVERLAY_COMM_DRAW_H

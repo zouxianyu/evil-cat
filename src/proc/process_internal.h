@@ -4,12 +4,13 @@
 #include <optional>
 #include <unordered_map>
 #include <string>
+#include <cstdint>
 #include "process_interface.h"
 
 class ProcessInternal : public ProcessInterface {
 
 public:
-    bool attach(const std::string &processName) override;
+    bool attach(uint32_t pid) override;
 
     bool detach() override;
 

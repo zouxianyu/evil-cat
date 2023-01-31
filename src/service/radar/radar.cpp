@@ -74,12 +74,12 @@ void Radar::serviceCallback() {
     glm::vec2 radarPosition = Settings::Radar::normalizedCenter * windowSize;
 
     // draw background and border
-    ImGui::GetBackgroundDrawList()->AddCircleFilled(
+    Module::view->drawCircleFilled(
             ImVec2(radarPosition.x, radarPosition.y),
             Settings::Radar::radius,
             Settings::Radar::backgroundColor
     );
-    ImGui::GetBackgroundDrawList()->AddCircle(
+    Module::view->drawCircle(
             ImVec2(radarPosition.x, radarPosition.y),
             Settings::Radar::radius,
             Settings::Radar::borderColor,
@@ -95,12 +95,12 @@ void Radar::serviceCallback() {
             radarPosition + Settings::Radar::viewLineScale * rightHandleFix(currentOrientation2D);
     ImVec2 drawingEnd = ImVec2(vDrawingEnd.x, vDrawingEnd.y);
 
-    ImGui::GetBackgroundDrawList()->AddCircleFilled(
+    Module::view->drawCircleFilled(
             drawingCenter,
             Settings::Radar::playerRadius,
             Settings::Radar::teammateColor
     );
-    ImGui::GetBackgroundDrawList()->AddLine(
+    Module::view->drawLine(
             drawingCenter,
             drawingEnd,
             Settings::Radar::teammateColor,
@@ -162,12 +162,12 @@ void Radar::serviceCallback() {
         vDrawingEnd = playerPosition2D + Settings::Radar::viewLineScale * playerOrientation2D;
         drawingEnd = ImVec2(vDrawingEnd.x, vDrawingEnd.y);
 
-        ImGui::GetBackgroundDrawList()->AddCircleFilled(
+        Module::view->drawCircleFilled(
                 drawingCenter,
                 Settings::Radar::playerRadius,
                 playerColor
         );
-        ImGui::GetBackgroundDrawList()->AddLine(
+        Module::view->drawLine(
                 drawingCenter,
                 drawingEnd,
                 playerColor,

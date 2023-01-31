@@ -5,6 +5,7 @@
 #include <optional>
 #include <mutex>
 #include <array>
+#include "cache/registry.h"
 #include "proc/process_interface.h"
 #include "singleton.h"
 
@@ -13,7 +14,7 @@
 
 using PageCache = std::array<uint8_t, CONF_BUFFER_POOL_CACHE_LINE_SIZE>;
 
-class BufferPool : public Singleton<BufferPool> {
+class BufferPool : public Singleton<BufferPool>, public CacheRegistry {
 
     std::unordered_map<gameptr_t, PageCache> cacheMap;
 
@@ -32,7 +33,7 @@ public:
 
     gameptr_t getModuleAddress(const std::string &moduleName);
 
-    bool refresh();
+    void refresh() override;
 };
 
 #endif //EVIL_CAT_MEM_BUFFER_POOL_H

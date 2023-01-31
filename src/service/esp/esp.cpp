@@ -64,9 +64,6 @@ void Esp::serviceCallback() {
         return;
     }
 
-    // get the new view projection matrix and window size of the frame
-    WorldToScreen::getInstance().refresh();
-
     // get players
     std::shared_ptr<PlayerInterface> localPlayer = Module::game->getLocalPlayer();
 
@@ -128,11 +125,8 @@ void Esp::showEsp2D(
                            Settings::Esp::teammateColor : Settings::Esp::enemyColor;
 
         // show box 2d
-        std::optional<glm::vec2> screenTop =
-                WorldToScreen::getInstance().translate(top);
-
-        std::optional<glm::vec2> screenFeet =
-                WorldToScreen::getInstance().translate(feet);
+        std::optional<glm::vec2> screenTop = WorldToScreen::translate(top);
+        std::optional<glm::vec2> screenFeet = WorldToScreen::translate(feet);
 
         if (!screenTop || !screenFeet) {
             continue;
@@ -142,7 +136,7 @@ void Esp::showEsp2D(
         float width = height / 2;
 
 
-        ImGui::GetBackgroundDrawList()->AddRect(
+        Module::view->drawLine(
                 ImVec2(screenFeet->x - width / 2, screenFeet->y - height),
                 ImVec2(screenFeet->x + width / 2, screenFeet->y),
                 boxColor
@@ -203,9 +197,7 @@ void Esp::showEsp3D(
         // translate to screen coordination
         bool notShow = false;
         for (int j = 0; j < 8; j++) {
-            std::optional<glm::vec2> result = WorldToScreen::getInstance().translate(
-                    corners[j]
-            );
+            std::optional<glm::vec2> result = WorldToScreen::translate(corners[j]);
             if (!result) {
                 notShow = true;
                 break;
@@ -225,19 +217,19 @@ void Esp::showEsp3D(
             const glm::vec2 &topP1 = screenCorners[j + 4];
             const glm::vec2 &topP2 = screenCorners[4 + (j + 1) % 4];
 
-            ImGui::GetBackgroundDrawList()->AddLine(
+            Module::view->drawLine(
                     ImVec2(groundP1.x, groundP1.y),
                     ImVec2(groundP2.x, groundP2.y),
                     boxColor
             );
 
-            ImGui::GetBackgroundDrawList()->AddLine(
+            Module::view->drawLine(
                     ImVec2(topP1.x, topP1.y),
                     ImVec2(topP2.x, topP2.y),
                     boxColor
             );
 
-            ImGui::GetBackgroundDrawList()->AddLine(
+            Module::view->drawLine(
                     ImVec2(groundP1.x, groundP1.y),
                     ImVec2(topP1.x, topP1.y),
                     boxColor
@@ -264,17 +256,14 @@ void Esp::showViewLine(
                              Settings::Esp::teammateColor : Settings::Esp::enemyColor;
 
         // show view line
-        std::optional<glm::vec2> screenCamera =
-                WorldToScreen::getInstance().translate(camera);
-
-        std::optional<glm::vec2> screenViewLineEnd =
-                WorldToScreen::getInstance().translate(viewLineEnd);
+        std::optional<glm::vec2> screenCamera = WorldToScreen::translate(camera);
+        std::optional<glm::vec2> screenViewLineEnd = WorldToScreen::translate(viewLineEnd);
 
         if (!screenCamera || !screenViewLineEnd) {
             continue;
         }
 
-        ImGui::GetBackgroundDrawList()->AddLine(
+        Module::view->drawLine(
                 ImVec2(screenCamera->x, screenCamera->y),
                 ImVec2(screenViewLineEnd->x, screenViewLineEnd->y),
                 viewLineColor
@@ -298,11 +287,8 @@ void Esp::showHeadCircle(
         glm::vec3 head = player->getBonePosition(Bone::head);
         glm::vec3 feet = player->getPosition();
 
-        std::optional<glm::vec2> screenHead =
-                WorldToScreen::getInstance().translate(head);
-
-        std::optional<glm::vec2> screenFeet =
-                WorldToScreen::getInstance().translate(feet);
+        std::optional<glm::vec2> screenHead = WorldToScreen::translate(head);
+        std::optional<glm::vec2> screenFeet = WorldToScreen::translate(feet);
 
         if (!screenHead || !screenFeet) {
             continue;
@@ -313,7 +299,7 @@ void Esp::showHeadCircle(
         // and divide it by a constant
         float headRadius = (screenFeet->y - screenHead->y) / 12.f;
 
-        ImGui::GetBackgroundDrawList()->AddCircle(
+        Module::view->drawCircle(
                 ImVec2(screenHead->x, screenHead->y),
                 headRadius,
                 headCircleColor
@@ -335,8 +321,7 @@ void Esp::showHeadBar(
         top.z += player->getHeight();
 
         // calculate the head bar position
-        std::optional<glm::vec2> screenTop =
-                WorldToScreen::getInstance().translate(top);
+        std::optional<glm::vec2> screenTop = WorldToScreen::translate(top);
 
         if (!screenTop) {
             continue;
@@ -355,7 +340,7 @@ void Esp::showHeadBar(
         auto barBorderColor = player->getTeamId() == localPlayer->getTeamId() ?
                               Settings::Esp::teammateColor : Settings::Esp::enemyColor;
 
-        ImGui::GetBackgroundDrawList()->AddRect(
+        Module::view->drawRect(
                 ImVec2(barLeftTop.x, barLeftTop.y),
                 ImVec2(barRightBottom.x, barRightBottom.y),
                 barBorderColor
@@ -379,19 +364,19 @@ void Esp::showHeadBar(
                 barRightBottom.y - 1
         };
 
-        ImGui::GetBackgroundDrawList()->AddRectFilled(
+        Module::view->drawRectFilled(
                 ImVec2(upperAreaLeftTop.x, upperAreaLeftTop.y),
                 ImVec2(upperAreaRightBottom.x, upperAreaRightBottom.y),
                 Settings::Esp::nameBackgroundColor
         );
 
-        ImGui::GetBackgroundDrawList()->AddText(
+        Module::view->drawString(
                 ImVec2(upperAreaLeftTop.x, upperAreaLeftTop.y),
                 ImColor(255,255,255),
-                player->getName().c_str()
+                player->getName()
         );
 
-        ImGui::GetBackgroundDrawList()->AddRectFilled(
+        Module::view->drawRectFilled(
                 ImVec2(lowerAreaLeftTop.x, lowerAreaLeftTop.y),
                 ImVec2(lowerAreaRightBottom.x, lowerAreaRightBottom.y),
                 Settings::Esp::healthBackgroundColor
@@ -425,7 +410,7 @@ void Esp::showHeadBar(
         } else {
             healthBarColor = Settings::Esp::healthLowColor;
         }
-        ImGui::GetBackgroundDrawList()->AddRectFilled(
+        Module::view->drawRectFilled(
                 ImVec2(healthLeftTop.x, healthLeftTop.y),
                 ImVec2(healthRightBottom.x, healthRightBottom.y),
                 healthBarColor
@@ -444,8 +429,7 @@ void Esp::showDistance(
 
         glm::vec3 feet = player->getPosition();
 
-        std::optional<glm::vec2> screenFeet =
-                WorldToScreen::getInstance().translate(feet);
+        std::optional<glm::vec2> screenFeet = WorldToScreen::translate(feet);
 
         if (!screenFeet) {
             continue;
@@ -453,11 +437,12 @@ void Esp::showDistance(
 
         auto distance = Module::game->getDistance(player);
         std::string distanceStr = std::to_string((int)std::round(distance)) + "m";
-        ImVec2 textSize = ImGui::CalcTextSize(distanceStr.c_str());
-        ImGui::GetBackgroundDrawList()->AddText(
+        // TODO: get string size via View interface
+        ImVec2 textSize(distanceStr.length() * 11.f, 22.f);
+        Module::view->drawString(
                 ImVec2(screenFeet->x - textSize.x / 2, screenFeet->y - textSize.y),
                 ImColor(255, 255, 255),
-                distanceStr.c_str()
+                distanceStr
         );
     }
 }
@@ -482,8 +467,7 @@ void Esp::showBone(
         glm::vec2 boneScreenPositions[magic_enum::enum_count<Bone>()];
         for (int i = 0; i < magic_enum::enum_count<Bone>(); i++) {
             glm::vec3 bonePosition = player->getBonePosition(static_cast<Bone>(i));
-            std::optional<glm::vec2> screenPosition =
-                    WorldToScreen::getInstance().translate(bonePosition);
+            std::optional<glm::vec2> screenPosition = WorldToScreen::translate(bonePosition);
             if (!screenPosition) {
                 showPlayer = false;
                 break;
@@ -499,77 +483,77 @@ void Esp::showBone(
         // now the bone positions array contains all the bone positions
         // draw them on the screen now
 
-        ImGui::GetBackgroundDrawList()->AddLine(
+        Module::view->drawLine(
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::head)]),
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::neck)]),
                 Settings::Esp::boneColor
         );
-        ImGui::GetBackgroundDrawList()->AddLine(
+        Module::view->drawLine(
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::neck)]),
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::leftShoulder)]),
                 Settings::Esp::boneColor
         );
-        ImGui::GetBackgroundDrawList()->AddLine(
+        Module::view->drawLine(
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::neck)]),
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::rightShoulder)]),
                 Settings::Esp::boneColor
         );
-        ImGui::GetBackgroundDrawList()->AddLine(
+        Module::view->drawLine(
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::neck)]),
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::spine)]),
                 Settings::Esp::boneColor
         );
-        ImGui::GetBackgroundDrawList()->AddLine(
+        Module::view->drawLine(
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::leftShoulder)]),
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::leftElbow)]),
                 Settings::Esp::boneColor
         );
-        ImGui::GetBackgroundDrawList()->AddLine(
+        Module::view->drawLine(
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::rightShoulder)]),
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::rightElbow)]),
                 Settings::Esp::boneColor
         );
-        ImGui::GetBackgroundDrawList()->AddLine(
+        Module::view->drawLine(
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::leftElbow)]),
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::leftHand)]),
                 Settings::Esp::boneColor
         );
-        ImGui::GetBackgroundDrawList()->AddLine(
+        Module::view->drawLine(
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::rightElbow)]),
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::rightHand)]),
                 Settings::Esp::boneColor
         );
-        ImGui::GetBackgroundDrawList()->AddLine(
+        Module::view->drawLine(
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::spine)]),
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::hip)]),
                 Settings::Esp::boneColor
         );
-        ImGui::GetBackgroundDrawList()->AddLine(
+        Module::view->drawLine(
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::hip)]),
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::leftHip)]),
                 Settings::Esp::boneColor
         );
-        ImGui::GetBackgroundDrawList()->AddLine(
+        Module::view->drawLine(
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::hip)]),
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::rightHip)]),
                 Settings::Esp::boneColor
         );
-        ImGui::GetBackgroundDrawList()->AddLine(
+        Module::view->drawLine(
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::leftHip)]),
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::leftKnee)]),
                 Settings::Esp::boneColor
         );
-        ImGui::GetBackgroundDrawList()->AddLine(
+        Module::view->drawLine(
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::rightHip)]),
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::rightKnee)]),
                 Settings::Esp::boneColor
         );
-        ImGui::GetBackgroundDrawList()->AddLine(
+        Module::view->drawLine(
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::leftKnee)]),
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::leftFoot)]),
                 Settings::Esp::boneColor
         );
-        ImGui::GetBackgroundDrawList()->AddLine(
+        Module::view->drawLine(
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::rightKnee)]),
                 glmToImVec2(boneScreenPositions[static_cast<int>(Bone::rightFoot)]),
                 Settings::Esp::boneColor

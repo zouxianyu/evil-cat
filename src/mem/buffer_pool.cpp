@@ -90,13 +90,10 @@ bool BufferPool::write(gameptr_t address, const void *buffer, gamesize_t size) {
     return Module::process->write(address, buffer, size);
 }
 
-bool BufferPool::refresh() {
-#ifndef CONF_USE_BUFFER_POOL
-    return true;
-#else
+void BufferPool::refresh() {
+#ifdef CONF_USE_BUFFER_POOL
     std::lock_guard lock(cacheMapMutex);
     cacheMap.clear();
-    return true;
 #endif
 }
 

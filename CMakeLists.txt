@@ -15,14 +15,15 @@ set(TARGET_NAME "${GAME_NAME}_cheat")
 #our sources
 file(GLOB MY_SOURCES_TOP "${PROJECT_SOURCE_DIR}/src/*.cpp")
 file(GLOB_RECURSE MY_SOURCES_MODULES
+        "${PROJECT_SOURCE_DIR}/src/cache/*.cpp"
         "${PROJECT_SOURCE_DIR}/src/controller/*.cpp"
+        "${PROJECT_SOURCE_DIR}/src/driver_loader/*.cpp"
         "${PROJECT_SOURCE_DIR}/src/entry/*.cpp"
         "${PROJECT_SOURCE_DIR}/src/mem/*.cpp"
         "${PROJECT_SOURCE_DIR}/src/proc/*.cpp"
         "${PROJECT_SOURCE_DIR}/src/service/*.cpp"
         "${PROJECT_SOURCE_DIR}/src/view/*.cpp"
         "${PROJECT_SOURCE_DIR}/src/world_to_screen/*.cpp"
-        "${PROJECT_SOURCE_DIR}/src/driver_loader/*.cpp"
         )
 file(GLOB_RECURSE MY_SOURCES_GAME "${PROJECT_SOURCE_DIR}/src/game/${GAME_NAME}/*.cpp")
 list(APPEND MY_SOURCES ${MY_SOURCES_TOP} ${MY_SOURCES_MODULES} ${MY_SOURCES_GAME})

@@ -6,11 +6,11 @@
 #include <dwmapi.h>
 #include <d3d9.h>
 #include <imgui.h>
-#include <imgui_spectrum.h>
+#include <imgui_impl_dx9.h>
+#include <imgui_impl_win32.h>
 #include "module.h"
 #include "controller/controller.h"
-#include "Functions.h"
-#include "Overlay.h"
+#include "proc/process_helper.h"
 #include "view.h"
 #include "settings.h"
 
@@ -48,6 +48,18 @@ static struct DirectX9Interface {
     MARGINS Margin = { -1 };
     MSG Message = { NULL };
 }DirectX9;
+
+static std::string RandomString(int len) {
+    srand(time(NULL));
+    std::string str = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    std::string newstr;
+    int pos;
+    while (newstr.size() != len) {
+        pos = ((rand() % (str.size() - 1)));
+        newstr += str.substr(pos, 1);
+    }
+    return newstr;
+}
 
 void ImGuiD3D9ExternalView::InputHandler() {
     for (int i = 0; i < 5; i++) {
@@ -264,7 +276,7 @@ void ImGuiD3D9ExternalView::SetupWindow() {
 void ImGuiD3D9ExternalView::ProcessCheck() {
     while (!Settings::exit) {
         if (Process.Hwnd != NULL) {
-            if (GetProcessId(targetProcess.c_str()) == 0) {
+            if (!ProcessHelper::isAlive(targetProcessPid)) {
                 Settings::exit = true;
                 break;
             }
@@ -273,8 +285,8 @@ void ImGuiD3D9ExternalView::ProcessCheck() {
     }
 }
 
-bool ImGuiD3D9ExternalView::initialize(const std::string &processName) {
-    targetProcess = processName;
+bool ImGuiD3D9ExternalView::initialize(uint32_t pid) {
+    targetProcessPid = pid;
     return true;
 }
 
@@ -286,7 +298,7 @@ bool ImGuiD3D9ExternalView::loop() {
     while (WindowFocus == false) {
         DWORD ForegroundWindowProcessID;
         GetWindowThreadProcessId(GetForegroundWindow(), &ForegroundWindowProcessID);
-        if (GetProcessId(targetProcess.c_str()) == ForegroundWindowProcessID) {
+        if (targetProcessPid == ForegroundWindowProcessID) {
             Process.ID = GetCurrentProcessId();
             Process.Handle = GetCurrentProcess();
             Process.Hwnd = GetForegroundWindow();
@@ -325,3 +337,96 @@ bool ImGuiD3D9ExternalView::loop() {
     processCheckThread.join();
     return true;
 }
+
+void ImGuiD3D9ExternalView::drawRect(
+        ImVec2 p1,
+        ImVec2 p2,
+        ImColor col,
+        float rounding,
+        ImDrawFlags flags,
+        float thickness
+) {
+    ImGui::GetBackgroundDrawList()->AddRect(
+            p1,
+            p2,
+            col,
+            rounding,
+            flags,
+            thickness
+    );
+}
+
+void ImGuiD3D9ExternalView::drawRectFilled(
+        ImVec2 p1,
+        ImVec2 p2,
+        ImColor col,
+        float rounding,
+        ImDrawFlags flags
+) {
+    ImGui::GetBackgroundDrawList()->AddRectFilled(
+            p1,
+            p2,
+            col,
+            rounding,
+            flags
+    );
+}
+
+void ImGuiD3D9ExternalView::drawLine(
+        ImVec2 p1,
+        ImVec2 p2,
+        ImColor col,
+        float thickness
+) {
+    ImGui::GetBackgroundDrawList()->AddLine(
+            p1,
+            p2,
+            col,
+            thickness
+    );
+}
+
+void ImGuiD3D9ExternalView::drawCircle(
+        ImVec2 center,
+        float radius,
+        ImColor col,
+        int segments,
+        float thickness
+) {
+    ImGui::GetBackgroundDrawList()->AddCircle(
+            center,
+            radius,
+            col,
+            segments,
+            thickness
+    );
+}
+
+void ImGuiD3D9ExternalView::drawCircleFilled(
+        ImVec2 center,
+        float radius,
+        ImColor col,
+        int segments
+) {
+    ImGui::GetBackgroundDrawList()->AddCircleFilled(
+            center,
+            radius,
+            col,
+            segments
+    );
+}
+
+void ImGuiD3D9ExternalView::drawString(
+        ImVec2 pos,
+        ImColor col,
+        const std::string &str
+) {
+    ImGui::GetBackgroundDrawList()->AddText(
+            pos,
+            col,
+            str.c_str()
+    );
+}
+
+
+

@@ -81,7 +81,7 @@ public:
         return value;
     }
 
-    void get(T* addr, size_t n) const {
+    void get(T* addr, size_t n = 1) const {
         if (bad) {
             return;
         }

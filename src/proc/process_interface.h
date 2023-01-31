@@ -6,7 +6,7 @@
 class ProcessInterface {
 public:
 
-    virtual bool attach(const std::string &processName) = 0;
+    virtual bool attach(uint32_t pid) = 0;
 
     virtual bool detach() = 0;
 
