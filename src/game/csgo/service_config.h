@@ -10,6 +10,8 @@
 #include "service/esp/esp.h"
 #include "service/radar/radar.h"
 
+#include "settings.h"
+
 using ServiceList = ServiceContainer<
         Aimbot,
         Esp,
@@ -20,7 +22,8 @@ using ServiceList = ServiceContainer<
 // change defalut settings
 
 inline static void changeDefaultSettings() {
-    Settings::Esp::viewLineScale = 30.f;
+    Settings::distanceFactor = 0.03f;
+    Settings::Esp::showBone = true;
     Settings::Radar::scale = 0.05f;
 }
 
