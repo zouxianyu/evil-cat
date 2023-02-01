@@ -16,7 +16,7 @@
 using ServiceList = ServiceContainer<
         Aimbot,
         Esp,
-//        Radar,
+        Radar,
         NameList
 >;
 
@@ -27,7 +27,7 @@ inline static void changeDefaultSettings() {
     Settings::distanceFactor = 0.01f;
     Settings::Esp::viewLineScale = 30.f;
     Settings::Esp::showBone = true;
-    Settings::Radar::scale = 0.05f;
+    Settings::Radar::scale = 0.01f;
     Settings::NameList::on = true;
 }
 
