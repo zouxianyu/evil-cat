@@ -23,8 +23,6 @@ namespace Settings::Esp {
     extern ImColor enemyColor;
     extern ImColor boneColor;
 
-    extern float viewLineScale;
-
     extern float barMoveUp;
     extern float barWidth;
     extern float barHeight;
