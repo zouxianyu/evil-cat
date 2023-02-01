@@ -5,6 +5,7 @@
 #include <glm/gtx/vector_angle.hpp>
 #include "world_to_screen/world_to_screen.h"
 #include "magic_enum.h"
+#include "settings.h"
 #include "esp.h"
 
 namespace Settings::Esp {
@@ -19,8 +20,6 @@ namespace Settings::Esp {
     ImColor teammateColor = ImColor(0, 255, 0, 225);
     ImColor enemyColor = ImColor(255, 0, 0, 225);
     ImColor boneColor = ImColor(234, 240, 68, 255);
-
-    float viewLineScale = 1.f;
 
     float barMoveUp = 15.f;
     float barWidth = 125.f;
@@ -248,24 +247,35 @@ void Esp::showViewLine(
             continue;
         }
 
-        glm::vec3 camera = player->getCameraPosition();
         glm::vec3 viewAngle = player->getViewAngle();
         glm::vec3 orientation = Module::game->viewAngleToOrientation(viewAngle);
-        glm::vec3 viewLineEnd = camera + orientation * Settings::Esp::viewLineScale;
+        glm::vec3 orientation2D = glm::normalize(glm::vec3(orientation.x, orientation.y, 0));
+
+        glm::vec3 pMiddle = player->getPosition(); pMiddle.z += player->getHeight() * 0.5f;
+        glm::vec3 pFront = pMiddle + orientation2D * player->getHeight() * 0.25f;
+        glm::vec3 pTop = pFront; pTop.z += player->getHeight() * 0.5f;
+        glm::vec3 pDown = pFront; pDown.z -= player->getHeight() * 0.5f;
+        glm::vec3 pDest = pFront + orientation * player->getHeight() * 0.5f;
+
         auto viewLineColor = player->getTeamId() == localPlayer->getTeamId() ?
                              Settings::Esp::teammateColor : Settings::Esp::enemyColor;
 
-        // show view line
-        std::optional<glm::vec2> screenCamera = WorldToScreen::translate(camera);
-        std::optional<glm::vec2> screenViewLineEnd = WorldToScreen::translate(viewLineEnd);
+        std::optional<glm::vec2> screenTop = WorldToScreen::translate(pTop);
+        std::optional<glm::vec2> screenDown = WorldToScreen::translate(pDown);
+        std::optional<glm::vec2> screenDest = WorldToScreen::translate(pDest);
 
-        if (!screenCamera || !screenViewLineEnd) {
+        if (!screenTop || !screenDown || !screenDest) {
             continue;
         }
 
         Module::view->drawLine(
-                ImVec2(screenCamera->x, screenCamera->y),
-                ImVec2(screenViewLineEnd->x, screenViewLineEnd->y),
+                ImVec2(screenDest->x, screenDest->y),
+                ImVec2(screenTop->x, screenTop->y),
+                viewLineColor
+        );
+        Module::view->drawLine(
+                ImVec2(screenDest->x, screenDest->y),
+                ImVec2(screenDown->x, screenDown->y),
                 viewLineColor
         );
     }
@@ -284,7 +294,7 @@ void Esp::showHeadCircle(
                                Settings::Esp::teammateColor : Settings::Esp::enemyColor;
 
         // show head circle
-        glm::vec3 head = player->getBonePosition(Bone::head);
+        glm::vec3 head = player->getBonePositions()[static_cast<int>(Bone::head)];
         glm::vec3 feet = player->getPosition();
 
         std::optional<glm::vec2> screenHead = WorldToScreen::translate(head);
@@ -435,7 +445,8 @@ void Esp::showDistance(
             continue;
         }
 
-        auto distance = Module::game->getDistance(player);
+        auto distance = glm::length(player->getPosition() - localPlayer->getPosition()) *
+                Settings::distanceFactor;
         std::string distanceStr = std::to_string((int)std::round(distance)) + "m";
         // TODO: get string size via View interface
         ImVec2 textSize(distanceStr.length() * 11.f, 22.f);
@@ -464,10 +475,11 @@ void Esp::showBone(
 
         // get all bone positions
         bool showPlayer = true;
+        BoneArray bonePositions = player->getBonePositions();
         glm::vec2 boneScreenPositions[magic_enum::enum_count<Bone>()];
         for (int i = 0; i < magic_enum::enum_count<Bone>(); i++) {
-            glm::vec3 bonePosition = player->getBonePosition(static_cast<Bone>(i));
-            std::optional<glm::vec2> screenPosition = WorldToScreen::translate(bonePosition);
+            std::optional<glm::vec2> screenPosition =
+                    WorldToScreen::translate(bonePositions[i]);
             if (!screenPosition) {
                 showPlayer = false;
                 break;

@@ -1,5 +1,5 @@
 #include "mem/memory_accessor.h"
-#include "offset/player.h"
+#include "offset.h"
 #include "player.h"
 
 Player::Player(gameptr_t address)
@@ -54,17 +54,12 @@ void Player::setArmor(float armor) {
     MemoryAccessor<int>{_this + Offset::Player::armor} = (int)armor;
 }
 
-glm::vec3 Player::getBonePosition(Bone boneType) {
-    switch (boneType) {
-        case Bone::head: {
-            glm::vec3 head = MemoryAccessor<glm::vec3>{_this + Offset::Player::head};
-            head.z += 0.25f;
-            return head;
-        }
-        default: {
-            return {0, 0, 0};
-        }
-    }
+BoneArray Player::getBonePositions() {
+    BoneArray bonePositions{};
+    bonePositions[static_cast<int>(Bone::head)] =
+            MemoryAccessor<glm::vec3>{_this + Offset::Player::head};
+
+    return bonePositions;
 }
 
 bool Player::operator==(const PlayerInterface &other) const {

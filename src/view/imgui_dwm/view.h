@@ -11,6 +11,8 @@ public:
 
     bool loop() override;
 
+    glm::vec2 getSize() override;
+
     void drawRect(
             ImVec2 p1,
             ImVec2 p2,
@@ -60,6 +62,8 @@ private:
     enum { FRAME_PER_SECOND = 60 };
 
     uint32_t targetPid;
+
+    std::pair<ImVec2, ImVec2> currentWindowRect;
 
     bool isTargetWindowOnTop();
 

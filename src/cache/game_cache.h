@@ -24,10 +24,6 @@ public:
         CACHE_BODY(vpMatrix, vpMatrixCached, getVPMatrix);
     }
 
-    glm::vec2 getWindowSize() override {
-        CACHE_BODY(windowSize, windowSizeCached, getWindowSize);
-    }
-
     glm::vec3 viewAngleToOrientation(glm::vec3 viewAngle) override {
         return instance->viewAngleToOrientation(viewAngle);
     }
@@ -36,15 +32,10 @@ public:
         return instance->orientationToViewAngle(orientation);
     }
 
-    float getDistance(std::shared_ptr<PlayerInterface> player) override {
-        return instance->getDistance(player);
-    }
-
     void refresh() override {
         localPlayerCached = false;
         playersCached = false;
         vpMatrixCached = false;
-        windowSizeCached = false;
     }
 
 private:
@@ -58,9 +49,6 @@ private:
 
     bool vpMatrixCached{};
     glm::mat4 vpMatrix;
-
-    bool windowSizeCached{};
-    glm::vec2 windowSize;
 
     std::shared_ptr<PlayerInterface>
     makeCacheAdapter(std::shared_ptr<PlayerInterface> player) {

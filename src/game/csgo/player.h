@@ -45,7 +45,7 @@ public:
 
     void setArmor(float armor) override;
 
-    glm::vec3 getBonePosition(Bone boneType) override;
+    BoneArray getBonePositions() override;
 
     bool operator==(const PlayerInterface &other) const override;
 

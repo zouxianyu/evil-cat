@@ -3,6 +3,7 @@
 
 #include <string>
 #include <functional>
+#include <glm/glm.hpp>
 #include <imgui.h>
 
 class ViewInterface {
@@ -10,6 +11,8 @@ public:
     virtual bool initialize(uint32_t pid) = 0;
 
     virtual bool loop() = 0;
+
+    virtual glm::vec2 getSize() = 0;
 
     virtual void drawRect(
             ImVec2 p1,

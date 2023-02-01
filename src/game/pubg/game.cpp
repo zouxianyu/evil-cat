@@ -112,10 +112,6 @@ glm::mat4 Game::getVPMatrix() {
     return projection * view;
 }
 
-glm::vec2 Game::getWindowSize() {
-    return {1280, 720};
-}
-
 glm::vec3 Game::viewAngleToOrientation(glm::vec3 viewAngle) {
     glm::vec3 X = glm::vec3(1.0f, 0.0f, 0.0f);
     glm::vec3 Z = glm::vec3(0.0f, 0.0f, 1.0f);
@@ -138,12 +134,6 @@ glm::vec3 Game::orientationToViewAngle(glm::vec3 orientation) {
     alpha = glm::clamp(glm::degrees(alpha), -180.0f, 180.0f);
     beta = glm::clamp(glm::degrees(beta), -75.0f, 75.0f);
     return {beta, alpha, 0.0f};
-}
-
-float Game::getDistance(std::shared_ptr<PlayerInterface> player) {
-    glm::vec3 localPlayerPos = Module::game->getLocalPlayer()->getPosition();
-    glm::vec3 playerPos = player->getPosition();
-    return glm::distance(localPlayerPos, playerPos) * 0.01f;
 }
 
 // copied from UE4 FInverseRotationMatrix
@@ -196,7 +186,7 @@ glm::mat4 Game::getViewMatrix(const CameraInfo &camera) {
 }
 
 glm::mat4 Game::getProjectionMatrix(const CameraInfo &camera) {
-    glm::vec2 windowSize = getWindowSize();
+    glm::vec2 windowSize = Module::view->getSize();
     float aspect = windowSize.x / windowSize.y;
     float fovy = 2 * atan(tan(glm::radians(camera.FOV) / 2) / aspect);
     glm::mat4 projection = glm::infinitePerspective(fovy, aspect, 0.1f);

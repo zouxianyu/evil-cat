@@ -14,6 +14,7 @@ namespace Settings {
     extern ImColor textColor;
     extern ImColor backgroundColor;
 
+    extern float distanceFactor;
 }
 
 #endif //EVIL_CAT_SETTINGS_H

@@ -69,7 +69,7 @@ void Radar::serviceCallback() {
     }
 
     // calculate the radar's position
-    glm::vec2 windowSize = Module::game->getWindowSize();
+    glm::vec2 windowSize = Module::view->getSize();
 
     glm::vec2 radarPosition = Settings::Radar::normalizedCenter * windowSize;
 

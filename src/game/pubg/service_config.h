@@ -11,10 +11,12 @@
 #include "service/radar/radar.h"
 #include "service/name_list/name_list.h"
 
+#include "settings.h"
+
 using ServiceList = ServiceContainer<
         Aimbot,
         Esp,
-//        Radar,
+        Radar,
         NameList
 >;
 
@@ -22,9 +24,9 @@ using ServiceList = ServiceContainer<
 // change default settings
 
 inline static void changeDefaultSettings() {
-    Settings::Esp::viewLineScale = 30.f;
+    Settings::distanceFactor = 0.01f;
     Settings::Esp::showBone = true;
-    Settings::Radar::scale = 0.05f;
+    Settings::Radar::scale = 0.01f;
     Settings::NameList::on = true;
 }
 

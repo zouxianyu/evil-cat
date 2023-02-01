@@ -47,6 +47,7 @@ struct FTransform {
     glm::vec3 scale;
     uint8_t pad2[4];
 
+    // copied from UE4 FTransform::ToMatrixWithScale
     glm::mat4 toMatrix() const {
         glm::mat4 matrix;
 

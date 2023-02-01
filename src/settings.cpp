@@ -13,4 +13,6 @@ namespace Settings {
     ImColor textColor = ImColor(255, 255, 255);
     ImColor backgroundColor = ImColor(0, 0, 0);
 
+    float distanceFactor = 1.f;
+
 }

@@ -338,6 +338,10 @@ bool ImGuiD3D9ExternalView::loop() {
     return true;
 }
 
+glm::vec2 ImGuiD3D9ExternalView::getSize() {
+    return {Process.WindowWidth, Process.WindowHeight};
+}
+
 void ImGuiD3D9ExternalView::drawRect(
         ImVec2 p1,
         ImVec2 p2,

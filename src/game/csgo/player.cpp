@@ -1,3 +1,4 @@
+#include <map>
 #include "magic_enum.h"
 #include "mem/memory_accessor.h"
 #include "offset.h"
@@ -22,12 +23,12 @@ glm::vec3 Player::getCameraPosition() {
 }
 
 glm::vec3 Player::getViewAngle() {
-    return MemoryAccessor<glm::vec3>{_this + hazedumper::netvars::m_viewAngle};
+    const uint32_t viewAngleOffset = hazedumper::netvars::m_vecOrigin - sizeof(glm::vec3);
+    return MemoryAccessor<glm::vec3>{_this + viewAngleOffset};
 }
 
 void Player::setViewAngle(glm::vec3 angle) {
     // not support
-    return;
 }
 
 std::string Player::getName() {
@@ -53,12 +54,11 @@ int Player::getTeamId() {
 }
 
 float Player::getHealth() {
-    return MemoryAccessor<int>{_this + hazedumper::netvars::m_iHealth};
+    return (float)MemoryAccessor<int>{_this + hazedumper::netvars::m_iHealth};
 }
 
 void Player::setHealth(float health) {
     // not support
-    return;
 }
 
 float Player::getArmor() {
@@ -68,7 +68,6 @@ float Player::getArmor() {
 
 void Player::setArmor(float armor) {
     // not support
-    return;
 }
 
 glm::vec3 Player::getBoneById(int id) {
@@ -79,17 +78,14 @@ glm::vec3 Player::getBoneById(int id) {
     return {mem[0][3], mem[1][3], mem[2][3]};
 }
 
+using BoneMappingArray = std::array<int, magic_enum::enum_count<Bone>()>;
 
-template<PlayerType T>
-constexpr std::array<int, magic_enum::enum_count<Bone>()>
-getBoneIdList() {
+constexpr BoneMappingArray getBoneMapping_unknown() {
     return {};
 }
 
-template<>
-constexpr std::array<int, magic_enum::enum_count<Bone>()>
-getBoneIdList<PlayerType::ctm_idf>() {
-    std::array<int, magic_enum::enum_count<Bone>()> map{};
+constexpr BoneMappingArray getBoneMapping_ctm_idf() {
+    BoneMappingArray map{};
     map[static_cast<int>(Bone::head)] = 8;
     map[static_cast<int>(Bone::neck)] = 7;
     map[static_cast<int>(Bone::leftShoulder)] = 11;
@@ -109,10 +105,8 @@ getBoneIdList<PlayerType::ctm_idf>() {
     return map;
 }
 
-template<>
-constexpr std::array<int, magic_enum::enum_count<Bone>()>
-getBoneIdList<PlayerType::tm_leet>() {
-    std::array<int, magic_enum::enum_count<Bone>()> map{};
+constexpr BoneMappingArray getBoneMapping_tm_leet() {
+    BoneMappingArray map{};
     map[static_cast<int>(Bone::head)] = 8;
     map[static_cast<int>(Bone::neck)] = 7;
     map[static_cast<int>(Bone::leftShoulder)] = 11;
@@ -152,15 +146,19 @@ PlayerType Player::getPlayerType() {
     }
 }
 
-glm::vec3 Player::getBonePosition(Bone boneType) {
-    switch (getPlayerType()) {
-        case PlayerType::ctm_idf:
-            return getBoneById(getBoneIdList<PlayerType::ctm_idf>()[static_cast<int>(boneType)]);
-        case PlayerType::tm_leet:
-            return getBoneById(getBoneIdList<PlayerType::tm_leet>()[static_cast<int>(boneType)]);
-        default:
-            return getBoneById(getBoneIdList<PlayerType::unknown>()[static_cast<int>(boneType)]);
+BoneArray Player::getBonePositions() {
+    const static std::map<PlayerType, BoneMappingArray> boneMappings{
+            {PlayerType::ctm_idf, getBoneMapping_ctm_idf()},
+            {PlayerType::tm_leet, getBoneMapping_tm_leet()},
+            {PlayerType::unknown, getBoneMapping_unknown()},
+    };
+
+    BoneArray bonePositions{};
+    PlayerType type = getPlayerType();
+    for (int i = 0; i < bonePositions.size(); i++) {
+        bonePositions[i] = getBoneById(boneMappings.at(type)[i]);
     }
+    return bonePositions;
 }
 
 bool Player::operator==(const PlayerInterface &other) const {

@@ -27,7 +27,8 @@ float Player::getHeight() {
 }
 
 glm::vec3 Player::getCameraPosition() {
-    return getBonePosition(Bone::head);
+    // unused
+    return {};
 }
 
 glm::vec3 Player::getViewAngle() {
@@ -37,6 +38,7 @@ glm::vec3 Player::getViewAngle() {
 }
 
 void Player::setViewAngle(glm::vec3 angle) {
+    // unused
 }
 
 std::string Player::getName() {
@@ -55,28 +57,39 @@ float Player::getHealth() {
 }
 
 void Player::setHealth(float health) {
+    // unused
 }
 
 float Player::getArmor() {
+    // unused
     return {};
 }
 
 void Player::setArmor(float armor) {
+    // unused
 }
 
-// https://www.unknowncheats.me/forum/playerunknown-s-battlegrounds/229574-pubg-skeleton-bone-esp.html
-glm::vec3 Player::getBonePosition(Bone boneType) {
+// 1. https://www.unknowncheats.me/forum/playerunknown-s-battlegrounds/229574-pubg-skeleton-bone-esp.html
+// 2. lily
+BoneArray Player::getBonePositions() {
+    BoneArray bonePositions{};
 
     uint64_t mesh = MemoryAccessor<uint64_t>(_this + Offset_Mesh);
     FTransform componentToWorld = MemoryAccessor<FTransform>(
             mesh + Offset_ComponentToWorld
     );
     TArray boneTransforms = MemoryAccessor<TArray>(mesh + Offset_BoneSpaceTransforms);
-    FTransform boneTransform = MemoryAccessor<FTransform>(
-            boneTransforms.ptr + PUBG::getBoneIndex(boneType) * sizeof(FTransform)
-    );
 
-    return (boneTransform * componentToWorld).translation;
+    for (int i = 0; i < bonePositions.size(); i++) {
+        FTransform boneTransform = MemoryAccessor<FTransform>(
+                boneTransforms.ptr +
+                PUBG::getBoneIndex(static_cast<Bone>(i)) * sizeof(FTransform)
+        );
+
+        bonePositions[i] = (boneTransform * componentToWorld).translation;
+    }
+
+    return bonePositions;
 }
 
 bool Player::operator==(const PlayerInterface &other) const {

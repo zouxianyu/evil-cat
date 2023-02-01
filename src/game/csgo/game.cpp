@@ -60,10 +60,6 @@ glm::mat4 Game::getVPMatrix() {
     return glm::transpose(mat);
 }
 
-glm::vec2 Game::getWindowSize() {
-    return {1600, 900};
-}
-
 glm::vec3 Game::viewAngleToOrientation(glm::vec3 viewAngle) {
     glm::vec3 Z = glm::vec3(0.0f, 0.0f, 1.0f);
     glm::vec3 X = glm::vec3(1.0f, 0.0f, 0.0f);
@@ -85,10 +81,4 @@ glm::vec3 Game::orientationToViewAngle(glm::vec3 orientation) {
     alpha = glm::clamp(glm::degrees(alpha), -180.0f, 180.0f);
     beta = glm::clamp(glm::degrees(beta), -89.0f, 89.0f);
     return {beta, alpha, 0.0f};
-}
-
-float Game::getDistance(std::shared_ptr<PlayerInterface> player) {
-    glm::vec3 localPlayerPos = getLocalPlayer()->getPosition();
-    glm::vec3 playerPos = player->getPosition();
-    return glm::distance(localPlayerPos, playerPos) * 0.015f;
 }

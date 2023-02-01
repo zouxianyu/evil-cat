@@ -15,7 +15,7 @@ static float getDeltaAngle(glm::vec3 v1, glm::vec3 v2) {
 
 static glm::vec3 getAimPosition(const std::shared_ptr<PlayerInterface>& player) {
     if (Settings::Aimbot::useBoneAimer) {
-        return player->getBonePosition(Settings::Aimbot::bone);
+        return player->getBonePositions()[static_cast<int>(Settings::Aimbot::bone)];
     } else {
         glm::vec3 position = player->getPosition();
         position.z += player->getHeight() * Settings::Aimbot::nonBoneAimerRelativeHeight;
@@ -70,7 +70,8 @@ std::optional<std::shared_ptr<PlayerInterface>> AimbotHelper::minAnglePicker(
         }
 
         // get target orientation
-        glm::vec3 targetOrientation = player->getBonePosition(Settings::Aimbot::bone) -
+        glm::vec3 targetOrientation =
+                player->getBonePositions()[static_cast<int>(Settings::Aimbot::bone)] -
                 localPlayer->getCameraPosition();
 
         // calculate delta view angle

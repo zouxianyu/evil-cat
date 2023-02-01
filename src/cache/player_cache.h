@@ -56,9 +56,8 @@ public:
         instance->setArmor(armor);
     }
 
-    glm::vec3 getBonePosition(Bone boneType) override {
-        int i = static_cast<int>(boneType);
-        CACHE_BODY(bonePosition[i], bonePositionCached[i], getBonePosition, boneType);
+    BoneArray getBonePositions() override {
+        CACHE_BODY(bonePositions, bonePositionsCached, getBonePositions);
     }
 
     bool operator==(const PlayerInterface &other) const override {
@@ -74,9 +73,7 @@ public:
         teamIdCached = false;
         healthCached = false;
         armorCached = false;
-        for (bool &v : bonePositionCached) {
-            v = false;
-        }
+        bonePositionsCached = false;
     }
 
 private:
@@ -106,8 +103,8 @@ private:
     bool armorCached{};
     float armor;
 
-    bool bonePositionCached[magic_enum::enum_count<Bone>()]{};
-    glm::vec3 bonePosition[magic_enum::enum_count<Bone>()];
+    bool bonePositionsCached{};
+    BoneArray bonePositions;
 };
 
 #endif //EVIL_CAT_CACHE_PLAYER_CACHE_H
