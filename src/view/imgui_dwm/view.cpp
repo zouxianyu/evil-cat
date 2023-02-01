@@ -38,6 +38,11 @@ bool ImGuiDWMView::loop() {
     return true;
 }
 
+glm::vec2 ImGuiDWMView::getSize() {
+    return {currentWindowRect.second.x - currentWindowRect.first.x,
+            currentWindowRect.second.y - currentWindowRect.first.y};
+}
+
 bool ImGuiDWMView::isTargetWindowOnTop() {
     DWORD topPid = 0;
     GetWindowThreadProcessId(GetForegroundWindow(), &topPid);
@@ -66,8 +71,8 @@ void ImGuiDWMView::waitForNextFrame(std::chrono::time_point<std::chrono::steady_
 }
 
 void ImGuiDWMView::render() {
-    auto [p1, p2] = getTopWindowRect();
-    Draw::setClipRect(p1, p2);
+    currentWindowRect = getTopWindowRect();
+    Draw::setClipRect(currentWindowRect.first, currentWindowRect.second);
 
     Draw::begin();
     for (auto &callback : Controller::getInstance().getServiceCallbacks()) {

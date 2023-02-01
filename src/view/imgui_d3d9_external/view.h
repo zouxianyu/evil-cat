@@ -30,6 +30,8 @@ public:
 
     bool loop() override;
 
+    glm::vec2 getSize() override;
+
     void drawRect(
             ImVec2 p1,
             ImVec2 p2,

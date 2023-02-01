@@ -12,13 +12,9 @@ public:
 
     glm::mat4 getVPMatrix() override;
 
-    glm::vec2 getWindowSize() override;
-
     glm::vec3 viewAngleToOrientation(glm::vec3 viewAngle) override;
 
     glm::vec3 orientationToViewAngle(glm::vec3 orientation) override;
-
-    float getDistance(std::shared_ptr<PlayerInterface> player) override;
 
 private:
     glm::mat4 getInverseRotationMatrix(FRotator rotation);

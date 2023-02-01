@@ -3,26 +3,7 @@
 
 #include <string>
 #include <glm/glm.hpp>
-
-// bone types
-enum class Bone : int {
-    head,
-    neck,
-    leftShoulder,
-    rightShoulder,
-    leftElbow,
-    rightElbow,
-    leftHand,
-    rightHand,
-    spine,
-    hip,
-    leftHip,
-    rightHip,
-    leftKnee,
-    rightKnee,
-    leftFoot,
-    rightFoot,
-};
+#include "bone.h"
 
 // this interface contains basic information about a player
 // use this interface to get basic information about a player in the core of the framework
@@ -72,7 +53,7 @@ public:
 
     virtual void setArmor(float health) = 0;
 
-    virtual glm::vec3 getBonePosition(Bone boneType) = 0;
+    virtual BoneArray getBonePositions() = 0;
 
     // we call use the compare operator to identify whether the player is the local player
     virtual bool operator==(const PlayerInterface &other) const = 0;

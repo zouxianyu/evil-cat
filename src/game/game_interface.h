@@ -14,13 +14,9 @@ public:
 
     virtual glm::mat4 getVPMatrix() = 0;
 
-    virtual glm::vec2 getWindowSize() = 0;
-
     virtual glm::vec3 viewAngleToOrientation(glm::vec3 viewAngle) = 0;
 
     virtual glm::vec3 orientationToViewAngle(glm::vec3 orientation) = 0;
-
-    virtual float getDistance(std::shared_ptr<PlayerInterface> player) = 0;
 
     virtual ~GameInterface() = default;
 };

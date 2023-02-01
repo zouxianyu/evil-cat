@@ -6,7 +6,7 @@
 std::optional<glm::vec2> WorldToScreen::translate(const glm::vec3 &world) {
 
     glm::mat4 vpMatrix = Module::game->getVPMatrix();
-    glm::vec2 windowSize = Module::game->getWindowSize();
+    glm::vec2 windowSize = Module::view->getSize();
     const float &width = windowSize.x;
     const float &height = windowSize.y;
 
