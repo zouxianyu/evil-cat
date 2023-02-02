@@ -7,6 +7,7 @@
 #include "service/service_container.h"
 
 #include "service/aimbot/aimbot.h"
+#include "service/item_esp/item_esp.h"
 #include "service/esp/esp.h"
 #include "service/radar/radar.h"
 #include "service/name_list/name_list.h"
@@ -15,6 +16,7 @@
 
 using ServiceList = ServiceContainer<
         Aimbot,
+        ItemEsp,
         Esp,
         Radar,
         NameList

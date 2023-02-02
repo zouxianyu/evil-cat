@@ -6,9 +6,7 @@
 
 class Game : public GameInterface {
 public:
-    std::shared_ptr<PlayerInterface> getLocalPlayer() override;
-
-    std::vector<std::shared_ptr<PlayerInterface>> getPlayers() override;
+    EntityContainer getEntities() override;
 
     glm::mat4 getVPMatrix() override;
 
@@ -17,6 +15,10 @@ public:
     glm::vec3 orientationToViewAngle(glm::vec3 orientation) override;
 
 private:
+    void getLocalPlayer(EntityContainer &container);
+
+    void getPlayersAndItems(EntityContainer &container);
+
     glm::mat4 getInverseRotationMatrix(FRotator rotation);
 
     glm::mat4 getViewMatrix(const CameraInfo &camera);

@@ -2,6 +2,7 @@
 #define EVIL_CAT_GAME_PUBG_NAME_HELPER_H
 
 #include <string>
+#include <optional>
 #include "structure.h"
 #include "game/player_interface.h"
 
@@ -21,6 +22,10 @@ namespace PUBG::Helper {
     void setCameraRotation(glm::vec3 rotation);
 
     int getBoneIndex(Bone bone);
+
+    std::optional<ItemInfo> getItemInfo(const std::string &objectName);
+
+    std::string getDroppedItemName(uint64_t actor);
 }
 
 namespace PUBG {
