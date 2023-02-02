@@ -22,7 +22,7 @@ void NameList::serviceCallback() {
         return;
     }
 
-    std::vector<std::shared_ptr<PlayerInterface>> players = Module::game->getPlayers();
+    std::vector<std::shared_ptr<PlayerInterface>> players = Module::game->getEntities().players;
 
     for (int i = 0; i < players.size(); i++) {
         PlayerInterface &player = *players[i];
