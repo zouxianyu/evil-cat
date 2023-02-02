@@ -2,7 +2,6 @@
 #define EVIL_CAT_CACHE_PLAYER_CACHE_H
 
 #include <memory>
-#include "magic_enum.h"
 #include "registry.h"
 #include "cache_body.h"
 #include "game/player_interface.h"
