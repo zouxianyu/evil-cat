@@ -5,15 +5,19 @@
 
 class Game : public GameInterface {
 public:
-    std::shared_ptr<PlayerInterface> getLocalPlayer() override;
-
-    std::vector<std::shared_ptr<PlayerInterface>> getPlayers() override;
+    EntityContainer getEntities() override;
 
     glm::mat4 getVPMatrix() override;
 
     glm::vec3 viewAngleToOrientation(glm::vec3 viewAngle) override;
 
     glm::vec3 orientationToViewAngle(glm::vec3 orientation) override;
+
+private:
+    void getLocalPlayer(EntityContainer &container);
+
+    void getPlayers(EntityContainer &container);
+
 };
 
 #endif //EVIL_CAT_GAME_ASSAULT_CUBE_GAME_H

@@ -8,8 +8,8 @@
 #include "mem/memory_accessor.h"
 #include "game.h"
 
-std::shared_ptr<PlayerInterface> Game::getLocalPlayer() {
-    return std::make_shared<Player>(
+void Game::getLocalPlayer(EntityContainer &container) {
+    container.localPlayer = std::make_shared<Player>(
             MemoryAccessor<gameptr_t>{
             "ac_client.exe",
             Offset::localPlayer
@@ -17,8 +17,7 @@ std::shared_ptr<PlayerInterface> Game::getLocalPlayer() {
     );
 }
 
-std::vector<std::shared_ptr<PlayerInterface>> Game::getPlayers() {
-    std::vector<std::shared_ptr<PlayerInterface>> players;
+void Game::getPlayers(EntityContainer &container) {
 
     // get player list address
     gameptr_t playerList = MemoryAccessor<gameptr_t>{
@@ -40,9 +39,16 @@ std::vector<std::shared_ptr<PlayerInterface>> Game::getPlayers() {
         if (!playerAddr) {
             continue;
         }
-        players.emplace_back(std::make_shared<Player>(playerAddr));
+        container.players.emplace_back(std::make_shared<Player>(playerAddr));
     }
-    return players;
+}
+
+EntityContainer Game::getEntities() {
+    EntityContainer container;
+    getLocalPlayer(container);
+    getPlayers(container);
+
+    return container;
 }
 
 glm::mat4 Game::getVPMatrix() {
