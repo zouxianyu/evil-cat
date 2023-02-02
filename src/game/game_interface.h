@@ -4,13 +4,11 @@
 #include <vector>
 #include <memory>
 #include <glm/glm.hpp>
-#include "game/player_interface.h"
+#include "entity_container.h"
 
 class GameInterface {
 public:
-    virtual std::shared_ptr<PlayerInterface> getLocalPlayer() = 0;
-
-    virtual std::vector<std::shared_ptr<PlayerInterface>> getPlayers() = 0;
+    virtual EntityContainer getEntities() = 0;
 
     virtual glm::mat4 getVPMatrix() = 0;
 
