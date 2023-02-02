@@ -133,9 +133,9 @@ void Aimbot::serviceCallback() {
         return;
     }
 
-    std::shared_ptr<PlayerInterface> localPlayer = Module::game->getLocalPlayer();
-
-    std::vector<std::shared_ptr<PlayerInterface>> players = Module::game->getPlayers();
+    EntityContainer container = Module::game->getEntities();
+    std::shared_ptr<PlayerInterface> &localPlayer = container.localPlayer;
+    std::vector<std::shared_ptr<PlayerInterface>> &players = container.players;
 
     if (players.empty()) {
         return;

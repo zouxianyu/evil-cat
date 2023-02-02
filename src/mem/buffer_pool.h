@@ -1,6 +1,7 @@
 #ifndef EVIL_CAT_MEM_BUFFER_POOL_H
 #define EVIL_CAT_MEM_BUFFER_POOL_H
 
+#include <map>
 #include <unordered_map>
 #include <optional>
 #include <mutex>
@@ -16,7 +17,7 @@ using PageCache = std::array<uint8_t, CONF_BUFFER_POOL_CACHE_LINE_SIZE>;
 
 class BufferPool : public Singleton<BufferPool>, public CacheRegistry {
 
-    std::unordered_map<gameptr_t, PageCache> cacheMap;
+    std::map<gameptr_t, PageCache> cacheMap;
 
     std::mutex cacheMapMutex;
 

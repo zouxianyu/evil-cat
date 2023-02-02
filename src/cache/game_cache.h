@@ -5,6 +5,7 @@
 #include "registry.h"
 #include "cache_body.h"
 #include "player_cache.h"
+#include "item_cache.h"
 #include "game/game_interface.h"
 
 class GameCache : public GameInterface, public CacheRegistry {
@@ -12,12 +13,8 @@ public:
     explicit GameCache(std::unique_ptr<GameInterface> instance)
             : instance(std::move(instance)) {}
 
-    std::shared_ptr<PlayerInterface> getLocalPlayer() override {
-        CACHE_BODY_TRANSFORM(localPlayer, localPlayerCached, makeCacheAdapter, getLocalPlayer);
-    }
-
-    std::vector<std::shared_ptr<PlayerInterface>> getPlayers() override {
-        CACHE_BODY_TRANSFORM(players, playersCached, makeCacheAdapter, getPlayers);
+    EntityContainer getEntities() override {
+        CACHE_BODY_TRANSFORM(entities, entitiesCached, makeCacheAdapter, getEntities);
     }
 
     glm::mat4 getVPMatrix() override {
@@ -33,33 +30,27 @@ public:
     }
 
     void refresh() override {
-        localPlayerCached = false;
-        playersCached = false;
+        entitiesCached = false;
         vpMatrixCached = false;
     }
 
 private:
     std::unique_ptr<GameInterface> instance;
 
-    bool localPlayerCached{};
-    std::shared_ptr<PlayerInterface> localPlayer;
-
-    bool playersCached{};
-    std::vector<std::shared_ptr<PlayerInterface>> players;
+    bool entitiesCached{};
+    EntityContainer entities;
 
     bool vpMatrixCached{};
     glm::mat4 vpMatrix;
 
-    std::shared_ptr<PlayerInterface>
-    makeCacheAdapter(std::shared_ptr<PlayerInterface> player) {
-        return std::make_shared<PlayerCache>(std::move(player));
-    }
-
-    std::vector<std::shared_ptr<PlayerInterface>>
-    makeCacheAdapter(const std::vector<std::shared_ptr<PlayerInterface>> &players) {
-        std::vector<std::shared_ptr<PlayerInterface>> result;
-        for (auto &player : players) {
-            result.emplace_back(makeCacheAdapter(player));
+    EntityContainer makeCacheAdapter(const EntityContainer &container) {
+        EntityContainer result;
+        result.localPlayer = std::make_shared<PlayerCache>(container.localPlayer);
+        for (auto &player : container.players) {
+            result.players.emplace_back(std::make_shared<PlayerCache>(player));
+        }
+        for (auto &item : container.items) {
+            result.items.emplace_back(std::make_shared<ItemCache>(item));
         }
         return result;
     }

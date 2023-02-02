@@ -9,12 +9,11 @@
 #include "offset.h"
 #include "structure.h"
 #include "player.h"
+#include "item.h"
 #include "log.h"
 #include "game.h"
 
-#include "world_to_screen/world_to_screen.h"
-
-std::shared_ptr<PlayerInterface> Game::getLocalPlayer() {
+void Game::getLocalPlayer(EntityContainer &container) {
 
     uint64_t playerController = PUBG::getPlayerController();
 
@@ -22,50 +21,10 @@ std::shared_ptr<PlayerInterface> Game::getLocalPlayer() {
             playerController + Offset_AcknowledgedPawn
     ));
 
-    return std::make_shared<LocalPlayer>(acknowledgedPawn);
+    container.localPlayer = std::make_shared<LocalPlayer>(acknowledgedPawn);
 }
 
-void showItem(uint64_t actor) {
-    uint64_t rootComponent = PUBG::decryptPtr(MemoryAccessor<uint64_t>(
-            actor + Offset_RootComponent
-    ));
-
-    // ComponentLocation = ComponentToWorld.Translation
-    glm::vec3 position = MemoryAccessor<glm::vec3>(
-            rootComponent + Offset_ComponentLocation
-    );
-    std::optional<glm::vec2> screenPos = WorldToScreen::translate(position);
-    if (!screenPos) {
-        return;
-    }
-
-    uint32_t actorNameId = PUBG::decryptId(MemoryAccessor<uint32_t>(
-            actor + Offset_ObjID
-    ));
-    std::string actorName = PUBG::getName(actorNameId);
-
-    if (actorName == "DroppedItem") {
-        uint64_t item = PUBG::decryptPtr(MemoryAccessor<uint64_t>(
-                actor + Offset_DroppedItem_Item
-        ));
-        uint64_t itemTable = MemoryAccessor<uint64_t>(
-                item + Offset_ItemTable
-        );
-        uint32_t itemNameId = MemoryAccessor<uint32_t>(
-                itemTable + Offset_ItemID
-        );
-        actorName = PUBG::getName(itemNameId);
-
-        Module::view->drawCircle({screenPos->x, screenPos->y},
-                                 10.0f, ImColor(255, 0, 0));
-        Module::view->drawString({screenPos->x, screenPos->y + 10.f},
-                                 ImColor(255, 0, 0), actorName);
-    }
-}
-
-std::vector<std::shared_ptr<PlayerInterface>> Game::getPlayers() {
-
-    std::vector<std::shared_ptr<PlayerInterface>> players;
+void Game::getPlayersAndItems(EntityContainer &container) {
 
     uint64_t gworld = PUBG::decryptPtr(MemoryAccessor<uint64_t>(
             "TslGame.exe",
@@ -93,14 +52,25 @@ std::vector<std::shared_ptr<PlayerInterface>> Game::getPlayers() {
         ));
         std::string actorName = PUBG::getName(actorNameId);
 
-//        showItem(actor);
-//
+        if (actorName == "DroppedItem") {
+            actorName = PUBG::getDroppedItemName(actor);
+        }
+
+        // fill entity container
         if (PUBG::isPlayer(actorName)) {
-            players.emplace_back(std::make_shared<Player>(actor));
+            container.players.emplace_back(std::make_shared<Player>(actor));
+        } else if (auto itemInfo = PUBG::getItemInfo(actorName)) {
+            container.items.emplace_back(std::make_shared<Item>(actor, *itemInfo));
         }
     }
+}
 
-    return players;
+EntityContainer Game::getEntities() {
+    EntityContainer container;
+    getLocalPlayer(container);
+    getPlayersAndItems(container);
+
+    return container;
 }
 
 glm::mat4 Game::getVPMatrix() {

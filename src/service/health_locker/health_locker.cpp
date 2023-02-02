@@ -32,7 +32,7 @@ bool HealthLocker::fastLoopCallback() {
     if (!Settings::HealthLocker::on) {
         return false;
     }
-    Module::game->getLocalPlayer()->setHealth(Settings::HealthLocker::lockHealth);
+    Module::game->getEntities().localPlayer->setHealth(Settings::HealthLocker::lockHealth);
     return true;
 }
 

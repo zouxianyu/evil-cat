@@ -64,9 +64,9 @@ void Esp::serviceCallback() {
     }
 
     // get players
-    std::shared_ptr<PlayerInterface> localPlayer = Module::game->getLocalPlayer();
-
-    std::vector<std::shared_ptr<PlayerInterface>> players = Module::game->getPlayers();
+    EntityContainer container = Module::game->getEntities();
+    std::shared_ptr<PlayerInterface> &localPlayer = container.localPlayer;
+    std::vector<std::shared_ptr<PlayerInterface>> &players = container.players;
 
     // show bone on the bottom
     if (Settings::Esp::showBone) {

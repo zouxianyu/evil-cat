@@ -112,4 +112,9 @@ struct CameraInfo {
     float FOV;
 };
 
+struct ItemInfo {
+    std::string name;
+    int level;
+};
+
 #endif //EVIL_CAT_GAME_PUBG_STRUCTURE_H
