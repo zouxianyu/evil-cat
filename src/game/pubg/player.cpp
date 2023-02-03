@@ -34,7 +34,13 @@ glm::vec3 Player::getCameraPosition() {
 glm::vec3 Player::getViewAngle() {
     uint64_t mesh = MemoryAccessor<uint64_t>(_this + Offset_Mesh);
     uint64_t animScriptInstance = MemoryAccessor<uint64_t>(mesh + Offset_AnimScriptInstance);
-    return MemoryAccessor<glm::vec3>(animScriptInstance + Offset_ControlRotation_CP);
+    float leanLeftAlpha = MemoryAccessor<float>(animScriptInstance + Offset_LeanLeftAlpha_CP);
+    float leanRightAlpha = MemoryAccessor<float>(animScriptInstance + Offset_LeanRightAlpha_CP);
+    FRotator recoil = MemoryAccessor<FRotator>(animScriptInstance + Offset_RecoilADSRotation_CP);
+    recoil.yaw += (leanRightAlpha - leanLeftAlpha) * recoil.pitch / 3.f;
+    FRotator rotation = MemoryAccessor<FRotator>(animScriptInstance + Offset_ControlRotation_CP);
+    rotation += recoil;
+    return PUBG::normalizeViewAngle(rotation);
 }
 
 void Player::setViewAngle(glm::vec3 angle) {
@@ -100,11 +106,13 @@ glm::vec3 LocalPlayer::getCameraPosition() {
     CameraInfo camera = PUBG::getCameraInfo();
     return camera.location;
 }
-
-glm::vec3 LocalPlayer::getViewAngle() {
-    CameraInfo camera = PUBG::getCameraInfo();
-    return camera.viewAngle;
-}
+//
+//glm::vec3 LocalPlayer::getViewAngle() {
+////    CameraInfo camera = PUBG::getCameraInfo();
+////    return camera.viewAngle;
+//    uint64_t controller = PUBG::getPlayerController();
+//    return MemoryAccessor<glm::vec3>(controller + Offset_ControlRotation);
+//}
 
 void LocalPlayer::setViewAngle(glm::vec3 angle) {
     PUBG::setCameraRotation(angle);

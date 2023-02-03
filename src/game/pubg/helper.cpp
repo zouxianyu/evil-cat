@@ -86,8 +86,25 @@ CameraInfo PUBG::Helper::getCameraInfo() {
     return {cameraLocation, cameraRotation, cameraFov};
 }
 
+static float normalizeAxis(float v) {
+    while (v > 180.f) {
+        v -= 360.f;
+    }
+    while (v < -180.f) {
+        v += 360.f;
+    }
+    return v;
+}
+
+glm::vec3 PUBG::Helper::normalizeViewAngle(glm::vec3 viewAngle) {
+    viewAngle.x = std::clamp(normalizeAxis(viewAngle.x), -75.f, 75.f);
+    viewAngle.y = normalizeAxis(viewAngle.y);
+    viewAngle.z = normalizeAxis(viewAngle.z);
+    return viewAngle;
+}
+
 void PUBG::Helper::setCameraRotation(glm::vec3 rotation) {
-    glm::vec3 delta = rotation - getCameraInfo().viewAngle;
+    glm::vec3 delta = normalizeViewAngle(rotation - getCameraInfo().viewAngle);
     delta *= 4.f;
 
     RECT rect;

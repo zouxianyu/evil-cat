@@ -38,6 +38,21 @@ struct FRotator {
     /** Rotation around the forward axis (around X axis),
      * Tilting your head, 0=Straight, +Clockwise, -CCW. */
     float roll;
+
+    FRotator operator+(const FRotator &other) const {
+        return {pitch + other.pitch, yaw + other.yaw, roll + other.roll};
+    }
+
+    FRotator operator+=(const FRotator &other) {
+        pitch += other.pitch;
+        yaw += other.yaw;
+        roll += other.roll;
+        return *this;
+    }
+
+    operator glm::vec3() const {
+        return {pitch, yaw, roll};
+    }
 };
 
 struct FTransform {

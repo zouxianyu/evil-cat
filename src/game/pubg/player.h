@@ -43,7 +43,7 @@ public:
 
     glm::vec3 getCameraPosition() override;
 
-    glm::vec3 getViewAngle() override;
+//    glm::vec3 getViewAngle() override;
 
     void setViewAngle(glm::vec3 angle) override;
 };
