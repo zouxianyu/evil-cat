@@ -7,7 +7,7 @@
 #include <windows.h>
 #include "aimbot.h"
 #include "module.h"
-#include "aimbot_helper.h"
+#include "aimbot_strategy.h"
 
 static float getDeltaAngle(glm::vec3 v1, glm::vec3 v2) {
     return glm::angle(glm::normalize(v1), glm::normalize(v2));
@@ -23,29 +23,20 @@ static glm::vec3 getAimPosition(const std::shared_ptr<PlayerInterface>& player) 
     }
 }
 
-namespace AimbotHelper {
-    Strategy triggerOnRightButton = {
-            rightKeyTrigger,
-            minAnglePicker,
-            speedChangeableAimer
-    };
-    Strategy triggerOnLeftButton = {
-            leftKeyTrigger,
-            minAnglePicker,
-            speedChangeableAimer
-    };
-}
-
-bool AimbotHelper::leftKeyTrigger() {
+bool AimbotStrategy::leftKeyTrigger() {
     return GetAsyncKeyState(VK_LBUTTON) & 0x8000;
 }
 
-bool AimbotHelper::rightKeyTrigger() {
+bool AimbotStrategy::rightKeyTrigger() {
     return GetAsyncKeyState(VK_RBUTTON) & 0x8000;
 }
 
-std::optional<std::shared_ptr<PlayerInterface>> AimbotHelper::minAnglePicker(
-        const std::shared_ptr<PlayerInterface>& localPlayer,
+bool AimbotStrategy::leftOrRightKeyTrigger() {
+    return leftKeyTrigger() || rightKeyTrigger();
+}
+
+std::shared_ptr<PlayerInterface> AimbotStrategy::minAnglePicker(
+        std::shared_ptr<PlayerInterface> localPlayer,
         const std::vector<std::shared_ptr<PlayerInterface>> &players
 ) {
 
@@ -57,8 +48,8 @@ std::optional<std::shared_ptr<PlayerInterface>> AimbotHelper::minAnglePicker(
 
     // find the best enemy
     // maybe there's no valid enemy, so we use "optional" container
-    std::optional<std::shared_ptr<PlayerInterface>> bestEnemy = std::nullopt;
-    double minAngle = glm::pi<double>();
+    std::shared_ptr<PlayerInterface> bestEnemy = nullptr;
+    auto minAngle = glm::pi<double>();
 
     for (auto &player: players) {
 
@@ -69,15 +60,9 @@ std::optional<std::shared_ptr<PlayerInterface>> AimbotHelper::minAnglePicker(
             continue;
         }
 
-        // get target orientation
-        glm::vec3 targetOrientation =
-                player->getBonePositions()[static_cast<int>(Settings::Aimbot::bone)] -
-                localPlayer->getCameraPosition();
-
-        // calculate delta view angle
+        // filter by angle
+        glm::vec3 targetOrientation = getAimPosition(player) - localPlayer->getCameraPosition();
         double deltaAngle = getDeltaAngle(localPlayerOrientation, targetOrientation);
-
-        // make sure the enemy's delta angle is less than the threshold
         if (deltaAngle >= Settings::Aimbot::maxAngle) {
             continue;
         }
@@ -93,9 +78,9 @@ std::optional<std::shared_ptr<PlayerInterface>> AimbotHelper::minAnglePicker(
     return bestEnemy;
 }
 
-void AimbotHelper::speedChangeableAimer(
-        const std::shared_ptr<PlayerInterface>& localPlayer,
-        const std::shared_ptr<PlayerInterface>& targetPlayer
+void AimbotStrategy::speedChangeableAimer(
+        std::shared_ptr<PlayerInterface> localPlayer,
+        std::shared_ptr<PlayerInterface> targetPlayer
 ) {
     glm::vec3 targetPos = getAimPosition(targetPlayer);
     glm::vec3 localPos = localPlayer->getCameraPosition();

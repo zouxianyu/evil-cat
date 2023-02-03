@@ -1,11 +1,9 @@
 #include <vector>
-#include <functional>
-#include <optional>
 #include <glm/glm.hpp>
 #include <imgui.h>
 #include "module.h"
 #include "game/player_interface.h"
-#include "aimbot_helper.h"
+#include "aimbot_strategy.h"
 #include "aimbot.h"
 
 namespace Settings::Aimbot {
@@ -25,7 +23,11 @@ namespace Settings::Aimbot {
     // strategy to trigger aimbot
     // trigger on left button is good for automatic weapons
     // trigger on right button is good for sniper, hand gun, etc
-    Strategy strategy = Strategy::triggerOnLeftButton;
+    Strategy strategy = {
+            AimbotStrategy::leftOrRightKeyTrigger,
+            AimbotStrategy::minAnglePicker,
+            AimbotStrategy::speedChangeableAimer
+    };
 
     // if we don't know the bone position, we cannot use bone aimer
     // so the aim position is between player's foot and top,
@@ -51,10 +53,6 @@ std::string Aimbot::getName() {
 }
 
 void Aimbot::menuCallback() {
-    const char *aimbotStrategy[] = {
-            "right button",
-            "auto follow"
-    };
     const char *aimbotBone[] = {
             "head",
             "neck",
@@ -74,12 +72,6 @@ void Aimbot::menuCallback() {
             "right foot",
     };
     ImGui::Checkbox("aimbot", &Settings::Aimbot::on);
-    ImGui::Combo(
-            "strategy",
-            (int *) &Settings::Aimbot::strategy,
-            aimbotStrategy,
-            IM_ARRAYSIZE(aimbotStrategy)
-    );
     ImGui::SliderAngle(
             "max angle",
             &Settings::Aimbot::maxAngle,
@@ -93,21 +85,18 @@ void Aimbot::menuCallback() {
             1.f
     );
     ImGui::Checkbox("bone aimer", &Settings::Aimbot::useBoneAimer);
-    if (Settings::Aimbot::useBoneAimer) {
-        ImGui::Combo(
-                "aim at",
-                (int *) &Settings::Aimbot::bone,
-                aimbotBone,
-                IM_ARRAYSIZE(aimbotBone)
-        );
-    } else {
-        ImGui::SliderFloat(
-                "relative height",
-                &Settings::Aimbot::nonBoneAimerRelativeHeight,
-                0.f,
-                1.f
-        );
-    }
+    ImGui::Combo(
+            "aim at",
+            (int *) &Settings::Aimbot::bone,
+            aimbotBone,
+            IM_ARRAYSIZE(aimbotBone)
+    );
+    ImGui::SliderFloat(
+            "relative height",
+            &Settings::Aimbot::nonBoneAimerRelativeHeight,
+            0.f,
+            1.f
+    );
 }
 
 void Aimbot::serviceCallback() {
@@ -116,20 +105,11 @@ void Aimbot::serviceCallback() {
         return;
     }
 
-    // get a strategy
-    AimbotHelper::Strategy strategy;
-    switch (Settings::Aimbot::strategy) {
-        case Settings::Aimbot::Strategy::triggerOnLeftButton:
-            strategy = AimbotHelper::triggerOnLeftButton;
-            break;
-        case Settings::Aimbot::Strategy::triggerOnRightButton:
-            strategy = AimbotHelper::triggerOnRightButton;
-            break;
-    }
+    const auto &strategy = Settings::Aimbot::strategy;
 
     // if not triggered, clear target
     if (!strategy.trigger()) {
-        optAimbotTarget = std::nullopt;
+        aimbotTarget = nullptr;
         return;
     }
 
@@ -142,16 +122,16 @@ void Aimbot::serviceCallback() {
     }
 
     // if there's no aimbot target, find one and aim to it
-    std::optional<std::shared_ptr<PlayerInterface>> optEnemy;
-    if (optAimbotTarget && (*optAimbotTarget)->getHealth() > 0) {
-        optEnemy = optAimbotTarget;
+    std::shared_ptr<PlayerInterface> enemy;
+    if (aimbotTarget && aimbotTarget->getHealth() > 0) {
+        enemy = aimbotTarget;
     } else {
-        optEnemy = strategy.targetPicker(localPlayer, players);
-        optAimbotTarget = optEnemy;
+        enemy = strategy.targetPicker(localPlayer, players);
+        aimbotTarget = enemy;
     }
 
     // aim to it
-    if (optEnemy) {
-        strategy.aimer(localPlayer, *optEnemy);
+    if (enemy) {
+        strategy.aimer(localPlayer, enemy);
     }
 }
