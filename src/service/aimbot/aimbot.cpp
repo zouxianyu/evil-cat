@@ -26,7 +26,7 @@ namespace Settings::Aimbot {
     Strategy strategy = {
             AimbotStrategy::leftOrRightKeyTrigger,
             AimbotStrategy::minAnglePicker,
-            AimbotStrategy::speedChangeableAimer
+            AimbotStrategy::predictAimer
     };
 
     // if we don't know the bone position, we cannot use bone aimer
@@ -44,6 +44,13 @@ namespace Settings::Aimbot {
     // 0.5 : aim at middle
     // 1 : aim at top
     float nonBoneAimerRelativeHeight = 0.7f;
+
+    bool ignoreInvisiblePlayer = true;
+
+    // for predict aimer
+    float dt = 0.01f;
+    float gravity = 9.8f;
+    bool showPredictAimPosition = true;
 }
 
 // TODO: add bone aimbot and traceline collision detection aimbot policy

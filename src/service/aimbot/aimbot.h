@@ -34,6 +34,10 @@ namespace Settings::Aimbot {
     extern bool useBoneAimer;
     extern Bone bone;
     extern float nonBoneAimerRelativeHeight;
+    extern bool ignoreInvisiblePlayer;
+    extern float dt;
+    extern float gravity;
+    extern bool showPredictAimPosition;
 }
 
 class Aimbot : public ServiceInterface {

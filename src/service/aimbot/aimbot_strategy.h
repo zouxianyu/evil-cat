@@ -20,7 +20,12 @@ namespace AimbotStrategy {
             const std::vector<std::shared_ptr<PlayerInterface>> &players
     );
 
-    void speedChangeableAimer(
+    void smoothAimer(
+            std::shared_ptr<PlayerInterface> localPlayer,
+            std::shared_ptr<PlayerInterface> targetPlayer
+    );
+
+    void predictAimer(
             std::shared_ptr<PlayerInterface> localPlayer,
             std::shared_ptr<PlayerInterface> targetPlayer
     );
