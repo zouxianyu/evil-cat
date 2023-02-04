@@ -19,6 +19,8 @@ namespace PUBG::Helper {
 
     CameraInfo getCameraInfo();
 
+    glm::vec2 getMouseSensitivity();
+
     void setCameraRotation(glm::vec3 rotation);
 
     int getBoneIndex(Bone bone);

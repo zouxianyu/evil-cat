@@ -103,17 +103,47 @@ glm::vec3 PUBG::Helper::normalizeViewAngle(glm::vec3 viewAngle) {
     return viewAngle;
 }
 
+glm::vec2 PUBG::Helper::getMouseSensitivity() {
+    uint64_t playerController = getPlayerController();
+    uint64_t playerInput = MemoryAccessor<uint64_t>(
+            playerController + Offset_PlayerInput
+    );
+    TArray axisProperties = MemoryAccessor<TArray>(
+            playerInput + Offset_AxisProperties
+    );
+    glm::vec2 result{};
+    using Element = TPair<FName, FInputAxisProperties>;
+    for (int i = 0; i < axisProperties.max; ++i) {
+        Element element = MemoryAccessor<Element>(
+                axisProperties.ptr + i * 64
+        );
+        std::string name = PUBG::getName(element.Key.id);
+        if (name == "MouseX") {
+            result.x = element.Value.Sensitivity;
+        } else if (name == "MouseY") {
+            result.y = element.Value.Sensitivity;
+        }
+    }
+    return result;
+}
+
 void PUBG::Helper::setCameraRotation(glm::vec3 rotation) {
-    glm::vec3 delta = normalizeViewAngle(rotation - getCameraInfo().viewAngle);
-    delta *= 4.f;
+    CameraInfo cameraInfo = getCameraInfo();
+    glm::vec3 delta = normalizeViewAngle(rotation - cameraInfo.viewAngle);
+    glm::vec2 sensitivity = getMouseSensitivity();
+    float FOVRatio = 90.f / cameraInfo.FOV;
+    glm::vec2 move = {
+            -delta.y / sensitivity.x * 10000.f * FOVRatio,
+            delta.x / sensitivity.y * 10000.f * FOVRatio
+    };
 
     RECT rect;
     GetClientRect(GetForegroundWindow(), &rect);
     INPUT input{};
     input.type = INPUT_MOUSE;
     input.mi.dwFlags = MOUSEEVENTF_MOVE;
-    input.mi.dx = static_cast<LONG>(delta.y * static_cast<float>(rect.right) / 180.f);
-    input.mi.dy = static_cast<LONG>(-delta.x * static_cast<float>(rect.bottom) / 180.f);
+    input.mi.dx = static_cast<LONG>(move.x);
+    input.mi.dy = static_cast<LONG>(move.y);
     SendInput(1, &input, sizeof(INPUT));
 }
 
