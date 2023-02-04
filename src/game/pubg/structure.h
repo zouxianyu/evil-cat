@@ -118,6 +118,45 @@ struct FTransform {
 
 };
 
+template<typename T1, typename T2>
+struct TPair {
+    T1 Key;
+    T2 Value;
+};
+
+struct FName {
+    uint32_t id;
+    uint32_t id2;
+};
+
+// ScriptStruct Engine.RichCurveKey
+// Size: 0x1c (Inherited: 0x00)
+struct FRichCurveKey {
+    uint8_t InterpMode; // 0x00(0x01)
+    uint8_t TangentMode; // 0x01(0x01)
+    uint8_t TangentWeightMode; // 0x02(0x01)
+    char pad_3[0x1]; // 0x03(0x01)
+    float Time; // 0x04(0x04)
+    float Value; // 0x08(0x04)
+    float ArriveTangent; // 0x0c(0x04)
+    float ArriveTangentWeight; // 0x10(0x04)
+    float LeaveTangent; // 0x14(0x04)
+    float LeaveTangentWeight; // 0x18(0x04)
+};
+
+// ScriptStruct Engine.InputAxisProperties
+// Size: 0x20 (Inherited: 0x00)
+struct FInputAxisProperties {
+    float DEADZONE; // 0x00(0x04)
+    float OuterDeadZone; // 0x04(0x04)
+    float Sensitivity; // 0x08(0x04)
+    float Exponent; // 0x0c(0x04)
+    char bInvert : 1; // 0x10(0x01)
+    char pad_10_1 : 7; // 0x10(0x01)
+    char pad_11[0x7]; // 0x11(0x07)
+    void* MultiplierAxisValueCurve; // 0x18(0x08)
+};
+
 struct CameraInfo {
     glm::vec3 location;
     union {

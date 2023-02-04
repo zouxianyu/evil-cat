@@ -31,6 +31,10 @@ public:
 
     BoneArray getBonePositions() override;
 
+    Weapon getWeapon() override;
+
+    bool isVisible() override;
+
     bool operator==(const PlayerInterface &other) const override;
 
 protected:
@@ -42,8 +46,6 @@ public:
     using Player::Player;
 
     glm::vec3 getCameraPosition() override;
-
-//    glm::vec3 getViewAngle() override;
 
     void setViewAngle(glm::vec3 angle) override;
 };

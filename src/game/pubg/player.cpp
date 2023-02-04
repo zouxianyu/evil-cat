@@ -98,6 +98,51 @@ BoneArray Player::getBonePositions() {
     return bonePositions;
 }
 
+Weapon Player::getWeapon() {
+    uint64_t weaponProcessor = MemoryAccessor<uint64_t>(
+            _this + Offset_WeaponProcessor
+    );
+    uint8_t currentWeaponIndex = MemoryAccessor<uint8_t>(
+            weaponProcessor + Offset_CurrentWeaponIndex
+    );
+    TArray equippedWeapons = MemoryAccessor<TArray>(
+            weaponProcessor + Offset_EquippedWeapons
+    );
+    uint64_t equippedWeapon = MemoryAccessor<uint64_t>(
+            equippedWeapons.ptr + currentWeaponIndex * sizeof(uint64_t)
+    );
+    uint64_t weaponTrajectoryData = MemoryAccessor<uint64_t>(
+            equippedWeapon + Offset_WeaponTrajectoryData
+    );
+    uint64_t ballisticCurve = MemoryAccessor<uint64_t>(
+            weaponTrajectoryData + Offset_TrajectoryConfig + Offset_BallisticCurve
+    );
+    TArray richCurveKeys = MemoryAccessor<TArray>(
+            ballisticCurve + Offset_FloatCurves + Offset_RichCurve_Keys
+    );
+
+    // sanity check
+    if (richCurveKeys.cnt == 0 || richCurveKeys.cnt > 100) {
+        return {};
+    }
+
+    Curve speedCurve;
+    for (int i = 0; i < richCurveKeys.cnt; i++) {
+        FRichCurveKey richCurveKey = MemoryAccessor<FRichCurveKey>(
+                richCurveKeys.ptr + i * sizeof(FRichCurveKey)
+        );
+        speedCurve.emplace_back(richCurveKey.Time, richCurveKey.Value);
+    }
+    return {100.f, speedCurve};
+}
+
+bool Player::isVisible() {
+    uint64_t mesh = MemoryAccessor<uint64_t>(_this + Offset_Mesh);
+    float lastSubmitTime = MemoryAccessor<float>(mesh + Offset_LastSubmitTime);
+    float lastRenderTime = MemoryAccessor<float>(mesh + Offset_LastRenderTimeOnScreen);
+    return lastSubmitTime - lastRenderTime < 0.1f;
+}
+
 bool Player::operator==(const PlayerInterface &other) const {
     return _this == dynamic_cast<const Player&>(other)._this;
 }
@@ -106,13 +151,6 @@ glm::vec3 LocalPlayer::getCameraPosition() {
     CameraInfo camera = PUBG::getCameraInfo();
     return camera.location;
 }
-//
-//glm::vec3 LocalPlayer::getViewAngle() {
-////    CameraInfo camera = PUBG::getCameraInfo();
-////    return camera.viewAngle;
-//    uint64_t controller = PUBG::getPlayerController();
-//    return MemoryAccessor<glm::vec3>(controller + Offset_ControlRotation);
-//}
 
 void LocalPlayer::setViewAngle(glm::vec3 angle) {
     PUBG::setCameraRotation(angle);
