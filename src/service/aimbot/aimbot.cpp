@@ -26,7 +26,7 @@ namespace Settings::Aimbot {
     Strategy strategy = {
             AimbotStrategy::leftOrRightKeyTrigger,
             AimbotStrategy::minAnglePicker,
-            AimbotStrategy::predictAimer
+            AimbotStrategy::smoothAimer
     };
 
     // if we don't know the bone position, we cannot use bone aimer
