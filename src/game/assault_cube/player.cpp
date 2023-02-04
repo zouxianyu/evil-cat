@@ -62,6 +62,14 @@ BoneArray Player::getBonePositions() {
     return bonePositions;
 }
 
+Weapon Player::getWeapon() {
+    return {};
+}
+
+bool Player::isVisible() {
+    return true;
+}
+
 bool Player::operator==(const PlayerInterface &other) const {
     return _this == dynamic_cast<const Player&>(other)._this;
 }

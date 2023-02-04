@@ -34,6 +34,10 @@ public:
 
     BoneArray getBonePositions() override;
 
+    Weapon getWeapon() override;
+
+    bool isVisible() override;
+
     bool operator==(const PlayerInterface &other) const override;
 
 };
