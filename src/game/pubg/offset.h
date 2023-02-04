@@ -22,6 +22,8 @@ constexpr auto Offset_PlayerController = 0x38;
 constexpr auto Offset_ControlRotation = 0x41C;
 constexpr auto Offset_AcknowledgedPawn = 0x480;
 constexpr auto Offset_PlayerCameraManager = 0x4A0;
+constexpr auto Offset_PlayerInput = 0x518;
+constexpr auto Offset_AxisProperties = 0x178;
 
 constexpr auto Offset_PlayerState = 0x428;
 constexpr auto Offset_PlayerStatistics = 0xA58;
@@ -65,6 +67,7 @@ constexpr auto Offset_TrajectoryGravityZ = 0xFC4;
 constexpr auto Offset_TrajectoryConfig = 0x108;
 constexpr auto Offset_BallisticCurve = 0x10;
 constexpr auto Offset_FloatCurves = 0x38;
+constexpr auto Offset_RichCurve_Keys = 0x60;
 
 constexpr auto Offset_AnimScriptInstance = 0xC80;
 constexpr auto Offset_ControlRotation_CP = 0x774;
