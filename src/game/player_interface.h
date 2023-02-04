@@ -4,6 +4,7 @@
 #include <string>
 #include <glm/glm.hpp>
 #include "bone.h"
+#include "weapon.h"
 
 // this interface contains basic information about a player
 // use this interface to get basic information about a player in the core of the framework
@@ -54,6 +55,10 @@ public:
     virtual void setArmor(float health) = 0;
 
     virtual BoneArray getBonePositions() = 0;
+
+    virtual Weapon getWeapon() = 0;
+
+    virtual bool isVisible() = 0;
 
     // we call use the compare operator to identify whether the player is the local player
     virtual bool operator==(const PlayerInterface &other) const = 0;

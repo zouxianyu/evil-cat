@@ -59,8 +59,16 @@ public:
         CACHE_BODY(bonePositions, bonePositionsCached, getBonePositions);
     }
 
+    Weapon getWeapon() override {
+        CACHE_BODY(weapon, weaponCached, getWeapon);
+    }
+
+    bool isVisible() override {
+        CACHE_BODY(visible, visibleCached, isVisible);
+    }
+
     bool operator==(const PlayerInterface &other) const override {
-        return *instance == *dynamic_cast<const PlayerCache&>(other).instance;
+        return *instance == *dynamic_cast<const PlayerCache &>(other).instance;
     }
 
     void refresh() override {
@@ -104,6 +112,12 @@ private:
 
     bool bonePositionsCached{};
     BoneArray bonePositions;
+
+    bool weaponCached{};
+    Weapon weapon;
+
+    bool visibleCached{};
+    bool visible;
 };
 
 #endif //EVIL_CAT_CACHE_PLAYER_CACHE_H
