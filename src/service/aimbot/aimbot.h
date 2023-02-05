@@ -38,6 +38,9 @@ namespace Settings::Aimbot {
     extern float dt;
     extern float gravity;
     extern bool showPredictAimPosition;
+    extern float kp;
+    extern float ki;
+    extern float kd;
 }
 
 class Aimbot : public ServiceInterface {

@@ -25,6 +25,11 @@ namespace AimbotStrategy {
             std::shared_ptr<PlayerInterface> targetPlayer
     );
 
+    void PIDAimer(
+            std::shared_ptr<PlayerInterface> localPlayer,
+            std::shared_ptr<PlayerInterface> targetPlayer
+    );
+
     void predictAimer(
             std::shared_ptr<PlayerInterface> localPlayer,
             std::shared_ptr<PlayerInterface> targetPlayer

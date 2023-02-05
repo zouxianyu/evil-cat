@@ -51,6 +51,11 @@ namespace Settings::Aimbot {
     float dt = 0.01f;
     float gravity = 9.8f;
     bool showPredictAimPosition = true;
+
+    // for PID aimer
+    float kp = 0.75f;
+    float ki = 0.0025f;
+    float kd = 0.0025f;
 }
 
 // TODO: add bone aimbot and traceline collision detection aimbot policy

@@ -15,19 +15,11 @@
 
 #include "world_to_screen/world_to_screen.h"
 
-namespace AimbotStrategy::Detail {
-    float getDeltaAngle(glm::vec3 v1, glm::vec3 v2);
-
-    glm::vec3 getAimPosition(const std::shared_ptr<PlayerInterface>& player);
-}
-
-using namespace AimbotStrategy::Detail;
-
-float AimbotStrategy::Detail::getDeltaAngle(glm::vec3 v1, glm::vec3 v2) {
+static float getDeltaAngle(glm::vec3 v1, glm::vec3 v2) {
     return glm::angle(glm::normalize(v1), glm::normalize(v2));
 }
 
-glm::vec3 AimbotStrategy::Detail::getAimPosition(const std::shared_ptr<PlayerInterface>& player) {
+static glm::vec3 getAimPosition(const std::shared_ptr<PlayerInterface>& player) {
     if (Settings::Aimbot::useBoneAimer) {
         return player->getBonePositions()[static_cast<int>(Settings::Aimbot::bone)];
     } else {
@@ -37,86 +29,9 @@ glm::vec3 AimbotStrategy::Detail::getAimPosition(const std::shared_ptr<PlayerInt
     }
 }
 
-bool AimbotStrategy::leftKeyTrigger() {
-    return GetAsyncKeyState(VK_LBUTTON) & 0x8000;
-}
-
-bool AimbotStrategy::rightKeyTrigger() {
-    return GetAsyncKeyState(VK_RBUTTON) & 0x8000;
-}
-
-bool AimbotStrategy::leftOrRightKeyTrigger() {
-    return leftKeyTrigger() || rightKeyTrigger();
-}
-
-std::shared_ptr<PlayerInterface> AimbotStrategy::minAnglePicker(
-        std::shared_ptr<PlayerInterface> localPlayer,
-        const std::vector<std::shared_ptr<PlayerInterface>> &players
-) {
-
-    // get local player orientation
-    glm::vec3 localPlayerViewAngle = localPlayer->getViewAngle();
-    glm::vec3 localPlayerOrientation = Module::game->viewAngleToOrientation(
-            localPlayerViewAngle
-    );
-
-    // find the best enemy
-    // maybe there's no valid enemy, so we use "optional" container
-    std::shared_ptr<PlayerInterface> bestEnemy = nullptr;
-    auto minAngle = glm::pi<double>();
-
-    for (auto &player: players) {
-
-        // if the player is not a valid enemy (death or teammates)
-        if (*player == *localPlayer ||
-            player->getHealth() <= 0 ||
-            player->getTeamId() == localPlayer->getTeamId()) {
-            continue;
-        }
-
-        // filter by visibility
-        if (Settings::Aimbot::ignoreInvisiblePlayer && !player->isVisible()) {
-            continue;
-        }
-
-        // filter by angle
-        glm::vec3 targetOrientation = getAimPosition(player) - localPlayer->getCameraPosition();
-        double deltaAngle = getDeltaAngle(localPlayerOrientation, targetOrientation);
-        if (deltaAngle >= Settings::Aimbot::maxAngle) {
-            continue;
-        }
-
-        if (deltaAngle < minAngle) {
-            // a better enemy is found
-            minAngle = deltaAngle;
-            bestEnemy = player;
-        }
-    }
-
-    // return the best enemy (maybe null)
-    return bestEnemy;
-}
-
-void AimbotStrategy::smoothAimer(
-        std::shared_ptr<PlayerInterface> localPlayer,
-        std::shared_ptr<PlayerInterface> targetPlayer
-) {
-    glm::vec3 targetPos = getAimPosition(targetPlayer);
-    glm::vec3 localPos = localPlayer->getCameraPosition();
-    glm::vec3 vTarget = glm::normalize(targetPos - localPos);
-    glm::vec3 vCurrent = glm::normalize(Module::game->viewAngleToOrientation(
-            localPlayer->getViewAngle()
-    ));
-    glm::vec3 vCross = glm::cross(vCurrent, vTarget);
-    float angle = glm::angle(vCurrent, vTarget) * Settings::Aimbot::moveRatio;
-    glm::vec3 vAim = glm::rotate(vCurrent, angle, vCross);
-    glm::vec3 aimViewAngle = Module::game->orientationToViewAngle(vAim);
-    localPlayer->setViewAngle(aimViewAngle);
-}
-
 struct PositionInfo {
     glm::vec3 position;
-    std::chrono::time_point<std::chrono::system_clock> time;
+    std::chrono::time_point<std::chrono::steady_clock> time;
 };
 
 static glm::vec3 linearPredictor(
@@ -133,7 +48,7 @@ static glm::vec3 linearPredictor(
 
     glm::vec3 position = getAimPosition(targetPlayer);
 
-    sequence.emplace_front(PositionInfo{position, std::chrono::system_clock::now()});
+    sequence.emplace_front(PositionInfo{position, std::chrono::steady_clock::now()});
     if (sequence.size() > 10) {
         sequence.pop_back();
     }
@@ -242,6 +157,161 @@ static glm::vec3 getZeroDistanceOffset(const Curve &speedCurve, float zeroDistan
     return {0.f, 0.f, -bullet.position.z};
 }
 
+struct PIDController {
+    const float &kp = Settings::Aimbot::kp;
+    const float &ki = Settings::Aimbot::ki;
+    const float &kd = Settings::Aimbot::kd;
+
+    float perr{};
+    float ierr{};
+    std::chrono::time_point<std::chrono::steady_clock> pt{};
+
+    void reset() {
+        perr = 0.f;
+        ierr = 0.f;
+        pt = std::chrono::steady_clock::now();
+    }
+
+    float step(float err) {
+        auto now = std::chrono::steady_clock::now();
+        float dt = std::chrono::duration_cast<std::chrono::milliseconds>(now - pt).count()
+                   / 1000.f;
+        if (dt > 0.5f) {
+            reset();
+            return 0.f;
+        }
+        pt = now;
+
+        float derr = (err - perr) / dt;
+        perr = err;
+        ierr += err * dt;
+
+        return kp * err + ki * ierr + kd * derr;
+    }
+};
+
+bool AimbotStrategy::leftKeyTrigger() {
+    return GetAsyncKeyState(VK_LBUTTON) & 0x8000;
+}
+
+bool AimbotStrategy::rightKeyTrigger() {
+    return GetAsyncKeyState(VK_RBUTTON) & 0x8000;
+}
+
+bool AimbotStrategy::leftOrRightKeyTrigger() {
+    return leftKeyTrigger() || rightKeyTrigger();
+}
+
+std::shared_ptr<PlayerInterface> AimbotStrategy::minAnglePicker(
+        std::shared_ptr<PlayerInterface> localPlayer,
+        const std::vector<std::shared_ptr<PlayerInterface>> &players
+) {
+
+    // get local player orientation
+    glm::vec3 localPlayerViewAngle = localPlayer->getViewAngle();
+    glm::vec3 localPlayerOrientation = Module::game->viewAngleToOrientation(
+            localPlayerViewAngle
+    );
+
+    // find the best enemy
+    // maybe there's no valid enemy, so we use "optional" container
+    std::shared_ptr<PlayerInterface> bestEnemy = nullptr;
+    auto minAngle = glm::pi<double>();
+
+    for (auto &player: players) {
+
+        // if the player is not a valid enemy (death or teammates)
+        if (*player == *localPlayer ||
+            player->getHealth() <= 0 ||
+            player->getTeamId() == localPlayer->getTeamId()) {
+            continue;
+        }
+
+        // filter by visibility
+        if (Settings::Aimbot::ignoreInvisiblePlayer && !player->isVisible()) {
+            continue;
+        }
+
+        // filter by angle
+        glm::vec3 targetOrientation = getAimPosition(player) - localPlayer->getCameraPosition();
+        double deltaAngle = getDeltaAngle(localPlayerOrientation, targetOrientation);
+        if (deltaAngle >= Settings::Aimbot::maxAngle) {
+            continue;
+        }
+
+        if (deltaAngle < minAngle) {
+            // a better enemy is found
+            minAngle = deltaAngle;
+            bestEnemy = player;
+        }
+    }
+
+    // return the best enemy (maybe null)
+    return bestEnemy;
+}
+
+std::pair<glm::vec3, glm::vec3> getAimInfo(
+        std::shared_ptr<PlayerInterface> localPlayer,
+        std::shared_ptr<PlayerInterface> targetPlayer
+) {
+    glm::vec3 targetPos = getAimPosition(targetPlayer);
+    glm::vec3 localPos = localPlayer->getCameraPosition();
+    glm::vec3 vTarget = glm::normalize(targetPos - localPos);
+    glm::vec3 vCurrent = glm::normalize(Module::game->viewAngleToOrientation(
+            localPlayer->getViewAngle()
+    ));
+    return {vCurrent, vTarget};
+}
+
+void smoothImpl(
+        std::shared_ptr<PlayerInterface> localPlayer,
+        glm::vec3 vCurrent,
+        glm::vec3 vTarget
+) {
+    glm::vec3 vCross = glm::cross(vCurrent, vTarget);
+    float angle = glm::angle(vCurrent, vTarget) * Settings::Aimbot::moveRatio;
+    glm::vec3 vAim = glm::rotate(vCurrent, angle, vCross);
+    glm::vec3 aimViewAngle = Module::game->orientationToViewAngle(vAim);
+    localPlayer->setViewAngle(aimViewAngle);
+}
+
+void PIDImpl(
+        std::shared_ptr<PlayerInterface> localPlayer,
+        glm::vec3 vCurrent,
+        glm::vec3 vTarget
+) {
+    static PIDController pidx, pidy;
+
+    glm::vec3 refZ = {0.f, 0.f, 1.f};
+    glm::vec3 refY = glm::normalize(glm::cross(refZ, vCurrent));
+    float dx = glm::orientedAngle(vCurrent, vTarget, refZ);
+    float dy = glm::orientedAngle(vCurrent, vTarget, refY);
+    dx = pidx.step(dx);
+    dy = pidy.step(dy);
+    glm::vec3 vAim = vCurrent;
+    vAim = glm::rotate(vAim, dx, refZ);
+    vAim = glm::rotate(vAim, dy, refY);
+    glm::vec3 aimViewAngle = Module::game->orientationToViewAngle(vAim);
+    localPlayer->setViewAngle(aimViewAngle);
+}
+
+void AimbotStrategy::smoothAimer(
+        std::shared_ptr<PlayerInterface> localPlayer,
+        std::shared_ptr<PlayerInterface> targetPlayer
+) {
+    auto [vCurrent, vTarget] = getAimInfo(localPlayer, targetPlayer);
+    smoothImpl(localPlayer, vCurrent, vTarget);
+}
+
+void AimbotStrategy::PIDAimer(
+        std::shared_ptr<PlayerInterface> localPlayer,
+        std::shared_ptr<PlayerInterface> targetPlayer
+) {
+
+    auto [vCurrent, vTarget] = getAimInfo(localPlayer, targetPlayer);
+    PIDImpl(localPlayer, vCurrent, vTarget);
+}
+
 static bool isValidWeapon(const Weapon &weapon) {
     return !weapon.speedCurve.empty();
 }
@@ -253,7 +323,7 @@ void AimbotStrategy::predictAimer(
     // get basic info
     Weapon weapon = localPlayer->getWeapon();
     if (!isValidWeapon(weapon)) {
-        return smoothAimer(localPlayer, targetPlayer);
+        return PIDAimer(localPlayer, targetPlayer);
     }
 
     glm::vec3 localPosition = localPlayer->getCameraPosition();
@@ -294,9 +364,5 @@ void AimbotStrategy::predictAimer(
     glm::vec3 vCurrent = glm::normalize(Module::game->viewAngleToOrientation(
             localPlayer->getViewAngle()
     ));
-    glm::vec3 vCross = glm::cross(vCurrent, vPredictAim);
-    float angle = glm::angle(vCurrent, vPredictAim) * Settings::Aimbot::moveRatio;
-    glm::vec3 vAim = glm::rotate(vCurrent, angle, vCross);
-    glm::vec3 aimViewAngle = Module::game->orientationToViewAngle(vAim);
-    localPlayer->setViewAngle(aimViewAngle);
+    PIDImpl(localPlayer, vCurrent, vPredictAim);
 }
