@@ -112,16 +112,16 @@ glm::vec2 PUBG::Helper::getMouseSensitivity() {
             playerInput + Offset_AxisProperties
     );
     glm::vec2 result{};
-    using Element = TPair<FName, FInputAxisProperties>;
+    using Element = std::array<float, 16>;
     for (int i = 0; i < axisProperties.max; ++i) {
         Element element = MemoryAccessor<Element>(
                 axisProperties.ptr + i * 64
         );
-        std::string name = PUBG::getName(element.Key.id);
+        std::string name = PUBG::getName(*reinterpret_cast<int *>(element.data()));
         if (name == "MouseX") {
-            result.x = element.Value.Sensitivity;
+            result.x = element[4];
         } else if (name == "MouseY") {
-            result.y = element.Value.Sensitivity;
+            result.y = element[4];
         }
     }
     return result;
@@ -133,8 +133,8 @@ void PUBG::Helper::setCameraRotation(glm::vec3 rotation) {
     glm::vec2 sensitivity = getMouseSensitivity();
     float FOVRatio = 90.f / cameraInfo.FOV;
     glm::vec2 move = {
-            -delta.y / sensitivity.x * 10000.f * FOVRatio,
-            delta.x / sensitivity.y * 10000.f * FOVRatio
+            delta.y / sensitivity.x * 10000.f * FOVRatio,
+            -delta.x / sensitivity.y * 10000.f * FOVRatio
     };
 
     RECT rect;
