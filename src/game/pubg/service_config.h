@@ -7,6 +7,7 @@
 #include "service/service_container.h"
 
 #include "service/aimbot/aimbot.h"
+#include "service/aimbot/aimbot_strategy.h"
 #include "service/item_esp/item_esp.h"
 #include "service/esp/esp.h"
 #include "service/radar/radar.h"
@@ -27,6 +28,7 @@ using ServiceList = ServiceContainer<
 
 inline static void changeDefaultSettings() {
     Settings::distanceFactor = 0.01f;
+    Settings::Aimbot::strategy.aimer = AimbotStrategy::predictAimer;
     Settings::Esp::showBone = true;
     Settings::Radar::scale = 0.01f;
     Settings::NameList::on = true;

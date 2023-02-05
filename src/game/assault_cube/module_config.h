@@ -4,11 +4,11 @@
 //////////////////////////////////////////////////////////////////////////
 // choose framework module
 
-#include "proc/process_driver_util.h"
-#include "view/imgui_dwm/view.h"
+#include "proc/process_external.h"
+#include "view/imgui_d3d9_external/view.h"
 
-using ProcessImpl = ProcessDriverUtil;
-using ViewImpl = ImGuiDWMView;
+using ProcessImpl = ProcessExternal;
+using ViewImpl = ImGuiD3D9ExternalView;
 
 
 //////////////////////////////////////////////////////////////////////////

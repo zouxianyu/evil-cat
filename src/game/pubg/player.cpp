@@ -34,7 +34,13 @@ glm::vec3 Player::getCameraPosition() {
 glm::vec3 Player::getViewAngle() {
     uint64_t mesh = MemoryAccessor<uint64_t>(_this + Offset_Mesh);
     uint64_t animScriptInstance = MemoryAccessor<uint64_t>(mesh + Offset_AnimScriptInstance);
-    return MemoryAccessor<glm::vec3>(animScriptInstance + Offset_ControlRotation_CP);
+    float leanLeftAlpha = MemoryAccessor<float>(animScriptInstance + Offset_LeanLeftAlpha_CP);
+    float leanRightAlpha = MemoryAccessor<float>(animScriptInstance + Offset_LeanRightAlpha_CP);
+    FRotator recoil = MemoryAccessor<FRotator>(animScriptInstance + Offset_RecoilADSRotation_CP);
+    recoil.yaw += (leanRightAlpha - leanLeftAlpha) * recoil.pitch / 3.f;
+    FRotator rotation = MemoryAccessor<FRotator>(animScriptInstance + Offset_ControlRotation_CP);
+    rotation += recoil;
+    return PUBG::normalizeViewAngle(rotation);
 }
 
 void Player::setViewAngle(glm::vec3 angle) {
@@ -92,6 +98,51 @@ BoneArray Player::getBonePositions() {
     return bonePositions;
 }
 
+Weapon Player::getWeapon() {
+    uint64_t weaponProcessor = MemoryAccessor<uint64_t>(
+            _this + Offset_WeaponProcessor
+    );
+    uint8_t currentWeaponIndex = MemoryAccessor<uint8_t>(
+            weaponProcessor + Offset_CurrentWeaponIndex
+    );
+    TArray equippedWeapons = MemoryAccessor<TArray>(
+            weaponProcessor + Offset_EquippedWeapons
+    );
+    uint64_t equippedWeapon = MemoryAccessor<uint64_t>(
+            equippedWeapons.ptr + currentWeaponIndex * sizeof(uint64_t)
+    );
+    uint64_t weaponTrajectoryData = MemoryAccessor<uint64_t>(
+            equippedWeapon + Offset_WeaponTrajectoryData
+    );
+    uint64_t ballisticCurve = MemoryAccessor<uint64_t>(
+            weaponTrajectoryData + Offset_TrajectoryConfig + Offset_BallisticCurve
+    );
+    TArray richCurveKeys = MemoryAccessor<TArray>(
+            ballisticCurve + Offset_FloatCurves + Offset_RichCurve_Keys
+    );
+
+    // sanity check
+    if (richCurveKeys.cnt == 0 || richCurveKeys.cnt > 100) {
+        return {};
+    }
+
+    Curve speedCurve;
+    for (int i = 0; i < richCurveKeys.cnt; i++) {
+        FRichCurveKey richCurveKey = MemoryAccessor<FRichCurveKey>(
+                richCurveKeys.ptr + i * sizeof(FRichCurveKey)
+        );
+        speedCurve.emplace_back(richCurveKey.Time, richCurveKey.Value);
+    }
+    return {100.f, speedCurve};
+}
+
+bool Player::isVisible() {
+    uint64_t mesh = MemoryAccessor<uint64_t>(_this + Offset_Mesh);
+    float lastSubmitTime = MemoryAccessor<float>(mesh + Offset_LastSubmitTime);
+    float lastRenderTime = MemoryAccessor<float>(mesh + Offset_LastRenderTimeOnScreen);
+    return lastSubmitTime - lastRenderTime < 0.1f;
+}
+
 bool Player::operator==(const PlayerInterface &other) const {
     return _this == dynamic_cast<const Player&>(other)._this;
 }
@@ -102,8 +153,7 @@ glm::vec3 LocalPlayer::getCameraPosition() {
 }
 
 glm::vec3 LocalPlayer::getViewAngle() {
-    CameraInfo camera = PUBG::getCameraInfo();
-    return camera.viewAngle;
+    return PUBG::getCameraInfo().viewAngle;
 }
 
 void LocalPlayer::setViewAngle(glm::vec3 angle) {
