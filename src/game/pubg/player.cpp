@@ -152,6 +152,10 @@ glm::vec3 LocalPlayer::getCameraPosition() {
     return camera.location;
 }
 
+glm::vec3 LocalPlayer::getViewAngle() {
+    return PUBG::getCameraInfo().viewAngle;
+}
+
 void LocalPlayer::setViewAngle(glm::vec3 angle) {
     PUBG::setCameraRotation(angle);
 }
