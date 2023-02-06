@@ -52,15 +52,53 @@ void Game::getPlayersAndItems(EntityContainer &container) {
         ));
         std::string actorName = PUBG::getName(actorNameId);
 
-        if (actorName == "DroppedItem") {
-            actorName = PUBG::getDroppedItemName(actor);
-        }
-
-        // fill entity container
         if (PUBG::isPlayer(actorName)) {
             container.players.emplace_back(std::make_shared<Player>(actor));
-        } else if (auto itemInfo = PUBG::getItemInfo(actorName)) {
-            container.items.emplace_back(std::make_shared<Item>(actor, *itemInfo));
+
+        } else if (actorName == "DroppedItem") {
+            uint64_t item = PUBG::decryptPtr(MemoryAccessor<uint64_t>(
+                    actor + Offset_DroppedItem_Item
+            ));
+            uint64_t itemTable = MemoryAccessor<uint64_t>(
+                    item + Offset_ItemTable
+            );
+            uint32_t itemNameId = MemoryAccessor<uint32_t>(
+                    itemTable + Offset_ItemID
+            );
+            std::string itemName = PUBG::getName(itemNameId);
+            if (auto itemInfo = PUBG::getItemInfo(itemName)) {
+                container.items.emplace_back(
+                        std::make_shared<ItemActor>(actor, *itemInfo));
+            }
+
+        } else if (actorName == "DroppedItemGroup") {
+            TArray ownedComponents = MemoryAccessor<TArray>(
+                    actor + Offset_OwnedComponents
+            );
+            for (uint32_t j = 0; j < ownedComponents.cnt && j < 1000; j++) {
+                uint64_t component = MemoryAccessor<uint64_t>(
+                        ownedComponents.ptr + j * 0x10
+                );
+                uint64_t item = MemoryAccessor<uint64_t>(
+                        component + Offset_DroppedItemGroup_Item
+                );
+                uint64_t itemTable = MemoryAccessor<uint64_t>(
+                        item + Offset_ItemTable
+                );
+                uint32_t itemNameId = MemoryAccessor<uint32_t>(
+                        itemTable + Offset_ItemID
+                );
+                std::string itemName = PUBG::getName(itemNameId);
+                if (auto itemInfo = PUBG::getItemInfo(itemName)) {
+                    container.items.emplace_back(
+                            std::make_shared<ItemComponent>(component, *itemInfo));
+                }
+            }
+        } else {
+            if (auto itemInfo = PUBG::getItemInfo(actorName)) {
+                container.items.emplace_back(
+                        std::make_shared<ItemActor>(actor, *itemInfo));
+            }
         }
     }
 }
