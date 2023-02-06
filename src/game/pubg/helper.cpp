@@ -130,12 +130,16 @@ glm::vec2 PUBG::Helper::getMouseSensitivity() {
 void PUBG::Helper::setCameraRotation(glm::vec3 rotation) {
     CameraInfo cameraInfo = getCameraInfo();
     glm::vec3 delta = normalizeViewAngle(rotation - cameraInfo.viewAngle);
-    glm::vec2 sensitivity = getMouseSensitivity();
+//    glm::vec2 sensitivity = getMouseSensitivity();
     float FOVRatio = 90.f / cameraInfo.FOV;
+//    glm::vec2 move = {
+//            delta.y / sensitivity.x * 10000.f * FOVRatio,
+//            -delta.x / sensitivity.y * 10000.f * FOVRatio
+//    };
     glm::vec2 move = {
-            delta.y / sensitivity.x * 10000.f * FOVRatio,
-            -delta.x / sensitivity.y * 10000.f * FOVRatio
-    };
+            delta.y * 20.f * FOVRatio,
+            -delta.x * 20.f * FOVRatio
+    }
 
     RECT rect;
     GetClientRect(GetForegroundWindow(), &rect);
