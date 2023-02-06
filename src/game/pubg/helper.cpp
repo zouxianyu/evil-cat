@@ -139,7 +139,7 @@ void PUBG::Helper::setCameraRotation(glm::vec3 rotation) {
     glm::vec2 move = {
             delta.y * 20.f * FOVRatio,
             -delta.x * 20.f * FOVRatio
-    }
+    };
 
     RECT rect;
     GetClientRect(GetForegroundWindow(), &rect);
