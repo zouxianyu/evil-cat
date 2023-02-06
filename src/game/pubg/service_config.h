@@ -19,8 +19,7 @@ using ServiceList = ServiceContainer<
         Aimbot,
         ItemEsp,
         Esp,
-        Radar,
-        NameList
+        Radar
 >;
 
 //////////////////////////////////////////////////////////////////////////
@@ -29,9 +28,10 @@ using ServiceList = ServiceContainer<
 inline static void changeDefaultSettings() {
     Settings::distanceFactor = 0.01f;
     Settings::Aimbot::strategy.aimer = AimbotStrategy::predictAimer;
+    Settings::Aimbot::bone = Bone::spine;
     Settings::Esp::showBone = true;
+    Settings::ItemEsp::level = 4;
     Settings::Radar::scale = 0.01f;
-    Settings::NameList::on = true;
 }
 
 #endif //EVIL_CAT_GAME_PUBG_SERVICE_CONFIG_H
