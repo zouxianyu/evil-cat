@@ -4,9 +4,9 @@
 #include "game/item_interface.h"
 #include "structure.h"
 
-class Item : public ItemInterface {
+class ItemActor : public ItemInterface {
 public:
-    Item(gameptr_t address, ItemInfo info);
+    ItemActor(gameptr_t address, ItemInfo info);
 
     glm::vec3 getPosition() override;
 
@@ -19,6 +19,13 @@ public:
 protected:
     gameptr_t _this;
     ItemInfo info;
+};
+
+class ItemComponent : public ItemActor {
+public:
+    using ItemActor::ItemActor;
+
+    glm::vec3 getPosition() override;
 };
 
 #endif //EVIL_CAT_GAME_PUBG_ITEM_H
