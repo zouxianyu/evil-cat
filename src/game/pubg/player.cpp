@@ -1,5 +1,6 @@
 #include "mem/memory_accessor.h"
 #include "decrypt.h"
+#include "name_pool.h"
 #include "helper.h"
 #include "structure.h"
 #include "offset.h"
@@ -48,6 +49,10 @@ void Player::setViewAngle(glm::vec3 angle) {
 }
 
 std::string Player::getName() {
+    uint32_t actorNameId = PUBG::decryptId(MemoryAccessor<uint32_t>(_this + Offset_ObjID));
+    if (PUBG::isAIPlayer(PUBG::getName(actorNameId))) {
+        return "AI";
+    }
     FString str = MemoryAccessor<FString>(_this + Offset_CharacterName);
     return PUBG::toString(str);
 }
