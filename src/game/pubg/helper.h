@@ -27,8 +27,6 @@ namespace PUBG::Helper {
 
     std::optional<ItemInfo> getItemInfo(const std::string &objectName);
 
-    std::string getDroppedItemName(uint64_t actor);
-
     glm::vec3 normalizeViewAngle(glm::vec3 viewAngle);
 }
 

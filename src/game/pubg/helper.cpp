@@ -754,16 +754,3 @@ std::optional<ItemInfo> PUBG::Helper::getItemInfo(const std::string &objectName)
         return std::nullopt;
     }
 }
-
-std::string PUBG::Helper::getDroppedItemName(uint64_t actor) {
-    uint64_t item = PUBG::decryptPtr(MemoryAccessor<uint64_t>(
-            actor + Offset_DroppedItem_Item
-    ));
-    uint64_t itemTable = MemoryAccessor<uint64_t>(
-            item + Offset_ItemTable
-    );
-    uint32_t itemNameId = MemoryAccessor<uint32_t>(
-            itemTable + Offset_ItemID
-    );
-    return PUBG::getName(itemNameId);
-}
