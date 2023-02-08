@@ -19,6 +19,7 @@ namespace Settings::Esp {
     extern bool showHeadCircle;
     extern bool showDistance;
     extern bool colorfulEnemyHeadBar;
+    extern bool sortByDistance;
 
     extern ImColor teammateColor;
     extern ImColor enemyColor;
@@ -35,6 +36,11 @@ namespace Settings::Esp {
 }
 
 class Esp : public ServiceInterface {
+    void sortPlayersByDistance(
+            const std::shared_ptr<PlayerInterface>& localPlayer,
+            std::vector<std::shared_ptr<PlayerInterface>> &players
+    );
+
     void showEsp2D(
             const std::shared_ptr<PlayerInterface>& localPlayer,
             const std::vector<std::shared_ptr<PlayerInterface>> &players

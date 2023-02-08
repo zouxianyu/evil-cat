@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 #include <vector>
 #include <imgui.h>
 #include <glm/glm.hpp>
@@ -18,6 +19,7 @@ namespace Settings::Esp {
     bool showHeadCircle = false;
     bool showDistance = true;
     bool colorfulEnemyHeadBar = false;
+    bool sortByDistance = true;
 
     ImColor teammateColor = ImColor(0, 255, 0, 225);
     ImColor enemyColor = ImColor(255, 0, 0, 225);
@@ -126,6 +128,10 @@ void Esp::serviceCallback() {
     std::shared_ptr<PlayerInterface> &localPlayer = container.localPlayer;
     std::vector<std::shared_ptr<PlayerInterface>> &players = container.players;
 
+    if (Settings::Esp::sortByDistance) {
+        sortPlayersByDistance(localPlayer, players);
+    }
+
     // show bone on the bottom
     if (Settings::Esp::showBone) {
         showBone(localPlayer, players);
@@ -161,6 +167,19 @@ void Esp::serviceCallback() {
         showDistance(localPlayer, players);
     }
 
+}
+
+void Esp::sortPlayersByDistance(
+        const std::shared_ptr<PlayerInterface> &localPlayer,
+        std::vector<std::shared_ptr<PlayerInterface>> &players
+) {
+    glm::vec3 position = localPlayer->getPosition();
+
+    std::sort(players.begin(), players.end(),
+              [position](const auto &a, const auto &b) {
+                  return glm::distance(a->getPosition(), position) >
+                         glm::distance(b->getPosition(), position);
+              });
 }
 
 void Esp::showEsp2D(
