@@ -18,6 +18,7 @@ namespace Settings::Esp {
     extern bool showHeadBar;
     extern bool showHeadCircle;
     extern bool showDistance;
+    extern bool colorfulEnemyHeadBar;
 
     extern ImColor teammateColor;
     extern ImColor enemyColor;
@@ -30,6 +31,7 @@ namespace Settings::Esp {
     extern ImColor healthFullColor;
     extern ImColor healthHalfColor;
     extern ImColor healthLowColor;
+    extern std::vector<ImColor> teamColors;
 }
 
 class Esp : public ServiceInterface {

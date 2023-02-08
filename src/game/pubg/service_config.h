@@ -30,6 +30,7 @@ inline static void changeDefaultSettings() {
     Settings::Aimbot::strategy.aimer = AimbotStrategy::predictAimer;
     Settings::Aimbot::bone = Bone::spine;
     Settings::Esp::showBone = true;
+    Settings::Esp::colorfulEnemyHeadBar = true;
     Settings::ItemEsp::level = 4;
     Settings::Radar::scale = 0.01f;
 }

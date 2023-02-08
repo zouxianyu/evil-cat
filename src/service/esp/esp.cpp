@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include <imgui.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -16,6 +17,7 @@ namespace Settings::Esp {
     bool showHeadBar = true;
     bool showHeadCircle = false;
     bool showDistance = true;
+    bool colorfulEnemyHeadBar = false;
 
     ImColor teammateColor = ImColor(0, 255, 0, 225);
     ImColor enemyColor = ImColor(255, 0, 0, 225);
@@ -30,6 +32,62 @@ namespace Settings::Esp {
     ImColor healthFullColor = ImColor(255, 255, 255, 255);
     ImColor healthHalfColor = ImColor(150, 150, 150, 255);
     ImColor healthLowColor = ImColor(255, 120, 120, 255);
+
+    std::vector<ImColor> teamColors = {
+            ImColor::HSV(1.0f / 24.0f, 1.0f, 0.8f),
+            ImColor::HSV(2.0f / 24.0f, 1.0f, 0.8f),
+            ImColor::HSV(3.0f / 24.0f, 1.0f, 0.8f),
+            ImColor::HSV(4.0f / 24.0f, 1.0f, 0.8f),
+            ImColor::HSV(5.0f / 24.0f, 1.0f, 0.8f),
+            ImColor::HSV(6.5f / 24.0f, 1.0f, 0.8f),
+            ImColor::HSV(10.0f / 24.0f, 1.0f, 0.8f),
+            ImColor::HSV(11.0f / 24.0f, 1.0f, 0.8f),
+            ImColor::HSV(12.0f / 24.0f, 1.0f, 0.8f),
+            ImColor::HSV(13.0f / 24.0f, 1.0f, 0.8f),
+            ImColor::HSV(14.0f / 24.0f, 1.0f, 0.8f),
+            ImColor::HSV(15.0f / 24.0f, 1.0f, 0.8f),
+            ImColor::HSV(17.5f / 24.0f, 1.0f, 0.8f),
+            ImColor::HSV(18.5f / 24.0f, 1.0f, 0.8f),
+            ImColor::HSV(19.5f / 24.0f, 1.0f, 0.8f),
+            ImColor::HSV(20.5f / 24.0f, 1.0f, 0.8f),
+            ImColor::HSV(22.0f / 24.0f, 1.0f, 0.8f),
+
+            ImColor::HSV(1.0f / 24.0f, 0.5f, 0.8f),
+            ImColor::HSV(2.0f / 24.0f, 0.5f, 0.8f),
+            ImColor::HSV(3.0f / 24.0f, 0.5f, 0.8f),
+            ImColor::HSV(4.0f / 24.0f, 0.5f, 0.8f),
+            ImColor::HSV(5.0f / 24.0f, 0.5f, 0.8f),
+            ImColor::HSV(6.5f / 24.0f, 0.5f, 0.8f),
+            ImColor::HSV(10.0f / 24.0f, 0.5f, 0.8f),
+            ImColor::HSV(11.0f / 24.0f, 0.5f, 0.8f),
+            ImColor::HSV(12.0f / 24.0f, 0.5f, 0.8f),
+            ImColor::HSV(13.0f / 24.0f, 0.5f, 0.8f),
+            ImColor::HSV(14.0f / 24.0f, 0.5f, 0.8f),
+            ImColor::HSV(15.0f / 24.0f, 0.5f, 0.8f),
+            ImColor::HSV(17.5f / 24.0f, 0.5f, 0.8f),
+            ImColor::HSV(18.5f / 24.0f, 0.5f, 0.8f),
+            ImColor::HSV(19.5f / 24.0f, 0.5f, 0.8f),
+            ImColor::HSV(20.5f / 24.0f, 0.5f, 0.8f),
+            ImColor::HSV(22.0f / 24.0f, 0.5f, 0.8f),
+
+            ImColor::HSV(1.0f / 24.0f, 0.5f, 0.6f),
+            ImColor::HSV(2.0f / 24.0f, 0.5f, 0.6f),
+            ImColor::HSV(3.0f / 24.0f, 0.5f, 0.6f),
+            ImColor::HSV(4.0f / 24.0f, 0.5f, 0.6f),
+            ImColor::HSV(5.0f / 24.0f, 0.5f, 0.6f),
+            ImColor::HSV(6.5f / 24.0f, 0.5f, 0.6f),
+            ImColor::HSV(10.0f / 24.0f, 0.5f, 0.6f),
+            ImColor::HSV(11.0f / 24.0f, 0.5f, 0.6f),
+            ImColor::HSV(12.0f / 24.0f, 0.5f, 0.6f),
+            ImColor::HSV(13.0f / 24.0f, 0.5f, 0.6f),
+            ImColor::HSV(14.0f / 24.0f, 0.5f, 0.6f),
+            ImColor::HSV(15.0f / 24.0f, 0.5f, 0.6f),
+            ImColor::HSV(17.5f / 24.0f, 0.5f, 0.6f),
+            ImColor::HSV(18.5f / 24.0f, 0.5f, 0.6f),
+            ImColor::HSV(19.5f / 24.0f, 0.5f, 0.6f),
+            ImColor::HSV(20.5f / 24.0f, 0.5f, 0.6f),
+            ImColor::HSV(22.0f / 24.0f, 0.5f, 0.6f),
+    };
 }
 
 std::string Esp::getName() {
@@ -347,8 +405,17 @@ void Esp::showHeadBar(
                 screenTop->y - Settings::Esp::barMoveUp
         };
 
-        auto barBorderColor = player->getTeamId() == localPlayer->getTeamId() ?
-                              Settings::Esp::teammateColor : Settings::Esp::enemyColor;
+        ImColor barBorderColor;
+        if (player->getTeamId() == localPlayer->getTeamId()) {
+            barBorderColor = Settings::Esp::teammateColor;
+        } else {
+            if (Settings::Esp::colorfulEnemyHeadBar) {
+                auto &teamColors = Settings::Esp::teamColors;
+                barBorderColor = teamColors[player->getTeamId() % teamColors.size()];
+            } else {
+                barBorderColor = Settings::Esp::enemyColor;
+            }
+        }
 
         Module::view->drawRect(
                 ImVec2(barLeftTop.x, barLeftTop.y),
