@@ -11,6 +11,20 @@ namespace Settings::ItemEsp {
     extern bool on;
     extern int level;
     extern bool sortByDistance;
+
+    extern float barMoveUp;
+    extern float barWidth;
+    extern float barHeight;
+    extern float barTextShift;
+
+    extern ImColor textColor;
+    extern ImColor backgroundColor;
+    extern ImColor borderColor;
+
+    extern bool colorGradient;
+    extern float noGradientAlpha;
+    extern std::pair<float, float> alphaMax;
+    extern std::pair<float, float> alphaMin;
 }
 
 class ItemEsp : public ServiceInterface {
