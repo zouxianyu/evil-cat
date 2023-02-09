@@ -16,8 +16,15 @@ public:
 private:
     void getLocalPlayer(EntityContainer &container);
 
-    void getPlayers(EntityContainer &container);
+    void getPlayersAndItems(EntityContainer &container);
 
+    std::vector<uint32_t> getEntityList();
+
+    uint32_t getClassID(uint32_t entity);
+
+    std::string getItemName(uint32_t id);
+
+    bool isDormant(uint32_t entity);
 };
 
 #endif //EVIL_CAT_GAME_CSGO_GAME_H
